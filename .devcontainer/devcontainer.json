@@ -1,0 +1,23 @@
+
+{
+  "name": "OMNeT++ (Qt GUI) + INET — Ubuntu base + noVNC",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/home/ubuntu/src",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/ubuntu/src,type=bind,consistency=cached",
+
+  "remoteUser": "ubuntu",
+  "containerUser": "ubuntu",
+  "updateRemoteUserUID": false,
+  "overrideCommand": false,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        "eamodio.gitlens"
+      ]
+    }
+  }
+}

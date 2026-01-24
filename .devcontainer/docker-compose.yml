@@ -1,0 +1,21 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OMNET_VERSION: "6.0.1"
+        INET_VERSION: "4.5.2"
+        VARIANT: "22.04"
+        USER_UID: 1000
+        USER_GID: 1000
+
+    volumes:
+      - .:/home/ubuntu/src:rw
+
+    ports:
+      - "6083:6083"
+    environment:
+      NOVNC_PORT: 6083
+      DISPLAY: ":1"
+      VNC_RESOLUTION: "1600x900"

@@ -1,0 +1,566 @@
+// ==================================================================
+// OMNeT++ INET Multi-Robot External Position & Message Passing
+// ==================================================================
+
+// ------------------------------------------------------------------
+// 1. Network Definition (MultiRobotNetwork.ned)
+// ------------------------------------------------------------------
+package multirobot.simulations;
+
+import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
+import inet.node.inet.AdhocHost;
+import inet.physicallayer.wireless.ieee80211.packetlevel.Ieee80211ScalarRadioMedium;
+import inet.visualizer.integrated.IntegratedCanvasVisualizer;
+import inet.environment.common.PhysicalEnvironment;
+import inet.mobility.contract.IMobility;
+
+network MultiRobotNetwork
+{
+    parameters:
+        int numRobots = default(3);
+        @display("bgb=1000,1000");
+
+    submodules:
+        visualizer: IntegratedCanvasVisualizer {
+            @display("p=100,50");
+        }
+
+        configurator: Ipv4NetworkConfigurator {
+            @display("p=100,150");
+        }
+
+        radioMedium: Ieee80211ScalarRadioMedium {
+            @display("p=100,250");
+        }
+
+        physicalEnvironment: PhysicalEnvironment {
+            @display("p=100,350");
+        }
+
+        robot[numRobots]: RobotNode {
+            @display("p=300,300,m,5,100,100");
+        }
+}
+
+// ------------------------------------------------------------------
+// 2. Robot Node Definition (RobotNode.ned)
+// ------------------------------------------------------------------
+package multirobot.nodes;
+
+import inet.node.inet.AdhocHost;
+import inet.mobility.contract.IMobility;
+
+module RobotNode extends AdhocHost
+{
+    parameters:
+        @display("i=misc/robot");
+
+        // Use external mobility model
+        mobility.typename = "ExternalMobility";
+
+        // Network interface configuration
+        numWlanInterfaces = 1;
+        wlan[0].radio.transmitter.power = 2mW;
+        wlan[0].radio.receiver.sensitivity = -85dBm;
+        wlan[0].radio.typename = "Ieee80211ScalarRadio";
+        wlan[0].radio.bandName = "2.4 GHz";
+
+    submodules:
+        robotApp: RobotApplication {
+            @display("p=825,100");
+        }
+
+        externalInterface: ExternalInterface {
+            @display("p=825,200");
+        }
+}
+
+// ------------------------------------------------------------------
+// 3. External Mobility Module (ExternalMobility.ned)
+// ------------------------------------------------------------------
+package multirobot.mobility;
+
+import inet.mobility.base.MovingMobilityBase;
+
+simple ExternalMobility extends MovingMobilityBase
+{
+    parameters:
+        @class(ExternalMobility);
+        @signal[mobilityStateChanged](type=inet::MobilityBase);
+
+        // External position update parameters
+        string externalHost = default("localhost");
+        int externalPort = default(9999);
+        double updateInterval @unit(s) = default(0.1s);
+
+        // Initial position
+        double initialX @unit(m) = default(0m);
+        double initialY @unit(m) = default(0m);
+        double initialZ @unit(m) = default(0m);
+}
+
+// ------------------------------------------------------------------
+// 4. ExternalMobility Implementation (ExternalMobility.h)
+// ------------------------------------------------------------------
+#ifndef __MULTIROBOT_EXTERNALMOBILITY_H
+#define __MULTIROBOT_EXTERNALMOBILITY_H
+
+#include "inet/mobility/base/MovingMobilityBase.h"
+#include <omnetpp.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+using namespace omnetpp;
+using namespace inet;
+
+class ExternalMobility : public MovingMobilityBase
+{
+  private:
+    int sockfd;
+    struct sockaddr_in servaddr;
+    cMessage *updateTimer;
+
+    const char *externalHost;
+    int externalPort;
+    simtime_t updateInterval;
+
+    Coord targetPosition;
+    Coord lastPosition;
+
+  protected:
+    virtual int numInitStages() const override { return NUM_INIT_STAGES; }
+    virtual void initialize(int stage) override;
+    virtual void handleSelfMessage(cMessage *msg) override;
+    virtual void setInitialPosition() override;
+    virtual void move() override;
+    virtual void orient() override;
+
+    void connectToExternalSimulator();
+    void requestPositionUpdate();
+    bool receivePositionUpdate(double &x, double &y, double &z);
+
+  public:
+    ExternalMobility();
+    virtual ~ExternalMobility();
+};
+
+#endif
+
+// ------------------------------------------------------------------
+// 5. ExternalMobility Implementation (ExternalMobility.cc)
+// ------------------------------------------------------------------
+#include "ExternalMobility.h"
+
+Define_Module(ExternalMobility);
+
+ExternalMobility::ExternalMobility()
+{
+    updateTimer = nullptr;
+    sockfd = -1;
+}
+
+ExternalMobility::~ExternalMobility()
+{
+    cancelAndDelete(updateTimer);
+    if (sockfd >= 0)
+        close(sockfd);
+}
+
+void ExternalMobility::initialize(int stage)
+{
+    MovingMobilityBase::initialize(stage);
+
+    if (stage == INITSTAGE_LOCAL) {
+        externalHost = par("externalHost");
+        externalPort = par("externalPort");
+        updateInterval = par("updateInterval");
+
+        lastPosition.x = par("initialX");
+        lastPosition.y = par("initialY");
+        lastPosition.z = par("initialZ");
+
+        updateTimer = new cMessage("updateTimer");
+    }
+    else if (stage == INITSTAGE_PHYSICAL_ENVIRONMENT) {
+        connectToExternalSimulator();
+        scheduleAt(simTime() + updateInterval, updateTimer);
+    }
+}
+
+void ExternalMobility::connectToExternalSimulator()
+{
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0) {
+        EV_ERROR << "Failed to create socket" << endl;
+        return;
+    }
+
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(externalPort);
+    inet_pton(AF_INET, externalHost, &servaddr.sin_addr);
+
+    EV_INFO << "Connected to external simulator at " << externalHost
+            << ":" << externalPort << endl;
+}
+
+void ExternalMobility::handleSelfMessage(cMessage *msg)
+{
+    if (msg == updateTimer) {
+        requestPositionUpdate();
+
+        double x, y, z;
+        if (receivePositionUpdate(x, y, z)) {
+            targetPosition.x = x;
+            targetPosition.y = y;
+            targetPosition.z = z;
+
+            move();
+        }
+
+        scheduleAt(simTime() + updateInterval, updateTimer);
+    }
+}
+
+void ExternalMobility::requestPositionUpdate()
+{
+    // Request format: "GET_POS:<module_id>"
+    char buffer[256];
+    snprintf(buffer, sizeof(buffer), "GET_POS:%s", getFullPath().c_str());
+
+    sendto(sockfd, buffer, strlen(buffer), 0,
+           (struct sockaddr*)&servaddr, sizeof(servaddr));
+}
+
+bool ExternalMobility::receivePositionUpdate(double &x, double &y, double &z)
+{
+    char buffer[256];
+    socklen_t len = sizeof(servaddr);
+
+    // Set timeout for receiving
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 100000; // 100ms timeout
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+
+    int n = recvfrom(sockfd, buffer, sizeof(buffer), 0,
+                     (struct sockaddr*)&servaddr, &len);
+
+    if (n > 0) {
+        buffer[n] = '\0';
+        // Expected format: "POS:x,y,z"
+        if (sscanf(buffer, "POS:%lf,%lf,%lf", &x, &y, &z) == 3) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void ExternalMobility::setInitialPosition()
+{
+    lastPosition.x = par("initialX");
+    lastPosition.y = par("initialY");
+    lastPosition.z = par("initialZ");
+}
+
+void ExternalMobility::move()
+{
+    lastPosition = targetPosition;
+    emitMobilityStateChangedSignal();
+}
+
+void ExternalMobility::orient()
+{
+    // No orientation change needed
+}
+
+// ------------------------------------------------------------------
+// 6. Robot Application (RobotApplication.ned)
+// ------------------------------------------------------------------
+package multirobot.applications;
+
+import inet.applications.base.ApplicationBase;
+
+simple RobotApplication extends ApplicationBase
+{
+    parameters:
+        @class(RobotApplication);
+        @display("i=block/app");
+
+        // Message parameters
+        int destPort = default(5000);
+        int localPort = default(5000);
+        string messageTypes = default("STATUS,POSITION,TASK,ALERT,COMMAND");
+        double messageInterval @unit(s) = default(1s);
+
+    gates:
+        input socketIn;
+        output socketOut;
+}
+
+// ------------------------------------------------------------------
+// 7. RobotApplication Implementation (RobotApplication.h)
+// ------------------------------------------------------------------
+#ifndef __MULTIROBOT_ROBOTAPPLICATION_H
+#define __MULTIROBOT_ROBOTAPPLICATION_H
+
+#include "inet/applications/base/ApplicationBase.h"
+#include "inet/transportlayer/contract/udp/UdpSocket.h"
+#include "RobotMessage_m.h"
+
+using namespace omnetpp;
+using namespace inet;
+
+class RobotApplication : public ApplicationBase
+{
+  private:
+    UdpSocket socket;
+    cMessage *sendTimer;
+    int destPort;
+    int localPort;
+    double messageInterval;
+
+    std::vector<std::string> messageTypes;
+    int messageSequence;
+
+  protected:
+    virtual int numInitStages() const override { return NUM_INIT_STAGES; }
+    virtual void initialize(int stage) override;
+    virtual void handleMessageWhenUp(cMessage *msg) override;
+    virtual void finish() override;
+
+    void sendMessage();
+    void processMessage(RobotMessage *msg);
+    void sendCustomMessage(const char *type, const char *payload,
+                          L3Address dest);
+
+  public:
+    RobotApplication();
+    virtual ~RobotApplication();
+};
+
+#endif
+
+// ------------------------------------------------------------------
+// 8. Robot Message Definition (RobotMessage.msg)
+// ------------------------------------------------------------------
+import inet.common.INETDefs;
+import inet.common.packet.chunk.Chunk;
+
+namespace multirobot;
+
+class RobotMessage extends inet::FieldsChunk
+{
+    string sourceId;
+    string destinationId;
+    string messageType;
+    string payload;
+    int sequenceNumber;
+    simtime_t timestamp;
+    double positionX;
+    double positionY;
+    double positionZ;
+}
+
+// ------------------------------------------------------------------
+// 9. Configuration File (omnetpp.ini)
+// ------------------------------------------------------------------
+[General]
+network = multirobot.simulations.MultiRobotNetwork
+sim-time-limit = 300s
+record-eventlog = true
+
+# Visualizer configuration
+*.visualizer.*.mobilityVisualizer.displayMobility = true
+*.visualizer.*.mobilityVisualizer.displayPositions = true
+*.visualizer.*.mobilityVisualizer.displayOrientations = true
+*.visualizer.*.mobilityVisualizer.displayVelocities = true
+*.visualizer.*.mobilityVisualizer.displayMovementTrails = true
+
+*.visualizer.*.mediumVisualizer.displaySignals = true
+*.visualizer.*.physicalLinkVisualizer.displayLinks = true
+
+# Number of robots
+*.numRobots = 3
+
+# External mobility configuration for all robots
+*.robot[*].mobility.typename = "ExternalMobility"
+*.robot[*].mobility.externalHost = "localhost"
+*.robot[*].mobility.externalPort = 9999
+*.robot[*].mobility.updateInterval = 0.1s
+
+# Initial positions
+*.robot[0].mobility.initialX = 100m
+*.robot[0].mobility.initialY = 100m
+*.robot[1].mobility.initialX = 300m
+*.robot[1].mobility.initialY = 150m
+*.robot[2].mobility.initialX = 200m
+*.robot[2].mobility.initialY = 250m
+
+# Wireless configuration
+*.robot[*].wlan[0].radio.transmitter.power = 2mW
+*.robot[*].wlan[0].radio.receiver.sensitivity = -85dBm
+*.robot[*].wlan[0].typename = "WirelessInterface"
+*.robot[*].wlan[0].radio.typename = "Ieee80211ScalarRadio"
+*.robot[*].wlan[0].radio.bandName = "2.4 GHz"
+
+# Application configuration
+*.robot[*].numApps = 1
+*.robot[*].app[0].typename = "RobotApplication"
+*.robot[*].app[0].localPort = 5000
+*.robot[*].app[0].destPort = 5000
+*.robot[*].app[0].messageInterval = 1s
+
+# IP configuration
+*.configurator.config = xml("<config><interface hosts='**' address='10.0.0.x' netmask='255.255.255.0'/></config>")
+
+# ------------------------------------------------------------------
+// 10. External Simulator Interface (Python Example)
+// ------------------------------------------------------------------
+"""
+External Simulator Interface - Python Example
+This script demonstrates how to provide position updates to OMNeT++
+"""
+
+import socket
+import json
+import time
+import math
+
+class ExternalSimulator:
+    def __init__(self, host='localhost', port=9999):
+        self.host = host
+        self.port = port
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind((host, port))
+
+        # Robot positions (simulated)
+        self.robots = {
+            'robot[0]': {'x': 100, 'y': 100, 'z': 0, 'vx': 1, 'vy': 0.5},
+            'robot[1]': {'x': 300, 'y': 150, 'z': 0, 'vx': -0.5, 'vy': 1},
+            'robot[2]': {'x': 200, 'y': 250, 'z': 0, 'vx': 0.7, 'vy': -0.7},
+        }
+
+        self.time = 0
+
+    def update_positions(self, dt):
+        """Update robot positions based on simple motion model"""
+        self.time += dt
+
+        for robot_id, pos in self.robots.items():
+            # Simple circular motion with drift
+            pos['x'] += pos['vx'] * dt + math.sin(self.time * 0.1) * 5
+            pos['y'] += pos['vy'] * dt + math.cos(self.time * 0.1) * 5
+
+            # Boundary check (keep in 1000x1000 area)
+            if pos['x'] < 0 or pos['x'] > 1000:
+                pos['vx'] *= -1
+            if pos['y'] < 0 or pos['y'] > 1000:
+                pos['vy'] *= -1
+
+    def handle_request(self):
+        """Handle position requests from OMNeT++"""
+        try:
+            data, addr = self.sock.recvfrom(1024)
+            request = data.decode('utf-8')
+
+            if request.startswith('GET_POS:'):
+                robot_id = request.split(':')[1]
+
+                # Find matching robot
+                for rid, pos in self.robots.items():
+                    if rid in robot_id:
+                        response = f"POS:{pos['x']},{pos['y']},{pos['z']}"
+                        self.sock.sendto(response.encode(), addr)
+                        print(f"Sent position for {rid}: {response}")
+                        break
+
+        except socket.timeout:
+            pass
+
+    def run(self):
+        """Main simulation loop"""
+        print(f"External Simulator running on {self.host}:{self.port}")
+        self.sock.settimeout(0.01)  # 10ms timeout
+
+        last_update = time.time()
+
+        try:
+            while True:
+                current_time = time.time()
+                dt = current_time - last_update
+
+                if dt >= 0.1:  # Update every 100ms
+                    self.update_positions(dt)
+                    last_update = current_time
+
+                self.handle_request()
+
+        except KeyboardInterrupt:
+            print("\\nShutting down...")
+            self.sock.close()
+
+if __name__ == '__main__':
+    sim = ExternalSimulator()
+    sim.run()
+
+// ------------------------------------------------------------------
+// 11. README and Build Instructions
+// ------------------------------------------------------------------
+/*
+BUILD INSTRUCTIONS:
+===================
+
+1. Prerequisites:
+   - OMNeT++ 6.0 or later
+   - INET Framework 4.5 or later
+
+2. Create project structure:
+   multirobot/
+   ├── simulations/
+   │   ├── MultiRobotNetwork.ned
+   │   └── omnetpp.ini
+   ├── nodes/
+   │   └── RobotNode.ned
+   ├── mobility/
+   │   ├── ExternalMobility.ned
+   │   ├── ExternalMobility.h
+   │   └── ExternalMobility.cc
+   ├── applications/
+   │   ├── RobotApplication.ned
+   │   ├── RobotApplication.h
+   │   ├── RobotApplication.cc
+   │   └── RobotMessage.msg
+   └── external/
+       └── external_simulator.py
+
+3. Build:
+   $ cd multirobot
+   $ opp_makemake -f --deep -I/path/to/inet/src -L/path/to/inet/src -lINET
+   $ make
+
+4. Run:
+   Terminal 1: python3 external/external_simulator.py
+   Terminal 2: ./multirobot -u Cmdenv -c General
+
+FEATURES:
+=========
+- External position updates via UDP socket
+- Custom message passing between robots
+- IEEE 802.11 wireless communication
+- Visualization of robot movements and messages
+- Configurable robot count and parameters
+- Integration with external simulators (SUMO, Gazebo, etc.)
+
+CUSTOM MESSAGE FORMAT:
+=====================
+- sourceId: Robot identifier
+- destinationId: Target robot or "broadcast"
+- messageType: STATUS, POSITION, TASK, ALERT, COMMAND
+- payload: Custom message content
+- sequenceNumber: Message sequence
+- timestamp: Simulation time
+- position: Current 3D coordinates
+*/
