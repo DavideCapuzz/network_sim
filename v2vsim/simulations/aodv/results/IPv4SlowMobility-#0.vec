@@ -1,0 +1,1418 @@
+version 3
+run IPv4SlowMobility-0-20260125-02:06:35-67112
+attr configname IPv4SlowMobility
+attr datetime 20260125-02:06:35
+attr datetimef 20260125-020635
+attr experiment IPv4SlowMobility
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network AODVNetwork
+attr processid 67112
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config image-path ../../../../packages/inet/images
+config description "two fixed communicating nodes with low speed mobile nodes"
+config extends Static
+config **.aodv.activeRouteTimeout 3s
+config **.host[2..20].mobility.typename MassMobility
+config **.host[*].mobility.changeInterval "normal(5s, 0.1s)"
+config **.host[*].mobility.angleDelta "normal(0deg, 30deg)"
+config **.host[*].mobility.speed "normal(2mps, 0.01mps)"
+config **.host[1].mobility.initialX 600m
+config **.host[1].mobility.initialY 600m
+config description "routing without mobility"
+config *.numHosts 20
+config *.host[*].wlan[*].radio.transmitter.communicationRange 250m
+config *.host[0].app[0].destAddr "\"host[1](ipv4)\""
+config **.host[*].mobility.typename StationaryMobility
+config *.host[0].numApps 1
+config *.host[0].app[0].typename PingApp
+config *.host[0].app[0].startTime uniform(1s,5s)
+config *.host[0].app[0].printPing true
+config network AODVNetwork
+config num-rngs 3
+config **.mobility.rng-0 1
+config **.wlan[*].mac.rng-0 2
+config **.wlan[*].typename AckingWirelessInterface
+config **.wlan[*].bitrate 2Mbps
+config **.wlan[*].mac.headerLength 23B
+config **.wlan[*].radio.typename UnitDiskRadio
+config **.wlan[*].radio.transmitter.headerLength 96b
+config **.wlan[*].radio.transmitter.interferenceRange 0m
+config **.wlan[*].radio.transmitter.detectionRange 0m
+config **.wlan[*].radio.receiver.ignoreInterference true
+config **.mobility.constraintAreaMinZ 0m
+config **.mobility.constraintAreaMaxZ 0m
+config **.mobility.constraintAreaMinX 0m
+config **.mobility.constraintAreaMinY 0m
+config **.mobility.constraintAreaMaxX 600m
+config **.mobility.constraintAreaMaxY 600m
+config **.hasStatus true
+
+vector 0 AODVNetwork.host[0].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 1 AODVNetwork.host[0].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 2 AODVNetwork.host[0].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 3 AODVNetwork.host[1].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 4 AODVNetwork.host[1].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 5 AODVNetwork.host[1].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 6 AODVNetwork.host[2].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 7 AODVNetwork.host[2].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 8 AODVNetwork.host[2].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 9 AODVNetwork.host[3].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 10 AODVNetwork.host[3].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 11 AODVNetwork.host[3].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 12 AODVNetwork.host[4].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 13 AODVNetwork.host[4].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 14 AODVNetwork.host[4].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 15 AODVNetwork.host[5].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 16 AODVNetwork.host[5].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 17 AODVNetwork.host[5].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 18 AODVNetwork.host[6].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 19 AODVNetwork.host[6].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 20 AODVNetwork.host[6].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 21 AODVNetwork.host[7].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 22 AODVNetwork.host[7].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 23 AODVNetwork.host[7].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 24 AODVNetwork.host[8].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 25 AODVNetwork.host[8].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 26 AODVNetwork.host[8].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 27 AODVNetwork.host[9].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 28 AODVNetwork.host[9].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 29 AODVNetwork.host[9].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 30 AODVNetwork.host[10].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 31 AODVNetwork.host[10].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 32 AODVNetwork.host[10].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 33 AODVNetwork.host[11].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 34 AODVNetwork.host[11].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 35 AODVNetwork.host[11].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 36 AODVNetwork.host[12].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 37 AODVNetwork.host[12].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 38 AODVNetwork.host[12].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 39 AODVNetwork.host[13].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 40 AODVNetwork.host[13].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 41 AODVNetwork.host[13].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 42 AODVNetwork.host[14].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 43 AODVNetwork.host[14].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 44 AODVNetwork.host[14].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 45 AODVNetwork.host[15].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 46 AODVNetwork.host[15].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 47 AODVNetwork.host[15].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 48 AODVNetwork.host[16].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 49 AODVNetwork.host[16].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 50 AODVNetwork.host[16].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 51 AODVNetwork.host[17].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 52 AODVNetwork.host[17].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 53 AODVNetwork.host[17].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 54 AODVNetwork.host[18].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 55 AODVNetwork.host[18].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 56 AODVNetwork.host[18].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 57 AODVNetwork.host[19].udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetSentToUpper
+attr title "packets passed up, count"
+vector 58 AODVNetwork.host[19].udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), count"
+vector 59 AODVNetwork.host[19].udp droppedPkBadChecksum:vector(count) ETV
+attr interpolationmode none
+attr recordingmode vector(count)
+attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
+attr title "packets dropped (checksum error), count"
+vector 60 AODVNetwork.host[0].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 61 AODVNetwork.host[1].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 62 AODVNetwork.host[2].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 63 AODVNetwork.host[3].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 64 AODVNetwork.host[4].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 65 AODVNetwork.host[5].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 66 AODVNetwork.host[6].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 67 AODVNetwork.host[7].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 68 AODVNetwork.host[8].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 69 AODVNetwork.host[9].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 70 AODVNetwork.host[10].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 71 AODVNetwork.host[11].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 72 AODVNetwork.host[12].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 73 AODVNetwork.host[13].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 74 AODVNetwork.host[14].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 75 AODVNetwork.host[15].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 76 AODVNetwork.host[16].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 77 AODVNetwork.host[17].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 78 AODVNetwork.host[18].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 79 AODVNetwork.host[19].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source radioModeChanged
+attr title "Radio mode"
+vector 80 AODVNetwork.host[0].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 81 AODVNetwork.host[0].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 82 AODVNetwork.host[1].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 83 AODVNetwork.host[1].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 84 AODVNetwork.host[2].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 85 AODVNetwork.host[2].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 86 AODVNetwork.host[3].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 87 AODVNetwork.host[3].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 88 AODVNetwork.host[4].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 89 AODVNetwork.host[4].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 90 AODVNetwork.host[5].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 91 AODVNetwork.host[5].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 92 AODVNetwork.host[6].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 93 AODVNetwork.host[6].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 94 AODVNetwork.host[7].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 95 AODVNetwork.host[7].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 96 AODVNetwork.host[8].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 97 AODVNetwork.host[8].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 98 AODVNetwork.host[9].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 99 AODVNetwork.host[9].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 100 AODVNetwork.host[10].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 101 AODVNetwork.host[10].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 102 AODVNetwork.host[11].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 103 AODVNetwork.host[11].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 104 AODVNetwork.host[12].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 105 AODVNetwork.host[12].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 106 AODVNetwork.host[13].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 107 AODVNetwork.host[13].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 108 AODVNetwork.host[14].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 109 AODVNetwork.host[14].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 110 AODVNetwork.host[15].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 111 AODVNetwork.host[15].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 112 AODVNetwork.host[16].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 113 AODVNetwork.host[16].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 114 AODVNetwork.host[17].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 115 AODVNetwork.host[17].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 116 AODVNetwork.host[18].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 117 AODVNetwork.host[18].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+vector 118 AODVNetwork.host[19].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source receptionStateChanged
+attr title "Radio reception state"
+vector 119 AODVNetwork.host[19].wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr recordingmode vector
+attr source transmissionStateChanged
+attr title "Radio transmission state"
+0	0	0	0
+1	0	0	0
+2	0	0	0
+3	0	0	0
+4	0	0	0
+5	0	0	0
+6	0	0	0
+7	0	0	0
+8	0	0	0
+9	0	0	0
+10	0	0	0
+11	0	0	0
+12	0	0	0
+13	0	0	0
+14	0	0	0
+15	0	0	0
+16	0	0	0
+17	0	0	0
+18	0	0	0
+19	0	0	0
+20	0	0	0
+21	0	0	0
+22	0	0	0
+23	0	0	0
+24	0	0	0
+25	0	0	0
+26	0	0	0
+27	0	0	0
+28	0	0	0
+29	0	0	0
+30	0	0	0
+31	0	0	0
+32	0	0	0
+33	0	0	0
+34	0	0	0
+35	0	0	0
+36	0	0	0
+37	0	0	0
+38	0	0	0
+39	0	0	0
+40	0	0	0
+41	0	0	0
+42	0	0	0
+43	0	0	0
+44	0	0	0
+45	0	0	0
+46	0	0	0
+47	0	0	0
+48	0	0	0
+49	0	0	0
+50	0	0	0
+51	0	0	0
+52	0	0	0
+53	0	0	0
+54	0	0	0
+55	0	0	0
+56	0	0	0
+57	0	0	0
+58	0	0	0
+59	0	0	0
+60	0	0	0
+60	0	0	0
+60	0	0	4
+61	0	0	0
+61	0	0	0
+61	0	0	4
+62	0	0	0
+62	0	0	0
+62	0	0	4
+63	0	0	0
+63	0	0	0
+63	0	0	4
+64	0	0	0
+64	0	0	0
+64	0	0	4
+65	0	0	0
+65	0	0	0
+65	0	0	4
+66	0	0	0
+66	0	0	0
+66	0	0	4
+67	0	0	0
+67	0	0	0
+67	0	0	4
+68	0	0	0
+68	0	0	0
+68	0	0	4
+69	0	0	0
+69	0	0	0
+69	0	0	4
+70	0	0	0
+70	0	0	0
+70	0	0	4
+71	0	0	0
+71	0	0	0
+71	0	0	4
+72	0	0	0
+72	0	0	0
+72	0	0	4
+73	0	0	0
+73	0	0	0
+73	0	0	4
+74	0	0	0
+74	0	0	0
+74	0	0	4
+75	0	0	0
+75	0	0	0
+75	0	0	4
+76	0	0	0
+76	0	0	0
+76	0	0	4
+77	0	0	0
+77	0	0	0
+77	0	0	4
+78	0	0	0
+78	0	0	0
+78	0	0	4
+79	0	0	0
+79	0	0	0
+79	0	0	4
+80	0	0	1
+81	0	0	1
+82	0	0	1
+83	0	0	1
+84	0	0	1
+85	0	0	1
+86	0	0	1
+87	0	0	1
+88	0	0	1
+89	0	0	1
+90	0	0	1
+91	0	0	1
+92	0	0	1
+93	0	0	1
+94	0	0	1
+95	0	0	1
+96	0	0	1
+97	0	0	1
+98	0	0	1
+99	0	0	1
+100	0	0	1
+101	0	0	1
+102	0	0	1
+103	0	0	1
+104	0	0	1
+105	0	0	1
+106	0	0	1
+107	0	0	1
+108	0	0	1
+109	0	0	1
+110	0	0	1
+111	0	0	1
+112	0	0	1
+113	0	0	1
+114	0	0	1
+115	0	0	1
+116	0	0	1
+117	0	0	1
+118	0	0	1
+119	0	0	1
+vector 120 AODVNetwork.host[0].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 121 AODVNetwork.host[0].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 122 AODVNetwork.host[1].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 123 AODVNetwork.host[1].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 124 AODVNetwork.host[2].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 125 AODVNetwork.host[2].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 126 AODVNetwork.host[3].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 127 AODVNetwork.host[3].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 128 AODVNetwork.host[4].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 129 AODVNetwork.host[4].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 130 AODVNetwork.host[5].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 131 AODVNetwork.host[5].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 132 AODVNetwork.host[6].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 133 AODVNetwork.host[6].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 134 AODVNetwork.host[7].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 135 AODVNetwork.host[7].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 136 AODVNetwork.host[8].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 137 AODVNetwork.host[8].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 138 AODVNetwork.host[9].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 139 AODVNetwork.host[9].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 140 AODVNetwork.host[10].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 141 AODVNetwork.host[10].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 142 AODVNetwork.host[11].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 143 AODVNetwork.host[11].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 144 AODVNetwork.host[12].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 145 AODVNetwork.host[12].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 146 AODVNetwork.host[13].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 147 AODVNetwork.host[13].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 148 AODVNetwork.host[14].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 149 AODVNetwork.host[14].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 150 AODVNetwork.host[15].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 151 AODVNetwork.host[15].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 152 AODVNetwork.host[16].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 153 AODVNetwork.host[16].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 154 AODVNetwork.host[17].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 155 AODVNetwork.host[17].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 156 AODVNetwork.host[18].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 157 AODVNetwork.host[18].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+vector 158 AODVNetwork.host[19].wlan[0].queue outgoingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPulled)
+attr title "outgoing datarate"
+attr unit bps
+vector 159 AODVNetwork.host[19].wlan[0].queue incomingDataRate:vector ETV
+attr interpolationmode linear
+attr recordingmode vector
+attr source throughput(packetPushStarted)
+attr title "incoming datarate"
+attr unit bps
+120	186	0.1	0
+120	186	0.2	0
+120	186	0.3	0
+120	186	0.4	0
+120	186	0.5	0
+120	186	0.6	0
+120	186	0.7	0
+120	186	0.8	0
+120	186	0.9	0
+121	186	0.1	0
+121	186	0.2	0
+121	186	0.3	0
+121	186	0.4	0
+121	186	0.5	0
+121	186	0.6	0
+121	186	0.7	0
+121	186	0.8	0
+121	186	0.9	0
+122	186	0.1	0
+122	186	0.2	0
+122	186	0.3	0
+122	186	0.4	0
+122	186	0.5	0
+122	186	0.6	0
+122	186	0.7	0
+122	186	0.8	0
+122	186	0.9	0
+123	186	0.1	0
+123	186	0.2	0
+123	186	0.3	0
+123	186	0.4	0
+123	186	0.5	0
+123	186	0.6	0
+123	186	0.7	0
+123	186	0.8	0
+123	186	0.9	0
+124	186	0.1	0
+124	186	0.2	0
+124	186	0.3	0
+124	186	0.4	0
+124	186	0.5	0
+124	186	0.6	0
+124	186	0.7	0
+124	186	0.8	0
+124	186	0.9	0
+125	186	0.1	0
+125	186	0.2	0
+125	186	0.3	0
+125	186	0.4	0
+125	186	0.5	0
+125	186	0.6	0
+125	186	0.7	0
+125	186	0.8	0
+125	186	0.9	0
+126	186	0.1	0
+126	186	0.2	0
+126	186	0.3	0
+126	186	0.4	0
+126	186	0.5	0
+126	186	0.6	0
+126	186	0.7	0
+126	186	0.8	0
+126	186	0.9	0
+127	186	0.1	0
+127	186	0.2	0
+127	186	0.3	0
+127	186	0.4	0
+127	186	0.5	0
+127	186	0.6	0
+127	186	0.7	0
+127	186	0.8	0
+127	186	0.9	0
+128	186	0.1	0
+128	186	0.2	0
+128	186	0.3	0
+128	186	0.4	0
+128	186	0.5	0
+128	186	0.6	0
+128	186	0.7	0
+128	186	0.8	0
+128	186	0.9	0
+129	186	0.1	0
+129	186	0.2	0
+129	186	0.3	0
+129	186	0.4	0
+129	186	0.5	0
+129	186	0.6	0
+129	186	0.7	0
+129	186	0.8	0
+129	186	0.9	0
+130	186	0.1	0
+130	186	0.2	0
+130	186	0.3	0
+130	186	0.4	0
+130	186	0.5	0
+130	186	0.6	0
+130	186	0.7	0
+130	186	0.8	0
+130	186	0.9	0
+131	186	0.1	0
+131	186	0.2	0
+131	186	0.3	0
+131	186	0.4	0
+131	186	0.5	0
+131	186	0.6	0
+131	186	0.7	0
+131	186	0.8	0
+131	186	0.9	0
+132	186	0.1	0
+132	186	0.2	0
+132	186	0.3	0
+132	186	0.4	0
+132	186	0.5	0
+132	186	0.6	0
+132	186	0.7	0
+132	186	0.8	0
+132	186	0.9	0
+133	186	0.1	0
+133	186	0.2	0
+133	186	0.3	0
+133	186	0.4	0
+133	186	0.5	0
+133	186	0.6	0
+133	186	0.7	0
+133	186	0.8	0
+133	186	0.9	0
+134	186	0.1	0
+134	186	0.2	0
+134	186	0.3	0
+134	186	0.4	0
+134	186	0.5	0
+134	186	0.6	0
+134	186	0.7	0
+134	186	0.8	0
+134	186	0.9	0
+135	186	0.1	0
+135	186	0.2	0
+135	186	0.3	0
+135	186	0.4	0
+135	186	0.5	0
+135	186	0.6	0
+135	186	0.7	0
+135	186	0.8	0
+135	186	0.9	0
+136	186	0.1	0
+136	186	0.2	0
+136	186	0.3	0
+136	186	0.4	0
+136	186	0.5	0
+136	186	0.6	0
+136	186	0.7	0
+136	186	0.8	0
+136	186	0.9	0
+137	186	0.1	0
+137	186	0.2	0
+137	186	0.3	0
+137	186	0.4	0
+137	186	0.5	0
+137	186	0.6	0
+137	186	0.7	0
+137	186	0.8	0
+137	186	0.9	0
+138	186	0.1	0
+138	186	0.2	0
+138	186	0.3	0
+138	186	0.4	0
+138	186	0.5	0
+138	186	0.6	0
+138	186	0.7	0
+138	186	0.8	0
+138	186	0.9	0
+139	186	0.1	0
+139	186	0.2	0
+139	186	0.3	0
+139	186	0.4	0
+139	186	0.5	0
+139	186	0.6	0
+139	186	0.7	0
+139	186	0.8	0
+139	186	0.9	0
+140	186	0.1	0
+140	186	0.2	0
+140	186	0.3	0
+140	186	0.4	0
+140	186	0.5	0
+140	186	0.6	0
+140	186	0.7	0
+140	186	0.8	0
+140	186	0.9	0
+141	186	0.1	0
+141	186	0.2	0
+141	186	0.3	0
+141	186	0.4	0
+141	186	0.5	0
+141	186	0.6	0
+141	186	0.7	0
+141	186	0.8	0
+141	186	0.9	0
+142	186	0.1	0
+142	186	0.2	0
+142	186	0.3	0
+142	186	0.4	0
+142	186	0.5	0
+142	186	0.6	0
+142	186	0.7	0
+142	186	0.8	0
+142	186	0.9	0
+143	186	0.1	0
+143	186	0.2	0
+143	186	0.3	0
+143	186	0.4	0
+143	186	0.5	0
+143	186	0.6	0
+143	186	0.7	0
+143	186	0.8	0
+143	186	0.9	0
+144	186	0.1	0
+144	186	0.2	0
+144	186	0.3	0
+144	186	0.4	0
+144	186	0.5	0
+144	186	0.6	0
+144	186	0.7	0
+144	186	0.8	0
+144	186	0.9	0
+145	186	0.1	0
+145	186	0.2	0
+145	186	0.3	0
+145	186	0.4	0
+145	186	0.5	0
+145	186	0.6	0
+145	186	0.7	0
+145	186	0.8	0
+145	186	0.9	0
+146	186	0.1	0
+146	186	0.2	0
+146	186	0.3	0
+146	186	0.4	0
+146	186	0.5	0
+146	186	0.6	0
+146	186	0.7	0
+146	186	0.8	0
+146	186	0.9	0
+147	186	0.1	0
+147	186	0.2	0
+147	186	0.3	0
+147	186	0.4	0
+147	186	0.5	0
+147	186	0.6	0
+147	186	0.7	0
+147	186	0.8	0
+147	186	0.9	0
+148	186	0.1	0
+148	186	0.2	0
+148	186	0.3	0
+148	186	0.4	0
+148	186	0.5	0
+148	186	0.6	0
+148	186	0.7	0
+148	186	0.8	0
+148	186	0.9	0
+149	186	0.1	0
+149	186	0.2	0
+149	186	0.3	0
+149	186	0.4	0
+149	186	0.5	0
+149	186	0.6	0
+149	186	0.7	0
+149	186	0.8	0
+149	186	0.9	0
+150	186	0.1	0
+150	186	0.2	0
+150	186	0.3	0
+150	186	0.4	0
+150	186	0.5	0
+150	186	0.6	0
+150	186	0.7	0
+150	186	0.8	0
+150	186	0.9	0
+151	186	0.1	0
+151	186	0.2	0
+151	186	0.3	0
+151	186	0.4	0
+151	186	0.5	0
+151	186	0.6	0
+151	186	0.7	0
+151	186	0.8	0
+151	186	0.9	0
+152	186	0.1	0
+152	186	0.2	0
+152	186	0.3	0
+152	186	0.4	0
+152	186	0.5	0
+152	186	0.6	0
+152	186	0.7	0
+152	186	0.8	0
+152	186	0.9	0
+153	186	0.1	0
+153	186	0.2	0
+153	186	0.3	0
+153	186	0.4	0
+153	186	0.5	0
+153	186	0.6	0
+153	186	0.7	0
+153	186	0.8	0
+153	186	0.9	0
+154	186	0.1	0
+154	186	0.2	0
+154	186	0.3	0
+154	186	0.4	0
+154	186	0.5	0
+154	186	0.6	0
+154	186	0.7	0
+154	186	0.8	0
+154	186	0.9	0
+155	186	0.1	0
+155	186	0.2	0
+155	186	0.3	0
+155	186	0.4	0
+155	186	0.5	0
+155	186	0.6	0
+155	186	0.7	0
+155	186	0.8	0
+155	186	0.9	0
+156	186	0.1	0
+156	186	0.2	0
+156	186	0.3	0
+156	186	0.4	0
+156	186	0.5	0
+156	186	0.6	0
+156	186	0.7	0
+156	186	0.8	0
+156	186	0.9	0
+157	186	0.1	0
+157	186	0.2	0
+157	186	0.3	0
+157	186	0.4	0
+157	186	0.5	0
+157	186	0.6	0
+157	186	0.7	0
+157	186	0.8	0
+157	186	0.9	0
+158	186	0.1	0
+158	186	0.2	0
+158	186	0.3	0
+158	186	0.4	0
+158	186	0.5	0
+158	186	0.6	0
+158	186	0.7	0
+158	186	0.8	0
+158	186	0.9	0
+159	186	0.1	0
+159	186	0.2	0
+159	186	0.3	0
+159	186	0.4	0
+159	186	0.5	0
+159	186	0.6	0
+159	186	0.7	0
+159	186	0.8	0
+159	186	0.9	0
+
