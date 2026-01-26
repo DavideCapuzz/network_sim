@@ -1,8 +1,8 @@
 version 3
-run General-0-20260125-21:20:06-90427
+run General-0-20260126-18:54:15-164599
 attr configname General
-attr datetime 20260125-21:20:06
-attr datetimef 20260125-212006
+attr datetime 20260126-18:54:15
+attr datetimef 20260126-185415
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,19 +10,22 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network WirelessNetwork
-attr processid 90427
+attr processid 164599
 attr repetition 0
 attr replication #0
 attr resultdir results
 attr runnumber 0
 attr seedset 0
 config image-path ../../../../packages/inet/images
-config description "Simple sim where two robots communicate wirelessly"
+config description "N robots communicating wirelessly"
 config network WirelessNetwork
 config sim-time-limit 300s
 config user-interface Qtenv
+config *.numRobots 2
 config cmdenv-express-mode true
 config **.cmdenv-log-level info
+config **.radio.displayReception true
+config **.radio.displayTransmission true
 config *.configurator.config "xml(\"<config><interface hosts='**' address='10.0.0.x' netmask='255.255.255.0'/></config>\")"
 config *.robot*.numWlanInterfaces 1
 config *.robot*.wlan[0].typename Ieee80211Interface
@@ -32,7 +35,8 @@ config *.robot*.wlan[0].radio.transmitter.power 2mW
 config *.robot*.wlan[0].radio.receiver.sensitivity -85dBm
 config *.robot*.wlan[0].radio.receiver.noiseFloor -110dBm
 config *.robot*.wlan[0].radio.receiver.energyDetection -90dBm
-config *.robot*.wlan[0].radio.receiver.ignoreInterference true
+config *.robot*.wlan[0].radio.receiver.ignoreInterference false
+config *.robot*.wlan[0].radio.transmitter.communicationRange 150m
 config *.robot*.wlan[0].mac.typename Ieee80211Mac
 config *.robot*.wlan[0].mac.dcf.channelAccess.typename Dcaf
 config *.robot*.wlan[0].mac.useAck false
@@ -40,21 +44,20 @@ config *.robot*.wlan[0].mac.fullDuplex false
 config *.robot*.wlan[0].mac.headerLength 23B
 config *.robot*.numApps 1
 config *.robot*.app[0].typename UdpBasicApp
-config *.robot*.app[0].localPort 5000
+config *.robot*.app[0].destAddresses "\"255.255.255.255\""
 config *.robot*.app[0].destPort 5000
-config *.robot*.app[0].externalHost "\"172.25.0.1\""
-config *.robot*.app[0].externalPort 10000
-config *.robot0.mobility.typename StationaryMobility
-config *.robot0.mobility.initialX 200m
-config *.robot0.mobility.initialY 300m
-config *.robot0.mobility.initialZ 0m
-config *.robot1.mobility.typename StationaryMobility
-config *.robot1.mobility.initialX 400m
-config *.robot1.mobility.initialY 300m
-config *.robot1.mobility.initialZ 0m
+config *.robot*.app[0].localPort 5000
+config *.robot*.app[0].messageLength 500B
+config *.robot*.app[0].sendInterval exponential(1s)
+config *.robot*.app[0].packetName "\"UDPData\""
+config *.robot[*].mobility.initFromDisplayString false
+config *.robot[*].mobility.typename StationaryMobility
+config *.robot[0].mobility.initialX 400m
+config *.robot[0].mobility.initialY 300m
+config *.robot[*].mobility.initialZ 0m
+config *.robot[1].mobility.initialX 100m
+config *.robot[1].mobility.initialY 200m
 config *.visualizer.*.mobilityVisualizer.displayPositions true
-config *.visualizer.*.mobilityVisualizer.displayOrientations false
-config *.visualizer.*.mobilityVisualizer.displayVelocities false
 config *.visualizer.*.mobilityVisualizer.displayMovementTrails true
 config *.visualizer.*.mediumVisualizer.displaySignals true
 config *.visualizer.*.mediumVisualizer.displaySignalPropagation true
@@ -64,4097 +67,793 @@ config *.visualizer.*.mediumVisualizer.signalShape "\"ring\""
 config *.visualizer.*.mediumVisualizer.signalPropagationAnimationSpeed 5
 config *.visualizer.*.physicalLinkVisualizer.displayLinks true
 config *.visualizer.*.physicalLinkVisualizer.packetFilter "\"UDPData*\""
+config *.visualizer.*.mediumVisualizer.signalColor "\"red\""
+config *.visualizer.*.mediumVisualizer.fadeOutMode "\"simulationTime\""
 config *.radioMedium.backgroundNoiseLevel -110dBm
+config *.radioMedium.interferenceMode "\"scalar\""
+config *.radioMedium.pathLoss.typename LogNormalShadowing
 config *.radioMedium.pathLoss.alpha 2
-config *.radioMedium.interferenceMode "\"ignore\""
 config **.radio.displayCommunicationRange true
 
-vector 0 WirelessNetwork.robot0.wlan[0].mac.dcf frameSequenceActive:vector ETV
+vector 0 WirelessNetwork.robot[0].wlan[0].mac.dcf frameSequenceActive:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source warmup(count(frameSequenceStarted)-count(frameSequenceFinished))
 attr title "frame sequence active"
-vector 1 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:vector ETV
+vector 1 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(count(packetEnqueued) - count(packetDequeued))"
 attr title "queue length"
-vector 2 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.contention backoffActive:vector ETV
+vector 2 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffActive:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source warmup(count(backoffStarted)-count(backoffStopped))
 attr title "backoff active"
-vector 3 WirelessNetwork.robot0.udp passedUpPk:vector(count) ETV
+vector 3 WirelessNetwork.robot[0].udp passedUpPk:vector(count) ETV
 attr interpolationmode none
 attr recordingmode vector(count)
 attr source packetSentToUpper
 attr title "packets passed up, count"
-vector 4 WirelessNetwork.robot0.udp droppedPkWrongPort:vector(count) ETV
+vector 4 WirelessNetwork.robot[0].udp droppedPkWrongPort:vector(count) ETV
 attr interpolationmode none
 attr recordingmode vector(count)
 attr source packetDropReasonIsNoPortFound(packetDropped)
 attr title "packets dropped (wrong port), count"
-vector 5 WirelessNetwork.robot0.udp droppedPkBadChecksum:vector(count) ETV
+vector 5 WirelessNetwork.robot[0].udp droppedPkBadChecksum:vector(count) ETV
 attr interpolationmode none
 attr recordingmode vector(count)
 attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
 attr title "packets dropped (checksum error), count"
-vector 6 WirelessNetwork.robot1.wlan[0].mac.dcf frameSequenceActive:vector ETV
+vector 6 WirelessNetwork.robot[1].wlan[0].mac.dcf frameSequenceActive:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source warmup(count(frameSequenceStarted)-count(frameSequenceFinished))
 attr title "frame sequence active"
-vector 7 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:vector ETV
+vector 7 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(count(packetEnqueued) - count(packetDequeued))"
 attr title "queue length"
-vector 8 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.contention backoffActive:vector ETV
+vector 8 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffActive:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source warmup(count(backoffStarted)-count(backoffStopped))
 attr title "backoff active"
-vector 9 WirelessNetwork.robot1.udp passedUpPk:vector(count) ETV
+vector 9 WirelessNetwork.robot[1].udp passedUpPk:vector(count) ETV
 attr interpolationmode none
 attr recordingmode vector(count)
 attr source packetSentToUpper
 attr title "packets passed up, count"
-vector 10 WirelessNetwork.robot1.udp droppedPkWrongPort:vector(count) ETV
+vector 10 WirelessNetwork.robot[1].udp droppedPkWrongPort:vector(count) ETV
 attr interpolationmode none
 attr recordingmode vector(count)
 attr source packetDropReasonIsNoPortFound(packetDropped)
 attr title "packets dropped (wrong port), count"
-vector 11 WirelessNetwork.robot1.udp droppedPkBadChecksum:vector(count) ETV
+vector 11 WirelessNetwork.robot[1].udp droppedPkBadChecksum:vector(count) ETV
 attr interpolationmode none
 attr recordingmode vector(count)
 attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
 attr title "packets dropped (checksum error), count"
-vector 12 WirelessNetwork.robot0.wlan[0].radio radioMode:vector ETV
+vector 12 WirelessNetwork.robot[0].wlan[0].radio radioMode:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source radioModeChanged
 attr title "Radio mode"
-vector 13 WirelessNetwork.robot0.wlan[0].radio radioChannel:vector ETV
+vector 13 WirelessNetwork.robot[0].wlan[0].radio radioChannel:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source radioChannelChanged
 attr title "Radio channel"
-vector 14 WirelessNetwork.robot1.wlan[0].radio radioMode:vector ETV
+vector 14 WirelessNetwork.robot[1].wlan[0].radio radioMode:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source radioModeChanged
 attr title "Radio mode"
-vector 15 WirelessNetwork.robot1.wlan[0].radio radioChannel:vector ETV
+vector 15 WirelessNetwork.robot[1].wlan[0].radio radioChannel:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source radioChannelChanged
 attr title "Radio channel"
-vector 16 WirelessNetwork.robot0.wlan[0].radio receptionState:vector ETV
+vector 16 WirelessNetwork.robot[0].wlan[0].radio receptionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source receptionStateChanged
 attr title "Radio reception state"
-vector 17 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.contention stateChanged:vector ETV
+vector 17 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention stateChanged:vector ETV
 attr enum IDLE,DEFER,IFS_AND_BACKOFF
 attr interpolationmode none
 attr recordingmode vector
 attr title "contention state changed"
 attr type enum
-vector 18 WirelessNetwork.robot1.wlan[0].radio receptionState:vector ETV
+vector 18 WirelessNetwork.robot[1].wlan[0].radio receptionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source receptionStateChanged
 attr title "Radio reception state"
-vector 19 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.contention stateChanged:vector ETV
+vector 19 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention stateChanged:vector ETV
 attr enum IDLE,DEFER,IFS_AND_BACKOFF
 attr interpolationmode none
 attr recordingmode vector
 attr title "contention state changed"
 attr type enum
-vector 20 WirelessNetwork.robot0.wlan[0].mac.dcf.recoveryProcedure contentionWindowChanged:vector ETV
+vector 20 WirelessNetwork.robot[0].wlan[0].mac.dcf.recoveryProcedure contentionWindowChanged:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr title "contention window"
-vector 21 WirelessNetwork.robot1.wlan[0].mac.dcf.recoveryProcedure contentionWindowChanged:vector ETV
+vector 21 WirelessNetwork.robot[1].wlan[0].mac.dcf.recoveryProcedure contentionWindowChanged:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr title "contention window"
-vector 22 WirelessNetwork.robot0.wlan[0].agent sentRequest:vector ETV
+vector 22 WirelessNetwork.robot[0].wlan[0].agent sentRequest:vector ETV
 attr recordingmode vector
 attr title "sent requests"
-vector 23 WirelessNetwork.robot1.wlan[0].agent sentRequest:vector ETV
+vector 23 WirelessNetwork.robot[1].wlan[0].agent sentRequest:vector ETV
 attr recordingmode vector
 attr title "sent requests"
-vector 24 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
+vector 24 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths"
 attr unit b
-vector 25 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
+vector 25 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPushStarted)
 attr title "incoming datarate"
 attr unit bps
-vector 26 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
+vector 26 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + count(packetPushStarted) - count(packetPulled) - count(packetRemoved) - count(packetDropped)))"
 attr title "queue length"
 attr unit pk
-vector 27 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
+vector 27 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetPushStarted)) - sum(packetLength(packetPulled)) - sum(packetLength(packetRemoved)) - sum(packetLength(packetDropped))))"
 attr title "queue bit length"
 attr unit b
-vector 28 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
+vector 28 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "backoff periods"
-vector 29 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
+vector 29 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetPulled)
 attr title "queueing times"
 attr unit s
-vector 30 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
+vector 30 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths"
 attr unit b
-vector 31 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
+vector 31 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPulled)
 attr title "outgoing datarate"
 attr unit bps
-vector 32 WirelessNetwork.robot0.wlan[0].mac.dcf datarateSelected:vector ETV
+vector 32 WirelessNetwork.robot[0].wlan[0].mac.dcf datarateSelected:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "datarates selected"
-vector 33 WirelessNetwork.robot0.wlan[0].mac packetSentToLower:vector(packetBytes) ETV
+vector 33 WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent to lower layer, packetBytes"
-vector 34 WirelessNetwork.robot0.wlan[0].radio transmissionState:vector ETV
+vector 34 WirelessNetwork.robot[0].wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source transmissionStateChanged
 attr title "Radio transmission state"
-vector 35 WirelessNetwork.robot0.wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
+vector 35 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent, packetBytes"
-vector 36 WirelessNetwork.robot0.wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
+vector 36 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, packetBytes"
-vector 37 WirelessNetwork.robot0.wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
+vector 37 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Broadcast(packetSentToPeer)
 attr title "packets sent: broadcast , packetBytes"
-vector 38 WirelessNetwork.robot0.wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
+vector 38 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, packetBytes"
-vector 39 WirelessNetwork.robot0.wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
+vector 39 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
-vector 40 WirelessNetwork.robot1.wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets received from lower layer, packetBytes"
-vector 41 WirelessNetwork.robot1.wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets received, packetBytes"
-vector 42 WirelessNetwork.robot1.wlan[0].mac.dcf packetReceivedFromPeerMulticast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Multicast(packetReceivedFromPeer)
-attr title "packets received: multicast, packetBytes"
-vector 43 WirelessNetwork.robot1.wlan[0].mac.dcf packetReceivedFromPeerBroadcast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Broadcast(packetReceivedFromPeer)
-attr title "packets received: broadcast, packetBytes"
-vector 44 WirelessNetwork.robot1.wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211NotRetry(packetReceivedFromPeer)
-attr title "packets received: without retry, packetBytes"
-vector 45 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
+vector 40 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths"
 attr unit b
-vector 46 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
+vector 41 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPushStarted)
 attr title "incoming datarate"
 attr unit bps
-vector 47 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
+vector 42 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + count(packetPushStarted) - count(packetPulled) - count(packetRemoved) - count(packetDropped)))"
 attr title "queue length"
 attr unit pk
-vector 48 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
+vector 43 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetPushStarted)) - sum(packetLength(packetPulled)) - sum(packetLength(packetRemoved)) - sum(packetLength(packetDropped))))"
 attr title "queue bit length"
 attr unit b
-vector 49 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
+vector 44 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "backoff periods"
-vector 50 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
+vector 45 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetPulled)
 attr title "queueing times"
 attr unit s
-vector 51 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
+vector 46 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths"
 attr unit b
-vector 52 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
+vector 47 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPulled)
 attr title "outgoing datarate"
 attr unit bps
-vector 53 WirelessNetwork.robot1.wlan[0].mac.dcf datarateSelected:vector ETV
+vector 48 WirelessNetwork.robot[1].wlan[0].mac.dcf datarateSelected:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "datarates selected"
-vector 54 WirelessNetwork.robot1.wlan[0].mac packetSentToLower:vector(packetBytes) ETV
+vector 49 WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent to lower layer, packetBytes"
-vector 55 WirelessNetwork.robot1.wlan[0].radio transmissionState:vector ETV
+vector 50 WirelessNetwork.robot[1].wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source transmissionStateChanged
 attr title "Radio transmission state"
-vector 56 WirelessNetwork.robot1.wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
+vector 51 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent, packetBytes"
-vector 57 WirelessNetwork.robot1.wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
+vector 52 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, packetBytes"
-vector 58 WirelessNetwork.robot1.wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
+vector 53 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Broadcast(packetSentToPeer)
 attr title "packets sent: broadcast , packetBytes"
-vector 59 WirelessNetwork.robot1.wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
+vector 54 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, packetBytes"
-vector 60 WirelessNetwork.robot1.wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
+vector 55 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
-vector 61 WirelessNetwork.robot0.wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets received from lower layer, packetBytes"
-vector 62 WirelessNetwork.robot0.wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets received, packetBytes"
-vector 63 WirelessNetwork.robot0.wlan[0].mac.dcf packetReceivedFromPeerMulticast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Multicast(packetReceivedFromPeer)
-attr title "packets received: multicast, packetBytes"
-vector 64 WirelessNetwork.robot0.wlan[0].mac.dcf packetReceivedFromPeerBroadcast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Broadcast(packetReceivedFromPeer)
-attr title "packets received: broadcast, packetBytes"
-vector 65 WirelessNetwork.robot0.wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211NotRetry(packetReceivedFromPeer)
-attr title "packets received: without retry, packetBytes"
-vector 66 WirelessNetwork.robot0.wlan[0].agent dropConfirm:vector ETV
+vector 56 WirelessNetwork.robot[0].wlan[0].agent dropConfirm:vector ETV
 attr recordingmode vector
 attr title "dropped confirms"
-vector 67 WirelessNetwork.robot1.wlan[0].agent dropConfirm:vector ETV
+vector 57 WirelessNetwork.robot[1].wlan[0].agent dropConfirm:vector ETV
 attr recordingmode vector
 attr title "dropped confirms"
+vector 58 WirelessNetwork.robot[0].app[0] packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 59 WirelessNetwork.robot[0].udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 60 WirelessNetwork.robot[0].ipv4.ip packetDropNoInterfaceFound:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetDropReasonIsNoInterfaceFound(packetDropped)
+attr title "packet drop: no interface found, packetBytes"
+vector 61 WirelessNetwork.robot[1].app[0] packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 62 WirelessNetwork.robot[1].udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 63 WirelessNetwork.robot[1].ipv4.ip packetDropNoInterfaceFound:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetDropReasonIsNoInterfaceFound(packetDropped)
+attr title "packet drop: no interface found, packetBytes"
 0	0	0	0
 0	0	0	0
-0	16	0.264644050691	1
-0	20	0.264682050691	0
-0	54	0.664644050691	1
-0	58	0.664682050691	0
-0	92	1.064644050691	1
-0	96	1.064682050691	0
-0	130	1.464644050691	1
+0	12	0.314556809491	1
+0	16	0.314594809491	0
+0	46	0.714556809491	1
+0	50	0.714594809491	0
+0	91	1.114556809491	1
+0	95	1.114594809491	0
+0	125	1.514556809491	1
 1	0	0	0
 1	0	0	0
-1	16	0.264644050691	1
-1	20	0.264682050691	0
-1	54	0.664644050691	1
-1	58	0.664682050691	0
-1	92	1.064644050691	1
-1	96	1.064682050691	0
-1	130	1.464644050691	1
+1	12	0.314556809491	1
+1	16	0.314594809491	0
+1	46	0.714556809491	1
+1	50	0.714594809491	0
+1	91	1.114556809491	1
+1	95	1.114594809491	0
+1	125	1.514556809491	1
 2	0	0	0
 2	0	0	0
-2	14	0.264644050691	1
-2	15	0.264644050691	0
-2	52	0.664644050691	1
-2	53	0.664644050691	0
-2	90	1.064644050691	1
-2	91	1.064644050691	0
-2	128	1.464644050691	1
-2	129	1.464644050691	0
+2	10	0.314556809491	1
+2	11	0.314556809491	0
+2	44	0.714556809491	1
+2	45	0.714556809491	0
+2	89	1.114556809491	1
+2	90	1.114556809491	0
+2	123	1.514556809491	1
+2	124	1.514556809491	0
 3	0	0	0
 4	0	0	0
 5	0	0	0
 6	0	0	0
 6	0	0	0
-6	29	0.277853384917	1
-6	33	0.277891384917	0
-6	67	0.677853384917	1
-6	71	0.677891384917	0
-6	105	1.077853384917	1
-6	109	1.077891384917	0
+6	23	0.353279723227	1
+6	27	0.353317723227	0
+6	57	0.753279723227	1
+6	61	0.753317723227	0
+6	102	1.153279723227	1
+6	106	1.153317723227	0
 7	0	0	0
 7	0	0	0
-7	29	0.277853384917	1
-7	33	0.277891384917	0
-7	67	0.677853384917	1
-7	71	0.677891384917	0
-7	105	1.077853384917	1
-7	109	1.077891384917	0
+7	23	0.353279723227	1
+7	27	0.353317723227	0
+7	57	0.753279723227	1
+7	61	0.753317723227	0
+7	102	1.153279723227	1
+7	106	1.153317723227	0
 8	0	0	0
 8	0	0	0
-8	27	0.277853384917	1
-8	28	0.277853384917	0
-8	65	0.677853384917	1
-8	66	0.677853384917	0
-8	103	1.077853384917	1
-8	104	1.077853384917	0
+8	21	0.353279723227	1
+8	22	0.353279723227	0
+8	55	0.753279723227	1
+8	56	0.753279723227	0
+8	100	1.153279723227	1
+8	101	1.153279723227	0
 9	0	0	0
 10	0	0	0
 11	0	0	0
 12	0	0	0
 12	0	0	0
 12	0	0	2
-12	17	0.264644050691	3
-12	21	0.264682050691	2
-12	55	0.664644050691	3
-12	59	0.664682050691	2
-12	93	1.064644050691	3
-12	97	1.064682050691	2
-12	131	1.464644050691	3
+12	13	0.314556809491	3
+12	17	0.314594809491	2
+12	47	0.714556809491	3
+12	51	0.714594809491	2
+12	92	1.114556809491	3
+12	96	1.114594809491	2
+12	126	1.514556809491	3
 13	0	0	0
-13	8	0.164644050691	0
-13	45	0.564644050691	0
-13	83	0.964644050691	0
-13	121	1.364644050691	0
+13	4	0.214556809491	0
+13	37	0.614556809491	0
+13	79	1.014556809491	0
+13	116	1.414556809491	0
 14	0	0	0
 14	0	0	0
 14	0	0	2
-14	30	0.277853384917	3
-14	34	0.277891384917	2
-14	68	0.677853384917	3
-14	72	0.677891384917	2
-14	106	1.077853384917	3
-14	110	1.077891384917	2
+14	24	0.353279723227	3
+14	28	0.353317723227	2
+14	58	0.753279723227	3
+14	62	0.753317723227	2
+14	103	1.153279723227	3
+14	107	1.153317723227	2
 15	0	0	0
-15	12	0.177853384917	0
-15	50	0.577853384917	0
-15	88	0.977853384917	0
-15	126	1.377853384917	0
+15	8	0.253279723227	0
+15	42	0.653279723227	0
+15	84	1.053279723227	0
+15	121	1.453279723227	0
 16	0	0	1
-16	17	0.264644050691	0
-16	21	0.264682050691	1
-16	32	0.277854052045	3
-16	35	0.277892052045	1
-16	55	0.664644050691	0
-16	59	0.664682050691	1
-16	70	0.677854052045	3
-16	73	0.677892052045	1
-16	93	1.064644050691	0
-16	97	1.064682050691	1
-16	108	1.077854052045	3
-16	111	1.077892052045	1
-16	131	1.464644050691	0
+16	13	0.314556809491	0
+16	17	0.314594809491	1
+16	26	0.353280778049	2
+16	29	0.353318778049	1
+16	47	0.714556809491	0
+16	51	0.714594809491	1
+16	60	0.753280778049	2
+16	63	0.753318778049	1
+16	92	1.114556809491	0
+16	96	1.114594809491	1
+16	105	1.153280778049	2
+16	108	1.153318778049	1
+16	126	1.514556809491	0
 17	0	0	0
 17	0	0	0
-17	14	0.264644050691	0
-17	14	0.264644050691	2
-17	15	0.264644050691	2
-17	15	0.264644050691	0
-17	17	0.264644050691	0
-17	17	0.264644050691	0
-17	21	0.264682050691	0
-17	21	0.264682050691	0
-17	32	0.277854052045	0
-17	32	0.277854052045	0
-17	35	0.277892052045	0
-17	35	0.277892052045	0
-17	52	0.664644050691	0
-17	52	0.664644050691	2
-17	53	0.664644050691	2
-17	53	0.664644050691	0
-17	55	0.664644050691	0
-17	55	0.664644050691	0
-17	59	0.664682050691	0
-17	59	0.664682050691	0
-17	70	0.677854052045	0
-17	70	0.677854052045	0
-17	73	0.677892052045	0
-17	73	0.677892052045	0
-17	90	1.064644050691	0
-17	90	1.064644050691	2
-17	91	1.064644050691	2
-17	91	1.064644050691	0
-17	93	1.064644050691	0
-17	93	1.064644050691	0
-17	97	1.064682050691	0
-17	97	1.064682050691	0
-17	108	1.077854052045	0
-17	108	1.077854052045	0
-17	111	1.077892052045	0
-17	111	1.077892052045	0
-17	128	1.464644050691	0
-17	128	1.464644050691	2
-17	129	1.464644050691	2
-17	129	1.464644050691	0
-17	131	1.464644050691	0
-17	131	1.464644050691	0
+17	10	0.314556809491	0
+17	10	0.314556809491	2
+17	11	0.314556809491	2
+17	11	0.314556809491	0
+17	13	0.314556809491	0
+17	13	0.314556809491	0
+17	17	0.314594809491	0
+17	17	0.314594809491	0
+17	26	0.353280778049	0
+17	26	0.353280778049	0
+17	29	0.353318778049	0
+17	29	0.353318778049	0
+17	44	0.714556809491	0
+17	44	0.714556809491	2
+17	45	0.714556809491	2
+17	45	0.714556809491	0
+17	47	0.714556809491	0
+17	47	0.714556809491	0
+17	51	0.714594809491	0
+17	51	0.714594809491	0
+17	60	0.753280778049	0
+17	60	0.753280778049	0
+17	63	0.753318778049	0
+17	63	0.753318778049	0
+17	89	1.114556809491	0
+17	89	1.114556809491	2
+17	90	1.114556809491	2
+17	90	1.114556809491	0
+17	92	1.114556809491	0
+17	92	1.114556809491	0
+17	96	1.114594809491	0
+17	96	1.114594809491	0
+17	105	1.153280778049	0
+17	105	1.153280778049	0
+17	108	1.153318778049	0
+17	108	1.153318778049	0
+17	123	1.514556809491	0
+17	123	1.514556809491	2
+17	124	1.514556809491	2
+17	124	1.514556809491	0
+17	126	1.514556809491	0
+17	126	1.514556809491	0
 18	0	0	1
-18	19	0.264644717819	3
-18	22	0.264682717819	1
-18	30	0.277853384917	0
-18	34	0.277891384917	1
-18	57	0.664644717819	3
-18	60	0.664682717819	1
-18	68	0.677853384917	0
-18	72	0.677891384917	1
-18	95	1.064644717819	3
-18	98	1.064682717819	1
-18	106	1.077853384917	0
-18	110	1.077891384917	1
+18	15	0.314557864313	2
+18	18	0.314595864313	1
+18	24	0.353279723227	0
+18	28	0.353317723227	1
+18	49	0.714557864313	2
+18	52	0.714595864313	1
+18	58	0.753279723227	0
+18	62	0.753317723227	1
+18	94	1.114557864313	2
+18	97	1.114595864313	1
+18	103	1.153279723227	0
+18	107	1.153317723227	1
 19	0	0	0
 19	0	0	0
-19	19	0.264644717819	0
-19	19	0.264644717819	0
-19	22	0.264682717819	0
-19	22	0.264682717819	0
-19	27	0.277853384917	0
-19	27	0.277853384917	2
-19	28	0.277853384917	2
-19	28	0.277853384917	0
-19	30	0.277853384917	0
-19	30	0.277853384917	0
-19	34	0.277891384917	0
-19	34	0.277891384917	0
-19	57	0.664644717819	0
-19	57	0.664644717819	0
-19	60	0.664682717819	0
-19	60	0.664682717819	0
-19	65	0.677853384917	0
-19	65	0.677853384917	2
-19	66	0.677853384917	2
-19	66	0.677853384917	0
-19	68	0.677853384917	0
-19	68	0.677853384917	0
-19	72	0.677891384917	0
-19	72	0.677891384917	0
-19	95	1.064644717819	0
-19	95	1.064644717819	0
-19	98	1.064682717819	0
-19	98	1.064682717819	0
-19	103	1.077853384917	0
-19	103	1.077853384917	2
-19	104	1.077853384917	2
-19	104	1.077853384917	0
-19	106	1.077853384917	0
-19	106	1.077853384917	0
-19	110	1.077891384917	0
-19	110	1.077891384917	0
+19	15	0.314557864313	0
+19	15	0.314557864313	0
+19	18	0.314595864313	0
+19	18	0.314595864313	0
+19	21	0.353279723227	0
+19	21	0.353279723227	2
+19	22	0.353279723227	2
+19	22	0.353279723227	0
+19	24	0.353279723227	0
+19	24	0.353279723227	0
+19	28	0.353317723227	0
+19	28	0.353317723227	0
+19	49	0.714557864313	0
+19	49	0.714557864313	0
+19	52	0.714595864313	0
+19	52	0.714595864313	0
+19	55	0.753279723227	0
+19	55	0.753279723227	2
+19	56	0.753279723227	2
+19	56	0.753279723227	0
+19	58	0.753279723227	0
+19	58	0.753279723227	0
+19	62	0.753317723227	0
+19	62	0.753317723227	0
+19	94	1.114557864313	0
+19	94	1.114557864313	0
+19	97	1.114595864313	0
+19	97	1.114595864313	0
+19	100	1.153279723227	0
+19	100	1.153279723227	2
+19	101	1.153279723227	2
+19	101	1.153279723227	0
+19	103	1.153279723227	0
+19	103	1.153279723227	0
+19	107	1.153317723227	0
+19	107	1.153317723227	0
 20	0	0	31
 21	0	0	31
-22	5	0.164644050691	1
-22	42	0.564644050691	1
-22	80	0.964644050691	1
-22	118	1.364644050691	1
-23	9	0.177853384917	1
-23	47	0.577853384917	1
-23	85	0.977853384917	1
-23	123	1.377853384917	1
-24	14	0.264644050691	256
-24	52	0.664644050691	256
-24	90	1.064644050691	256
-24	128	1.464644050691	256
-25	14	0.1	0
-25	14	0.2	0
-25	52	0.3	2560
-25	52	0.4	0
-25	52	0.5	0
-25	52	0.6	0
-25	90	0.7	2560
-25	90	0.8	0
-25	90	0.9	0
-25	90	1	0
-25	128	1.1	2560
-25	128	1.2	0
-25	128	1.3	0
-25	128	1.4	0
-26	14	0.264644050691	1
-26	16	0.264644050691	0
-26	52	0.664644050691	1
-26	54	0.664644050691	0
-26	90	1.064644050691	1
-26	92	1.064644050691	0
-26	128	1.464644050691	1
-26	130	1.464644050691	0
-27	14	0.264644050691	256
-27	16	0.264644050691	0
-27	52	0.664644050691	256
-27	54	0.664644050691	0
-27	90	1.064644050691	256
-27	92	1.064644050691	0
-27	128	1.464644050691	256
-27	130	1.464644050691	0
-28	14	0.264644050691	21
-28	52	0.664644050691	3
-28	90	1.064644050691	3
-28	128	1.464644050691	9
-29	16	0.264644050691	0
-29	54	0.664644050691	0
-29	92	1.064644050691	0
-29	130	1.464644050691	0
-30	16	0.264644050691	256
-30	54	0.664644050691	256
-30	92	1.064644050691	256
-30	130	1.464644050691	256
-31	16	0.1	0
-31	16	0.2	0
-31	54	0.3	2560
-31	54	0.4	0
-31	54	0.5	0
-31	54	0.6	0
-31	92	0.7	2560
-31	92	0.8	0
-31	92	0.9	0
-31	92	1	0
-31	130	1.1	2560
-31	130	1.2	0
-31	130	1.3	0
-31	130	1.4	0
-32	16	0.264644050691	24000000
-32	54	0.664644050691	24000000
-32	92	1.064644050691	24000000
-32	130	1.464644050691	24000000
-33	16	0.264644050691	32
-33	54	0.664644050691	32
-33	92	1.064644050691	32
-33	130	1.464644050691	32
-34	17	0.264644050691	1
-34	18	0.264644050691	2
-34	20	0.264682050691	1
-34	21	0.264682050691	0
-34	55	0.664644050691	1
-34	56	0.664644050691	2
-34	58	0.664682050691	1
-34	59	0.664682050691	0
-34	93	1.064644050691	1
-34	94	1.064644050691	2
-34	96	1.064682050691	1
-34	97	1.064682050691	0
-34	131	1.464644050691	1
-34	132	1.464644050691	2
-35	20	0.264682050691	32
-35	58	0.664682050691	32
-35	96	1.064682050691	32
-36	20	0.264682050691	32
-36	58	0.664682050691	32
-36	96	1.064682050691	32
-37	20	0.264682050691	32
-37	58	0.664682050691	32
-37	96	1.064682050691	32
-38	20	0.264682050691	32
-38	58	0.664682050691	32
-38	96	1.064682050691	32
-39	20	0.264682050691	3.8e-05
-39	58	0.664682050691	3.8e-05
-39	96	1.064682050691	3.8e-05
-40	23	0.264682717819	32
-40	61	0.664682717819	32
-40	99	1.064682717819	32
-41	23	0.264682717819	32
-41	61	0.664682717819	32
-41	99	1.064682717819	32
-42	23	0.264682717819	32
-42	61	0.664682717819	32
-42	99	1.064682717819	32
-43	23	0.264682717819	32
-43	61	0.664682717819	32
-43	99	1.064682717819	32
-44	23	0.264682717819	32
-44	61	0.664682717819	32
-44	99	1.064682717819	32
-45	27	0.277853384917	256
-45	65	0.677853384917	256
-45	103	1.077853384917	256
-46	27	0.1	0
-46	27	0.2	0
-46	65	0.3	2560
-46	65	0.4	0
-46	65	0.5	0
-46	65	0.6	0
-46	103	0.7	2560
-46	103	0.8	0
-46	103	0.9	0
-46	103	1	0
-47	27	0.277853384917	1
-47	29	0.277853384917	0
-47	65	0.677853384917	1
-47	67	0.677853384917	0
-47	103	1.077853384917	1
-47	105	1.077853384917	0
-48	27	0.277853384917	256
-48	29	0.277853384917	0
-48	65	0.677853384917	256
-48	67	0.677853384917	0
-48	103	1.077853384917	256
-48	105	1.077853384917	0
-49	27	0.277853384917	0
-49	65	0.677853384917	27
-49	103	1.077853384917	7
-50	29	0.277853384917	0
-50	67	0.677853384917	0
-50	105	1.077853384917	0
-51	29	0.277853384917	256
-51	67	0.677853384917	256
-51	105	1.077853384917	256
-52	29	0.1	0
-52	29	0.2	0
-52	67	0.3	2560
-52	67	0.4	0
-52	67	0.5	0
-52	67	0.6	0
-52	105	0.7	2560
-52	105	0.8	0
-52	105	0.9	0
-52	105	1	0
-53	29	0.277853384917	24000000
-53	67	0.677853384917	24000000
-53	105	1.077853384917	24000000
-54	29	0.277853384917	32
-54	67	0.677853384917	32
-54	105	1.077853384917	32
-55	30	0.277853384917	1
-55	31	0.277853384917	2
-55	33	0.277891384917	1
-55	34	0.277891384917	0
-55	68	0.677853384917	1
-55	69	0.677853384917	2
-55	71	0.677891384917	1
-55	72	0.677891384917	0
-55	106	1.077853384917	1
-55	107	1.077853384917	2
-55	109	1.077891384917	1
-55	110	1.077891384917	0
-56	33	0.277891384917	32
-56	71	0.677891384917	32
-56	109	1.077891384917	32
-57	33	0.277891384917	32
-57	71	0.677891384917	32
-57	109	1.077891384917	32
-58	33	0.277891384917	32
-58	71	0.677891384917	32
-58	109	1.077891384917	32
-59	33	0.277891384917	32
-59	71	0.677891384917	32
-59	109	1.077891384917	32
-60	33	0.277891384917	3.8e-05
-60	71	0.677891384917	3.8e-05
-60	109	1.077891384917	3.8e-05
-61	36	0.277892052045	32
-61	74	0.677892052045	32
-61	112	1.077892052045	32
-62	36	0.277892052045	32
-62	74	0.677892052045	32
-62	112	1.077892052045	32
-63	36	0.277892052045	32
-63	74	0.677892052045	32
-63	112	1.077892052045	32
-64	36	0.277892052045	32
-64	74	0.677892052045	32
-64	112	1.077892052045	32
-65	36	0.277892052045	32
-65	74	0.677892052045	32
-65	112	1.077892052045	32
-66	42	0.564644050691	1
-66	80	0.964644050691	1
-66	118	1.364644050691	1
-67	47	0.577853384917	1
-67	85	0.977853384917	1
-67	123	1.377853384917	1
-0	134	1.464682050691	0
-0	168	1.864644050691	1
-0	172	1.864682050691	0
-0	206	2.264644050691	1
-0	210	2.264682050691	0
-0	244	2.664644050691	1
-0	248	2.664682050691	0
-0	282	3.064644050691	1
-0	286	3.064682050691	0
-0	320	3.464644050691	1
-0	324	3.464682050691	0
-0	358	3.864644050691	1
-0	362	3.864682050691	0
-0	396	4.264644050691	1
-0	400	4.264682050691	0
-0	434	4.664644050691	1
-0	438	4.664682050691	0
-0	472	5.064644050691	1
-0	476	5.064682050691	0
-0	510	5.464644050691	1
-0	514	5.464682050691	0
-0	548	5.864644050691	1
-0	552	5.864682050691	0
-0	586	6.264644050691	1
-0	590	6.264682050691	0
-0	624	6.664644050691	1
-0	628	6.664682050691	0
-0	662	7.064644050691	1
-0	666	7.064682050691	0
-0	700	7.464644050691	1
-0	704	7.464682050691	0
-0	738	7.864644050691	1
-0	742	7.864682050691	0
-0	776	8.264644050691	1
-0	780	8.264682050691	0
-0	814	8.664644050691	1
-0	818	8.664682050691	0
-0	852	9.064644050691	1
-0	856	9.064682050691	0
-0	890	9.464644050691	1
-0	894	9.464682050691	0
-0	928	9.864644050691	1
-0	932	9.864682050691	0
-0	966	10.264644050691	1
-0	970	10.264682050691	0
-0	1004	10.664644050691	1
-0	1008	10.664682050691	0
-0	1042	11.064644050691	1
-0	1046	11.064682050691	0
-0	1080	11.464644050691	1
-0	1084	11.464682050691	0
-0	1118	11.864644050691	1
-1	134	1.464682050691	0
-1	168	1.864644050691	1
-1	172	1.864682050691	0
-1	206	2.264644050691	1
-1	210	2.264682050691	0
-1	244	2.664644050691	1
-1	248	2.664682050691	0
-1	282	3.064644050691	1
-1	286	3.064682050691	0
-1	320	3.464644050691	1
-1	324	3.464682050691	0
-1	358	3.864644050691	1
-1	362	3.864682050691	0
-1	396	4.264644050691	1
-1	400	4.264682050691	0
-1	434	4.664644050691	1
-1	438	4.664682050691	0
-1	472	5.064644050691	1
-1	476	5.064682050691	0
-1	510	5.464644050691	1
-1	514	5.464682050691	0
-1	548	5.864644050691	1
-1	552	5.864682050691	0
-1	586	6.264644050691	1
-1	590	6.264682050691	0
-1	624	6.664644050691	1
-1	628	6.664682050691	0
-1	662	7.064644050691	1
-1	666	7.064682050691	0
-1	700	7.464644050691	1
-1	704	7.464682050691	0
-1	738	7.864644050691	1
-1	742	7.864682050691	0
-1	776	8.264644050691	1
-1	780	8.264682050691	0
-1	814	8.664644050691	1
-1	818	8.664682050691	0
-1	852	9.064644050691	1
-1	856	9.064682050691	0
-1	890	9.464644050691	1
-1	894	9.464682050691	0
-1	928	9.864644050691	1
-1	932	9.864682050691	0
-1	966	10.264644050691	1
-1	970	10.264682050691	0
-1	1004	10.664644050691	1
-1	1008	10.664682050691	0
-1	1042	11.064644050691	1
-1	1046	11.064682050691	0
-1	1080	11.464644050691	1
-1	1084	11.464682050691	0
-1	1118	11.864644050691	1
-2	166	1.864644050691	1
-2	167	1.864644050691	0
-2	204	2.264644050691	1
-2	205	2.264644050691	0
-2	242	2.664644050691	1
-2	243	2.664644050691	0
-2	280	3.064644050691	1
-2	281	3.064644050691	0
-2	318	3.464644050691	1
-2	319	3.464644050691	0
-2	356	3.864644050691	1
-2	357	3.864644050691	0
-2	394	4.264644050691	1
-2	395	4.264644050691	0
-2	432	4.664644050691	1
-2	433	4.664644050691	0
-2	470	5.064644050691	1
-2	471	5.064644050691	0
-2	508	5.464644050691	1
-2	509	5.464644050691	0
-2	546	5.864644050691	1
-2	547	5.864644050691	0
-2	584	6.264644050691	1
-2	585	6.264644050691	0
-2	622	6.664644050691	1
-2	623	6.664644050691	0
-2	660	7.064644050691	1
-2	661	7.064644050691	0
-2	698	7.464644050691	1
-2	699	7.464644050691	0
-2	736	7.864644050691	1
-2	737	7.864644050691	0
-2	774	8.264644050691	1
-2	775	8.264644050691	0
-2	812	8.664644050691	1
-2	813	8.664644050691	0
-2	850	9.064644050691	1
-2	851	9.064644050691	0
-2	888	9.464644050691	1
-2	889	9.464644050691	0
-2	926	9.864644050691	1
-2	927	9.864644050691	0
-2	964	10.264644050691	1
-2	965	10.264644050691	0
-2	1002	10.664644050691	1
-2	1003	10.664644050691	0
-2	1040	11.064644050691	1
-2	1041	11.064644050691	0
-2	1078	11.464644050691	1
-2	1079	11.464644050691	0
-2	1116	11.864644050691	1
-2	1117	11.864644050691	0
-6	143	1.477853384917	1
-6	147	1.477891384917	0
-6	181	1.877853384917	1
-6	185	1.877891384917	0
-6	219	2.277853384917	1
-6	223	2.277891384917	0
-6	257	2.677853384917	1
-6	261	2.677891384917	0
-6	295	3.077853384917	1
-6	299	3.077891384917	0
-6	333	3.477853384917	1
-6	337	3.477891384917	0
-6	371	3.877853384917	1
-6	375	3.877891384917	0
-6	409	4.277853384917	1
-6	413	4.277891384917	0
-6	447	4.677853384917	1
-6	451	4.677891384917	0
-6	485	5.077853384917	1
-6	489	5.077891384917	0
-6	523	5.477853384917	1
-6	527	5.477891384917	0
-6	561	5.877853384917	1
-6	565	5.877891384917	0
-6	599	6.277853384917	1
-6	603	6.277891384917	0
-6	637	6.677853384917	1
-6	641	6.677891384917	0
-6	675	7.077853384917	1
-6	679	7.077891384917	0
-6	713	7.477853384917	1
-6	717	7.477891384917	0
-6	751	7.877853384917	1
-6	755	7.877891384917	0
-6	789	8.277853384917	1
-6	793	8.277891384917	0
-6	827	8.677853384917	1
-6	831	8.677891384917	0
-6	865	9.077853384917	1
-6	869	9.077891384917	0
-6	903	9.477853384917	1
-6	907	9.477891384917	0
-6	941	9.877853384917	1
-6	945	9.877891384917	0
-6	979	10.277853384917	1
-6	983	10.277891384917	0
-6	1017	10.677853384917	1
-6	1021	10.677891384917	0
-6	1055	11.077853384917	1
-6	1059	11.077891384917	0
-6	1093	11.477853384917	1
-6	1097	11.477891384917	0
-7	143	1.477853384917	1
-7	147	1.477891384917	0
-7	181	1.877853384917	1
-7	185	1.877891384917	0
-7	219	2.277853384917	1
-7	223	2.277891384917	0
-7	257	2.677853384917	1
-7	261	2.677891384917	0
-7	295	3.077853384917	1
-7	299	3.077891384917	0
-7	333	3.477853384917	1
-7	337	3.477891384917	0
-7	371	3.877853384917	1
-7	375	3.877891384917	0
-7	409	4.277853384917	1
-7	413	4.277891384917	0
-7	447	4.677853384917	1
-7	451	4.677891384917	0
-7	485	5.077853384917	1
-7	489	5.077891384917	0
-7	523	5.477853384917	1
-7	527	5.477891384917	0
-7	561	5.877853384917	1
-7	565	5.877891384917	0
-7	599	6.277853384917	1
-7	603	6.277891384917	0
-7	637	6.677853384917	1
-7	641	6.677891384917	0
-7	675	7.077853384917	1
-7	679	7.077891384917	0
-7	713	7.477853384917	1
-7	717	7.477891384917	0
-7	751	7.877853384917	1
-7	755	7.877891384917	0
-7	789	8.277853384917	1
-7	793	8.277891384917	0
-7	827	8.677853384917	1
-7	831	8.677891384917	0
-7	865	9.077853384917	1
-7	869	9.077891384917	0
-7	903	9.477853384917	1
-7	907	9.477891384917	0
-7	941	9.877853384917	1
-7	945	9.877891384917	0
-7	979	10.277853384917	1
-7	983	10.277891384917	0
-7	1017	10.677853384917	1
-7	1021	10.677891384917	0
-7	1055	11.077853384917	1
-7	1059	11.077891384917	0
-7	1093	11.477853384917	1
-7	1097	11.477891384917	0
-8	141	1.477853384917	1
-8	142	1.477853384917	0
-8	179	1.877853384917	1
-8	180	1.877853384917	0
-8	217	2.277853384917	1
-8	218	2.277853384917	0
-8	255	2.677853384917	1
-8	256	2.677853384917	0
-8	293	3.077853384917	1
-8	294	3.077853384917	0
-8	331	3.477853384917	1
-8	332	3.477853384917	0
-8	369	3.877853384917	1
-8	370	3.877853384917	0
-8	407	4.277853384917	1
-8	408	4.277853384917	0
-8	445	4.677853384917	1
-8	446	4.677853384917	0
-8	483	5.077853384917	1
-8	484	5.077853384917	0
-8	521	5.477853384917	1
-8	522	5.477853384917	0
-8	559	5.877853384917	1
-8	560	5.877853384917	0
-8	597	6.277853384917	1
-8	598	6.277853384917	0
-8	635	6.677853384917	1
-8	636	6.677853384917	0
-8	673	7.077853384917	1
-8	674	7.077853384917	0
-8	711	7.477853384917	1
-8	712	7.477853384917	0
-8	749	7.877853384917	1
-8	750	7.877853384917	0
-8	787	8.277853384917	1
-8	788	8.277853384917	0
-8	825	8.677853384917	1
-8	826	8.677853384917	0
-8	863	9.077853384917	1
-8	864	9.077853384917	0
-8	901	9.477853384917	1
-8	902	9.477853384917	0
-8	939	9.877853384917	1
-8	940	9.877853384917	0
-8	977	10.277853384917	1
-8	978	10.277853384917	0
-8	1015	10.677853384917	1
-8	1016	10.677853384917	0
-8	1053	11.077853384917	1
-8	1054	11.077853384917	0
-8	1091	11.477853384917	1
-8	1092	11.477853384917	0
-12	135	1.464682050691	2
-12	169	1.864644050691	3
-12	173	1.864682050691	2
-12	207	2.264644050691	3
-12	211	2.264682050691	2
-12	245	2.664644050691	3
-12	249	2.664682050691	2
-12	283	3.064644050691	3
-12	287	3.064682050691	2
-12	321	3.464644050691	3
-12	325	3.464682050691	2
-12	359	3.864644050691	3
-12	363	3.864682050691	2
-12	397	4.264644050691	3
-12	401	4.264682050691	2
-12	435	4.664644050691	3
-12	439	4.664682050691	2
-12	473	5.064644050691	3
-12	477	5.064682050691	2
-12	511	5.464644050691	3
-12	515	5.464682050691	2
-12	549	5.864644050691	3
-12	553	5.864682050691	2
-12	587	6.264644050691	3
-12	591	6.264682050691	2
-12	625	6.664644050691	3
-12	629	6.664682050691	2
-12	663	7.064644050691	3
-12	667	7.064682050691	2
-12	701	7.464644050691	3
-12	705	7.464682050691	2
-12	739	7.864644050691	3
-12	743	7.864682050691	2
-12	777	8.264644050691	3
-12	781	8.264682050691	2
-12	815	8.664644050691	3
-12	819	8.664682050691	2
-12	853	9.064644050691	3
-12	857	9.064682050691	2
-12	891	9.464644050691	3
-12	895	9.464682050691	2
-12	929	9.864644050691	3
-12	933	9.864682050691	2
-12	967	10.264644050691	3
-12	971	10.264682050691	2
-12	1005	10.664644050691	3
-12	1009	10.664682050691	2
-12	1043	11.064644050691	3
-12	1047	11.064682050691	2
-12	1081	11.464644050691	3
-12	1085	11.464682050691	2
-12	1119	11.864644050691	3
-13	159	1.764644050691	0
-13	197	2.164644050691	0
-13	235	2.564644050691	0
-13	273	2.964644050691	0
-13	311	3.364644050691	0
-13	349	3.764644050691	0
-13	387	4.164644050691	0
-13	425	4.564644050691	0
-13	463	4.964644050691	0
-13	501	5.364644050691	0
-13	539	5.764644050691	0
-13	577	6.164644050691	0
-13	615	6.564644050691	0
-13	653	6.964644050691	0
-13	691	7.364644050691	0
-13	729	7.764644050691	0
-13	767	8.164644050691	0
-13	805	8.564644050691	0
-13	843	8.964644050691	0
-13	881	9.364644050691	0
-13	919	9.764644050691	0
-13	957	10.164644050691	0
-13	995	10.564644050691	0
-13	1033	10.964644050691	0
-13	1071	11.364644050691	0
-13	1109	11.764644050691	0
-14	144	1.477853384917	3
-14	148	1.477891384917	2
-14	182	1.877853384917	3
-14	186	1.877891384917	2
-14	220	2.277853384917	3
-14	224	2.277891384917	2
-14	258	2.677853384917	3
-14	262	2.677891384917	2
-14	296	3.077853384917	3
-14	300	3.077891384917	2
-14	334	3.477853384917	3
-14	338	3.477891384917	2
-14	372	3.877853384917	3
-14	376	3.877891384917	2
-14	410	4.277853384917	3
-14	414	4.277891384917	2
-14	448	4.677853384917	3
-14	452	4.677891384917	2
-14	486	5.077853384917	3
-14	490	5.077891384917	2
-14	524	5.477853384917	3
-14	528	5.477891384917	2
-14	562	5.877853384917	3
-14	566	5.877891384917	2
-14	600	6.277853384917	3
-14	604	6.277891384917	2
-14	638	6.677853384917	3
-14	642	6.677891384917	2
-14	676	7.077853384917	3
-14	680	7.077891384917	2
-14	714	7.477853384917	3
-14	718	7.477891384917	2
-14	752	7.877853384917	3
-14	756	7.877891384917	2
-14	790	8.277853384917	3
-14	794	8.277891384917	2
-14	828	8.677853384917	3
-14	832	8.677891384917	2
-14	866	9.077853384917	3
-14	870	9.077891384917	2
-14	904	9.477853384917	3
-14	908	9.477891384917	2
-14	942	9.877853384917	3
-14	946	9.877891384917	2
-14	980	10.277853384917	3
-14	984	10.277891384917	2
-14	1018	10.677853384917	3
-14	1022	10.677891384917	2
-14	1056	11.077853384917	3
-14	1060	11.077891384917	2
-14	1094	11.477853384917	3
-14	1098	11.477891384917	2
-15	164	1.777853384917	0
-15	202	2.177853384917	0
-15	240	2.577853384917	0
-15	278	2.977853384917	0
-15	316	3.377853384917	0
-15	354	3.777853384917	0
-15	392	4.177853384917	0
-15	430	4.577853384917	0
-15	468	4.977853384917	0
-15	506	5.377853384917	0
-15	544	5.777853384917	0
-15	582	6.177853384917	0
-15	620	6.577853384917	0
-15	658	6.977853384917	0
-15	696	7.377853384917	0
-15	734	7.777853384917	0
-15	772	8.177853384917	0
-15	810	8.577853384917	0
-15	848	8.977853384917	0
-15	886	9.377853384917	0
-15	924	9.777853384917	0
-15	962	10.177853384917	0
-15	1000	10.577853384917	0
-15	1038	10.977853384917	0
-15	1076	11.377853384917	0
-15	1114	11.777853384917	0
-16	135	1.464682050691	1
-16	146	1.477854052045	3
-16	149	1.477892052045	1
-16	169	1.864644050691	0
-16	173	1.864682050691	1
-16	184	1.877854052045	3
-16	187	1.877892052045	1
-16	207	2.264644050691	0
-16	211	2.264682050691	1
-16	222	2.277854052045	3
-16	225	2.277892052045	1
-16	245	2.664644050691	0
-16	249	2.664682050691	1
-16	260	2.677854052045	3
-16	263	2.677892052045	1
-16	283	3.064644050691	0
-16	287	3.064682050691	1
-16	298	3.077854052045	3
-16	301	3.077892052045	1
-16	321	3.464644050691	0
-16	325	3.464682050691	1
-16	336	3.477854052045	3
-16	339	3.477892052045	1
-16	359	3.864644050691	0
-16	363	3.864682050691	1
-16	374	3.877854052045	3
-16	377	3.877892052045	1
-16	397	4.264644050691	0
-16	401	4.264682050691	1
-16	412	4.277854052045	3
-16	415	4.277892052045	1
-16	435	4.664644050691	0
-16	439	4.664682050691	1
-16	450	4.677854052045	3
-16	453	4.677892052045	1
-16	473	5.064644050691	0
-16	477	5.064682050691	1
-16	488	5.077854052045	3
-16	491	5.077892052045	1
-16	511	5.464644050691	0
-16	515	5.464682050691	1
-16	526	5.477854052045	3
-16	529	5.477892052045	1
-16	549	5.864644050691	0
-16	553	5.864682050691	1
-16	564	5.877854052045	3
-16	567	5.877892052045	1
-16	587	6.264644050691	0
-16	591	6.264682050691	1
-16	602	6.277854052045	3
-16	605	6.277892052045	1
-16	625	6.664644050691	0
-16	629	6.664682050691	1
-16	640	6.677854052045	3
-16	643	6.677892052045	1
-16	663	7.064644050691	0
-16	667	7.064682050691	1
-16	678	7.077854052045	3
-16	681	7.077892052045	1
-16	701	7.464644050691	0
-16	705	7.464682050691	1
-16	716	7.477854052045	3
-16	719	7.477892052045	1
-16	739	7.864644050691	0
-16	743	7.864682050691	1
-16	754	7.877854052045	3
-16	757	7.877892052045	1
-16	777	8.264644050691	0
-16	781	8.264682050691	1
-16	792	8.277854052045	3
-16	795	8.277892052045	1
-16	815	8.664644050691	0
-16	819	8.664682050691	1
-16	830	8.677854052045	3
-16	833	8.677892052045	1
-16	853	9.064644050691	0
-16	857	9.064682050691	1
-16	868	9.077854052045	3
-16	871	9.077892052045	1
-16	891	9.464644050691	0
-16	895	9.464682050691	1
-16	906	9.477854052045	3
-16	909	9.477892052045	1
-16	929	9.864644050691	0
-16	933	9.864682050691	1
-16	944	9.877854052045	3
-16	947	9.877892052045	1
-16	967	10.264644050691	0
-16	971	10.264682050691	1
-16	982	10.277854052045	3
-16	985	10.277892052045	1
-16	1005	10.664644050691	0
-16	1009	10.664682050691	1
-16	1020	10.677854052045	3
-16	1023	10.677892052045	1
-16	1043	11.064644050691	0
-16	1047	11.064682050691	1
-16	1058	11.077854052045	3
-16	1061	11.077892052045	1
-16	1081	11.464644050691	0
-16	1085	11.464682050691	1
-16	1096	11.477854052045	3
-16	1099	11.477892052045	1
-16	1119	11.864644050691	0
-17	135	1.464682050691	0
-17	135	1.464682050691	0
-17	146	1.477854052045	0
-17	146	1.477854052045	0
-17	149	1.477892052045	0
-17	149	1.477892052045	0
-17	166	1.864644050691	0
-17	166	1.864644050691	2
-17	167	1.864644050691	2
-17	167	1.864644050691	0
-17	169	1.864644050691	0
-17	169	1.864644050691	0
-17	173	1.864682050691	0
-17	173	1.864682050691	0
-17	184	1.877854052045	0
-17	184	1.877854052045	0
-17	187	1.877892052045	0
-17	187	1.877892052045	0
-17	204	2.264644050691	0
-17	204	2.264644050691	2
-17	205	2.264644050691	2
-17	205	2.264644050691	0
-17	207	2.264644050691	0
-17	207	2.264644050691	0
-17	211	2.264682050691	0
-17	211	2.264682050691	0
-17	222	2.277854052045	0
-17	222	2.277854052045	0
-17	225	2.277892052045	0
-17	225	2.277892052045	0
-17	242	2.664644050691	0
-17	242	2.664644050691	2
-17	243	2.664644050691	2
-17	243	2.664644050691	0
-17	245	2.664644050691	0
-17	245	2.664644050691	0
-17	249	2.664682050691	0
-17	249	2.664682050691	0
-17	260	2.677854052045	0
-17	260	2.677854052045	0
-17	263	2.677892052045	0
-17	263	2.677892052045	0
-17	280	3.064644050691	0
-17	280	3.064644050691	2
-17	281	3.064644050691	2
-17	281	3.064644050691	0
-17	283	3.064644050691	0
-17	283	3.064644050691	0
-17	287	3.064682050691	0
-17	287	3.064682050691	0
-17	298	3.077854052045	0
-17	298	3.077854052045	0
-17	301	3.077892052045	0
-17	301	3.077892052045	0
-17	318	3.464644050691	0
-17	318	3.464644050691	2
-17	319	3.464644050691	2
-17	319	3.464644050691	0
-17	321	3.464644050691	0
-17	321	3.464644050691	0
-17	325	3.464682050691	0
-17	325	3.464682050691	0
-17	336	3.477854052045	0
-17	336	3.477854052045	0
-17	339	3.477892052045	0
-17	339	3.477892052045	0
-17	356	3.864644050691	0
-17	356	3.864644050691	2
-17	357	3.864644050691	2
-17	357	3.864644050691	0
-17	359	3.864644050691	0
-17	359	3.864644050691	0
-17	363	3.864682050691	0
-17	363	3.864682050691	0
-17	374	3.877854052045	0
-17	374	3.877854052045	0
-17	377	3.877892052045	0
-17	377	3.877892052045	0
-17	394	4.264644050691	0
-17	394	4.264644050691	2
-17	395	4.264644050691	2
-17	395	4.264644050691	0
-17	397	4.264644050691	0
-17	397	4.264644050691	0
-17	401	4.264682050691	0
-17	401	4.264682050691	0
-17	412	4.277854052045	0
-17	412	4.277854052045	0
-17	415	4.277892052045	0
-17	415	4.277892052045	0
-17	432	4.664644050691	0
-17	432	4.664644050691	2
-17	433	4.664644050691	2
-17	433	4.664644050691	0
-17	435	4.664644050691	0
-17	435	4.664644050691	0
-17	439	4.664682050691	0
-17	439	4.664682050691	0
-17	450	4.677854052045	0
-17	450	4.677854052045	0
-17	453	4.677892052045	0
-17	453	4.677892052045	0
-17	470	5.064644050691	0
-17	470	5.064644050691	2
-17	471	5.064644050691	2
-17	471	5.064644050691	0
-17	473	5.064644050691	0
-17	473	5.064644050691	0
-17	477	5.064682050691	0
-17	477	5.064682050691	0
-17	488	5.077854052045	0
-17	488	5.077854052045	0
-17	491	5.077892052045	0
-17	491	5.077892052045	0
-17	508	5.464644050691	0
-17	508	5.464644050691	2
-17	509	5.464644050691	2
-17	509	5.464644050691	0
-17	511	5.464644050691	0
-17	511	5.464644050691	0
-17	515	5.464682050691	0
-17	515	5.464682050691	0
-17	526	5.477854052045	0
-17	526	5.477854052045	0
-17	529	5.477892052045	0
-17	529	5.477892052045	0
-17	546	5.864644050691	0
-17	546	5.864644050691	2
-17	547	5.864644050691	2
-17	547	5.864644050691	0
-17	549	5.864644050691	0
-17	549	5.864644050691	0
-17	553	5.864682050691	0
-17	553	5.864682050691	0
-17	564	5.877854052045	0
-17	564	5.877854052045	0
-17	567	5.877892052045	0
-17	567	5.877892052045	0
-17	584	6.264644050691	0
-17	584	6.264644050691	2
-17	585	6.264644050691	2
-17	585	6.264644050691	0
-17	587	6.264644050691	0
-17	587	6.264644050691	0
-17	591	6.264682050691	0
-17	591	6.264682050691	0
-17	602	6.277854052045	0
-17	602	6.277854052045	0
-17	605	6.277892052045	0
-17	605	6.277892052045	0
-17	622	6.664644050691	0
-17	622	6.664644050691	2
-17	623	6.664644050691	2
-17	623	6.664644050691	0
-17	625	6.664644050691	0
-17	625	6.664644050691	0
-17	629	6.664682050691	0
-17	629	6.664682050691	0
-17	640	6.677854052045	0
-17	640	6.677854052045	0
-17	643	6.677892052045	0
-17	643	6.677892052045	0
-17	660	7.064644050691	0
-17	660	7.064644050691	2
-17	661	7.064644050691	2
-17	661	7.064644050691	0
-17	663	7.064644050691	0
-17	663	7.064644050691	0
-17	667	7.064682050691	0
-17	667	7.064682050691	0
-17	678	7.077854052045	0
-17	678	7.077854052045	0
-17	681	7.077892052045	0
-17	681	7.077892052045	0
-17	698	7.464644050691	0
-17	698	7.464644050691	2
-17	699	7.464644050691	2
-17	699	7.464644050691	0
-17	701	7.464644050691	0
-17	701	7.464644050691	0
-17	705	7.464682050691	0
-17	705	7.464682050691	0
-17	716	7.477854052045	0
-17	716	7.477854052045	0
-17	719	7.477892052045	0
-17	719	7.477892052045	0
-17	736	7.864644050691	0
-17	736	7.864644050691	2
-17	737	7.864644050691	2
-17	737	7.864644050691	0
-17	739	7.864644050691	0
-17	739	7.864644050691	0
-17	743	7.864682050691	0
-17	743	7.864682050691	0
-17	754	7.877854052045	0
-17	754	7.877854052045	0
-17	757	7.877892052045	0
-17	757	7.877892052045	0
-17	774	8.264644050691	0
-17	774	8.264644050691	2
-17	775	8.264644050691	2
-17	775	8.264644050691	0
-17	777	8.264644050691	0
-17	777	8.264644050691	0
-17	781	8.264682050691	0
-17	781	8.264682050691	0
-17	792	8.277854052045	0
-17	792	8.277854052045	0
-17	795	8.277892052045	0
-17	795	8.277892052045	0
-17	812	8.664644050691	0
-17	812	8.664644050691	2
-17	813	8.664644050691	2
-17	813	8.664644050691	0
-17	815	8.664644050691	0
-17	815	8.664644050691	0
-17	819	8.664682050691	0
-17	819	8.664682050691	0
-17	830	8.677854052045	0
-17	830	8.677854052045	0
-17	833	8.677892052045	0
-17	833	8.677892052045	0
-17	850	9.064644050691	0
-17	850	9.064644050691	2
-17	851	9.064644050691	2
-17	851	9.064644050691	0
-17	853	9.064644050691	0
-17	853	9.064644050691	0
-17	857	9.064682050691	0
-17	857	9.064682050691	0
-17	868	9.077854052045	0
-17	868	9.077854052045	0
-17	871	9.077892052045	0
-17	871	9.077892052045	0
-17	888	9.464644050691	0
-17	888	9.464644050691	2
-17	889	9.464644050691	2
-17	889	9.464644050691	0
-17	891	9.464644050691	0
-17	891	9.464644050691	0
-17	895	9.464682050691	0
-17	895	9.464682050691	0
-17	906	9.477854052045	0
-17	906	9.477854052045	0
-17	909	9.477892052045	0
-17	909	9.477892052045	0
-17	926	9.864644050691	0
-17	926	9.864644050691	2
-17	927	9.864644050691	2
-17	927	9.864644050691	0
-17	929	9.864644050691	0
-17	929	9.864644050691	0
-17	933	9.864682050691	0
-17	933	9.864682050691	0
-17	944	9.877854052045	0
-17	944	9.877854052045	0
-17	947	9.877892052045	0
-17	947	9.877892052045	0
-17	964	10.264644050691	0
-17	964	10.264644050691	2
-17	965	10.264644050691	2
-17	965	10.264644050691	0
-17	967	10.264644050691	0
-17	967	10.264644050691	0
-17	971	10.264682050691	0
-17	971	10.264682050691	0
-17	982	10.277854052045	0
-17	982	10.277854052045	0
-17	985	10.277892052045	0
-17	985	10.277892052045	0
-17	1002	10.664644050691	0
-17	1002	10.664644050691	2
-17	1003	10.664644050691	2
-17	1003	10.664644050691	0
-17	1005	10.664644050691	0
-17	1005	10.664644050691	0
-17	1009	10.664682050691	0
-17	1009	10.664682050691	0
-17	1020	10.677854052045	0
-17	1020	10.677854052045	0
-17	1023	10.677892052045	0
-17	1023	10.677892052045	0
-17	1040	11.064644050691	0
-17	1040	11.064644050691	2
-17	1041	11.064644050691	2
-17	1041	11.064644050691	0
-17	1043	11.064644050691	0
-17	1043	11.064644050691	0
-17	1047	11.064682050691	0
-17	1047	11.064682050691	0
-17	1058	11.077854052045	0
-17	1058	11.077854052045	0
-17	1061	11.077892052045	0
-17	1061	11.077892052045	0
-17	1078	11.464644050691	0
-17	1078	11.464644050691	2
-17	1079	11.464644050691	2
-17	1079	11.464644050691	0
-17	1081	11.464644050691	0
-17	1081	11.464644050691	0
-17	1085	11.464682050691	0
-17	1085	11.464682050691	0
-17	1096	11.477854052045	0
-17	1096	11.477854052045	0
-17	1099	11.477892052045	0
-17	1099	11.477892052045	0
-17	1116	11.864644050691	0
-17	1116	11.864644050691	2
-17	1117	11.864644050691	2
-17	1117	11.864644050691	0
-17	1119	11.864644050691	0
-17	1119	11.864644050691	0
-18	133	1.464644717819	3
-18	136	1.464682717819	1
-18	144	1.477853384917	0
-18	148	1.477891384917	1
-18	171	1.864644717819	3
-18	174	1.864682717819	1
-18	182	1.877853384917	0
-18	186	1.877891384917	1
-18	209	2.264644717819	3
-18	212	2.264682717819	1
-18	220	2.277853384917	0
-18	224	2.277891384917	1
-18	247	2.664644717819	3
-18	250	2.664682717819	1
-18	258	2.677853384917	0
-18	262	2.677891384917	1
-18	285	3.064644717819	3
-18	288	3.064682717819	1
-18	296	3.077853384917	0
-18	300	3.077891384917	1
-18	323	3.464644717819	3
-18	326	3.464682717819	1
-18	334	3.477853384917	0
-18	338	3.477891384917	1
-18	361	3.864644717819	3
-18	364	3.864682717819	1
-18	372	3.877853384917	0
-18	376	3.877891384917	1
-18	399	4.264644717819	3
-18	402	4.264682717819	1
-18	410	4.277853384917	0
-18	414	4.277891384917	1
-18	437	4.664644717819	3
-18	440	4.664682717819	1
-18	448	4.677853384917	0
-18	452	4.677891384917	1
-18	475	5.064644717819	3
-18	478	5.064682717819	1
-18	486	5.077853384917	0
-18	490	5.077891384917	1
-18	513	5.464644717819	3
-18	516	5.464682717819	1
-18	524	5.477853384917	0
-18	528	5.477891384917	1
-18	551	5.864644717819	3
-18	554	5.864682717819	1
-18	562	5.877853384917	0
-18	566	5.877891384917	1
-18	589	6.264644717819	3
-18	592	6.264682717819	1
-18	600	6.277853384917	0
-18	604	6.277891384917	1
-18	627	6.664644717819	3
-18	630	6.664682717819	1
-18	638	6.677853384917	0
-18	642	6.677891384917	1
-18	665	7.064644717819	3
-18	668	7.064682717819	1
-18	676	7.077853384917	0
-18	680	7.077891384917	1
-18	703	7.464644717819	3
-18	706	7.464682717819	1
-18	714	7.477853384917	0
-18	718	7.477891384917	1
-18	741	7.864644717819	3
-18	744	7.864682717819	1
-18	752	7.877853384917	0
-18	756	7.877891384917	1
-18	779	8.264644717819	3
-18	782	8.264682717819	1
-18	790	8.277853384917	0
-18	794	8.277891384917	1
-18	817	8.664644717819	3
-18	820	8.664682717819	1
-18	828	8.677853384917	0
-18	832	8.677891384917	1
-18	855	9.064644717819	3
-18	858	9.064682717819	1
-18	866	9.077853384917	0
-18	870	9.077891384917	1
-18	893	9.464644717819	3
-18	896	9.464682717819	1
-18	904	9.477853384917	0
-18	908	9.477891384917	1
-18	931	9.864644717819	3
-18	934	9.864682717819	1
-18	942	9.877853384917	0
-18	946	9.877891384917	1
-18	969	10.264644717819	3
-18	972	10.264682717819	1
-18	980	10.277853384917	0
-18	984	10.277891384917	1
-18	1007	10.664644717819	3
-18	1010	10.664682717819	1
-18	1018	10.677853384917	0
-18	1022	10.677891384917	1
-18	1045	11.064644717819	3
-18	1048	11.064682717819	1
-18	1056	11.077853384917	0
-18	1060	11.077891384917	1
-18	1083	11.464644717819	3
-18	1086	11.464682717819	1
-18	1094	11.477853384917	0
-18	1098	11.477891384917	1
-19	133	1.464644717819	0
-19	133	1.464644717819	0
-19	136	1.464682717819	0
-19	136	1.464682717819	0
-19	141	1.477853384917	0
-19	141	1.477853384917	2
-19	142	1.477853384917	2
-19	142	1.477853384917	0
-19	144	1.477853384917	0
-19	144	1.477853384917	0
-19	148	1.477891384917	0
-19	148	1.477891384917	0
-19	171	1.864644717819	0
-19	171	1.864644717819	0
-19	174	1.864682717819	0
-19	174	1.864682717819	0
-19	179	1.877853384917	0
-19	179	1.877853384917	2
-19	180	1.877853384917	2
-19	180	1.877853384917	0
-19	182	1.877853384917	0
-19	182	1.877853384917	0
-19	186	1.877891384917	0
-19	186	1.877891384917	0
-19	209	2.264644717819	0
-19	209	2.264644717819	0
-19	212	2.264682717819	0
-19	212	2.264682717819	0
-19	217	2.277853384917	0
-19	217	2.277853384917	2
-19	218	2.277853384917	2
-19	218	2.277853384917	0
-19	220	2.277853384917	0
-19	220	2.277853384917	0
-19	224	2.277891384917	0
-19	224	2.277891384917	0
-19	247	2.664644717819	0
-19	247	2.664644717819	0
-19	250	2.664682717819	0
-19	250	2.664682717819	0
-19	255	2.677853384917	0
-19	255	2.677853384917	2
-19	256	2.677853384917	2
-19	256	2.677853384917	0
-19	258	2.677853384917	0
-19	258	2.677853384917	0
-19	262	2.677891384917	0
-19	262	2.677891384917	0
-19	285	3.064644717819	0
-19	285	3.064644717819	0
-19	288	3.064682717819	0
-19	288	3.064682717819	0
-19	293	3.077853384917	0
-19	293	3.077853384917	2
-19	294	3.077853384917	2
-19	294	3.077853384917	0
-19	296	3.077853384917	0
-19	296	3.077853384917	0
-19	300	3.077891384917	0
-19	300	3.077891384917	0
-19	323	3.464644717819	0
-19	323	3.464644717819	0
-19	326	3.464682717819	0
-19	326	3.464682717819	0
-19	331	3.477853384917	0
-19	331	3.477853384917	2
-19	332	3.477853384917	2
-19	332	3.477853384917	0
-19	334	3.477853384917	0
-19	334	3.477853384917	0
-19	338	3.477891384917	0
-19	338	3.477891384917	0
-19	361	3.864644717819	0
-19	361	3.864644717819	0
-19	364	3.864682717819	0
-19	364	3.864682717819	0
-19	369	3.877853384917	0
-19	369	3.877853384917	2
-19	370	3.877853384917	2
-19	370	3.877853384917	0
-19	372	3.877853384917	0
-19	372	3.877853384917	0
-19	376	3.877891384917	0
-19	376	3.877891384917	0
-19	399	4.264644717819	0
-19	399	4.264644717819	0
-19	402	4.264682717819	0
-19	402	4.264682717819	0
-19	407	4.277853384917	0
-19	407	4.277853384917	2
-19	408	4.277853384917	2
-19	408	4.277853384917	0
-19	410	4.277853384917	0
-19	410	4.277853384917	0
-19	414	4.277891384917	0
-19	414	4.277891384917	0
-19	437	4.664644717819	0
-19	437	4.664644717819	0
-19	440	4.664682717819	0
-19	440	4.664682717819	0
-19	445	4.677853384917	0
-19	445	4.677853384917	2
-19	446	4.677853384917	2
-19	446	4.677853384917	0
-19	448	4.677853384917	0
-19	448	4.677853384917	0
-19	452	4.677891384917	0
-19	452	4.677891384917	0
-19	475	5.064644717819	0
-19	475	5.064644717819	0
-19	478	5.064682717819	0
-19	478	5.064682717819	0
-19	483	5.077853384917	0
-19	483	5.077853384917	2
-19	484	5.077853384917	2
-19	484	5.077853384917	0
-19	486	5.077853384917	0
-19	486	5.077853384917	0
-19	490	5.077891384917	0
-19	490	5.077891384917	0
-19	513	5.464644717819	0
-19	513	5.464644717819	0
-19	516	5.464682717819	0
-19	516	5.464682717819	0
-19	521	5.477853384917	0
-19	521	5.477853384917	2
-19	522	5.477853384917	2
-19	522	5.477853384917	0
-19	524	5.477853384917	0
-19	524	5.477853384917	0
-19	528	5.477891384917	0
-19	528	5.477891384917	0
-19	551	5.864644717819	0
-19	551	5.864644717819	0
-19	554	5.864682717819	0
-19	554	5.864682717819	0
-19	559	5.877853384917	0
-19	559	5.877853384917	2
-19	560	5.877853384917	2
-19	560	5.877853384917	0
-19	562	5.877853384917	0
-19	562	5.877853384917	0
-19	566	5.877891384917	0
-19	566	5.877891384917	0
-19	589	6.264644717819	0
-19	589	6.264644717819	0
-19	592	6.264682717819	0
-19	592	6.264682717819	0
-19	597	6.277853384917	0
-19	597	6.277853384917	2
-19	598	6.277853384917	2
-19	598	6.277853384917	0
-19	600	6.277853384917	0
-19	600	6.277853384917	0
-19	604	6.277891384917	0
-19	604	6.277891384917	0
-19	627	6.664644717819	0
-19	627	6.664644717819	0
-19	630	6.664682717819	0
-19	630	6.664682717819	0
-19	635	6.677853384917	0
-19	635	6.677853384917	2
-19	636	6.677853384917	2
-19	636	6.677853384917	0
-19	638	6.677853384917	0
-19	638	6.677853384917	0
-19	642	6.677891384917	0
-19	642	6.677891384917	0
-19	665	7.064644717819	0
-19	665	7.064644717819	0
-19	668	7.064682717819	0
-19	668	7.064682717819	0
-19	673	7.077853384917	0
-19	673	7.077853384917	2
-19	674	7.077853384917	2
-19	674	7.077853384917	0
-19	676	7.077853384917	0
-19	676	7.077853384917	0
-19	680	7.077891384917	0
-19	680	7.077891384917	0
-19	703	7.464644717819	0
-19	703	7.464644717819	0
-19	706	7.464682717819	0
-19	706	7.464682717819	0
-19	711	7.477853384917	0
-19	711	7.477853384917	2
-19	712	7.477853384917	2
-19	712	7.477853384917	0
-19	714	7.477853384917	0
-19	714	7.477853384917	0
-19	718	7.477891384917	0
-19	718	7.477891384917	0
-19	741	7.864644717819	0
-19	741	7.864644717819	0
-19	744	7.864682717819	0
-19	744	7.864682717819	0
-19	749	7.877853384917	0
-19	749	7.877853384917	2
-19	750	7.877853384917	2
-19	750	7.877853384917	0
-19	752	7.877853384917	0
-19	752	7.877853384917	0
-19	756	7.877891384917	0
-19	756	7.877891384917	0
-19	779	8.264644717819	0
-19	779	8.264644717819	0
-19	782	8.264682717819	0
-19	782	8.264682717819	0
-19	787	8.277853384917	0
-19	787	8.277853384917	2
-19	788	8.277853384917	2
-19	788	8.277853384917	0
-19	790	8.277853384917	0
-19	790	8.277853384917	0
-19	794	8.277891384917	0
-19	794	8.277891384917	0
-19	817	8.664644717819	0
-19	817	8.664644717819	0
-19	820	8.664682717819	0
-19	820	8.664682717819	0
-19	825	8.677853384917	0
-19	825	8.677853384917	2
-19	826	8.677853384917	2
-19	826	8.677853384917	0
-19	828	8.677853384917	0
-19	828	8.677853384917	0
-19	832	8.677891384917	0
-19	832	8.677891384917	0
-19	855	9.064644717819	0
-19	855	9.064644717819	0
-19	858	9.064682717819	0
-19	858	9.064682717819	0
-19	863	9.077853384917	0
-19	863	9.077853384917	2
-19	864	9.077853384917	2
-19	864	9.077853384917	0
-19	866	9.077853384917	0
-19	866	9.077853384917	0
-19	870	9.077891384917	0
-19	870	9.077891384917	0
-19	893	9.464644717819	0
-19	893	9.464644717819	0
-19	896	9.464682717819	0
-19	896	9.464682717819	0
-19	901	9.477853384917	0
-19	901	9.477853384917	2
-19	902	9.477853384917	2
-19	902	9.477853384917	0
-19	904	9.477853384917	0
-19	904	9.477853384917	0
-19	908	9.477891384917	0
-19	908	9.477891384917	0
-19	931	9.864644717819	0
-19	931	9.864644717819	0
-19	934	9.864682717819	0
-19	934	9.864682717819	0
-19	939	9.877853384917	0
-19	939	9.877853384917	2
-19	940	9.877853384917	2
-19	940	9.877853384917	0
-19	942	9.877853384917	0
-19	942	9.877853384917	0
-19	946	9.877891384917	0
-19	946	9.877891384917	0
-19	969	10.264644717819	0
-19	969	10.264644717819	0
-19	972	10.264682717819	0
-19	972	10.264682717819	0
-19	977	10.277853384917	0
-19	977	10.277853384917	2
-19	978	10.277853384917	2
-19	978	10.277853384917	0
-19	980	10.277853384917	0
-19	980	10.277853384917	0
-19	984	10.277891384917	0
-19	984	10.277891384917	0
-19	1007	10.664644717819	0
-19	1007	10.664644717819	0
-19	1010	10.664682717819	0
-19	1010	10.664682717819	0
-19	1015	10.677853384917	0
-19	1015	10.677853384917	2
-19	1016	10.677853384917	2
-19	1016	10.677853384917	0
-19	1018	10.677853384917	0
-19	1018	10.677853384917	0
-19	1022	10.677891384917	0
-19	1022	10.677891384917	0
-19	1045	11.064644717819	0
-19	1045	11.064644717819	0
-19	1048	11.064682717819	0
-19	1048	11.064682717819	0
-19	1053	11.077853384917	0
-19	1053	11.077853384917	2
-19	1054	11.077853384917	2
-19	1054	11.077853384917	0
-19	1056	11.077853384917	0
-19	1056	11.077853384917	0
-19	1060	11.077891384917	0
-19	1060	11.077891384917	0
-19	1083	11.464644717819	0
-19	1083	11.464644717819	0
-19	1086	11.464682717819	0
-19	1086	11.464682717819	0
-19	1091	11.477853384917	0
-19	1091	11.477853384917	2
-19	1092	11.477853384917	2
-19	1092	11.477853384917	0
-19	1094	11.477853384917	0
-19	1094	11.477853384917	0
-19	1098	11.477891384917	0
-19	1098	11.477891384917	0
-22	156	1.764644050691	1
-22	194	2.164644050691	1
-22	232	2.564644050691	1
-22	270	2.964644050691	1
-22	308	3.364644050691	1
-22	346	3.764644050691	1
-22	384	4.164644050691	1
-22	422	4.564644050691	1
-22	460	4.964644050691	1
-22	498	5.364644050691	1
-22	536	5.764644050691	1
-22	574	6.164644050691	1
-22	612	6.564644050691	1
-22	650	6.964644050691	1
-22	688	7.364644050691	1
-22	726	7.764644050691	1
-22	764	8.164644050691	1
-22	802	8.564644050691	1
-22	840	8.964644050691	1
-22	878	9.364644050691	1
-22	916	9.764644050691	1
-22	954	10.164644050691	1
-22	992	10.564644050691	1
-22	1030	10.964644050691	1
-22	1068	11.364644050691	1
-22	1106	11.764644050691	1
-23	161	1.777853384917	1
-23	199	2.177853384917	1
-23	237	2.577853384917	1
-23	275	2.977853384917	1
-23	313	3.377853384917	1
-23	351	3.777853384917	1
-23	389	4.177853384917	1
-23	427	4.577853384917	1
-23	465	4.977853384917	1
-23	503	5.377853384917	1
-23	541	5.777853384917	1
-23	579	6.177853384917	1
-23	617	6.577853384917	1
-23	655	6.977853384917	1
-23	693	7.377853384917	1
-23	731	7.777853384917	1
-23	769	8.177853384917	1
-23	807	8.577853384917	1
-23	845	8.977853384917	1
-23	883	9.377853384917	1
-23	921	9.777853384917	1
-23	959	10.177853384917	1
-23	997	10.577853384917	1
-23	1035	10.977853384917	1
-23	1073	11.377853384917	1
-23	1111	11.777853384917	1
-24	166	1.864644050691	256
-24	204	2.264644050691	256
-24	242	2.664644050691	256
-24	280	3.064644050691	256
-24	318	3.464644050691	256
-24	356	3.864644050691	256
-24	394	4.264644050691	256
-24	432	4.664644050691	256
-24	470	5.064644050691	256
-24	508	5.464644050691	256
-24	546	5.864644050691	256
-24	584	6.264644050691	256
-24	622	6.664644050691	256
-24	660	7.064644050691	256
-24	698	7.464644050691	256
-24	736	7.864644050691	256
-24	774	8.264644050691	256
-24	812	8.664644050691	256
-24	850	9.064644050691	256
-24	888	9.464644050691	256
-24	926	9.864644050691	256
-24	964	10.264644050691	256
-24	1002	10.664644050691	256
-24	1040	11.064644050691	256
-24	1078	11.464644050691	256
-24	1116	11.864644050691	256
-25	166	1.5	2560
-25	166	1.6	0
-25	166	1.7	0
-25	166	1.8	0
-25	204	1.9	2560
-25	204	2	0
-25	204	2.1	0
-25	204	2.2	0
-25	242	2.3	2560
-25	242	2.4	0
-25	242	2.5	0
-25	242	2.6	0
-25	280	2.7	2560
-25	280	2.8	0
-25	280	2.9	0
-25	280	3	0
-25	318	3.1	2560
-25	318	3.2	0
-25	318	3.3	0
-25	318	3.4	0
-25	356	3.5	2560
-25	356	3.6	0
-25	356	3.7	0
-25	356	3.8	0
-25	394	3.9	2560
-25	394	4	0
-25	394	4.1	0
-25	394	4.2	0
-25	432	4.3	2560
-25	432	4.4	0
-25	432	4.5	0
-25	432	4.6	0
-25	470	4.7	2560
-25	470	4.8	0
-25	470	4.9	0
-25	470	5	0
-25	508	5.1	2560
-25	508	5.2	0
-25	508	5.3	0
-25	508	5.4	0
-25	546	5.5	2560
-25	546	5.6	0
-25	546	5.7	0
-25	546	5.8	0
-25	584	5.9	2560
-25	584	6	0
-25	584	6.1	0
-25	584	6.2	0
-25	622	6.3	2560
-25	622	6.4	0
-25	622	6.5	0
-25	622	6.6	0
-25	660	6.7	2560
-25	660	6.8	0
-25	660	6.9	0
-25	660	7	0
-25	698	7.1	2560
-25	698	7.2	0
-25	698	7.3	0
-25	698	7.4	0
-25	736	7.5	2560
-25	736	7.6	0
-25	736	7.7	0
-25	736	7.8	0
-25	774	7.9	2560
-25	774	8	0
-25	774	8.1	0
-25	774	8.2	0
-25	812	8.3	2560
-25	812	8.4	0
-25	812	8.5	0
-25	812	8.6	0
-25	850	8.7	2560
-25	850	8.8	0
-25	850	8.9	0
-25	850	9	0
-25	888	9.1	2560
-25	888	9.2	0
-25	888	9.3	0
-25	888	9.4	0
-25	926	9.5	2560
-25	926	9.6	0
-25	926	9.7	0
-25	926	9.8	0
-25	964	9.9	2560
-25	964	10	0
-25	964	10.1	0
-25	964	10.2	0
-25	1002	10.3	2560
-25	1002	10.4	0
-25	1002	10.5	0
-25	1002	10.6	0
-25	1040	10.7	2560
-25	1040	10.8	0
-25	1040	10.9	0
-25	1040	11	0
-25	1078	11.1	2560
-25	1078	11.2	0
-25	1078	11.3	0
-25	1078	11.4	0
-25	1116	11.5	2560
-25	1116	11.6	0
-25	1116	11.7	0
-25	1116	11.8	0
-26	166	1.864644050691	1
-26	168	1.864644050691	0
-26	204	2.264644050691	1
-26	206	2.264644050691	0
-26	242	2.664644050691	1
-26	244	2.664644050691	0
-26	280	3.064644050691	1
-26	282	3.064644050691	0
-26	318	3.464644050691	1
-26	320	3.464644050691	0
-26	356	3.864644050691	1
-26	358	3.864644050691	0
-26	394	4.264644050691	1
-26	396	4.264644050691	0
-26	432	4.664644050691	1
-26	434	4.664644050691	0
-26	470	5.064644050691	1
-26	472	5.064644050691	0
-26	508	5.464644050691	1
-26	510	5.464644050691	0
-26	546	5.864644050691	1
-26	548	5.864644050691	0
-26	584	6.264644050691	1
-26	586	6.264644050691	0
-26	622	6.664644050691	1
-26	624	6.664644050691	0
-26	660	7.064644050691	1
-26	662	7.064644050691	0
-26	698	7.464644050691	1
-26	700	7.464644050691	0
-26	736	7.864644050691	1
-26	738	7.864644050691	0
-26	774	8.264644050691	1
-26	776	8.264644050691	0
-26	812	8.664644050691	1
-26	814	8.664644050691	0
-26	850	9.064644050691	1
-26	852	9.064644050691	0
-26	888	9.464644050691	1
-26	890	9.464644050691	0
-26	926	9.864644050691	1
-26	928	9.864644050691	0
-26	964	10.264644050691	1
-26	966	10.264644050691	0
-26	1002	10.664644050691	1
-26	1004	10.664644050691	0
-26	1040	11.064644050691	1
-26	1042	11.064644050691	0
-26	1078	11.464644050691	1
-26	1080	11.464644050691	0
-26	1116	11.864644050691	1
-26	1118	11.864644050691	0
-27	166	1.864644050691	256
-27	168	1.864644050691	0
-27	204	2.264644050691	256
-27	206	2.264644050691	0
-27	242	2.664644050691	256
-27	244	2.664644050691	0
-27	280	3.064644050691	256
-27	282	3.064644050691	0
-27	318	3.464644050691	256
-27	320	3.464644050691	0
-27	356	3.864644050691	256
-27	358	3.864644050691	0
-27	394	4.264644050691	256
-27	396	4.264644050691	0
-27	432	4.664644050691	256
-27	434	4.664644050691	0
-27	470	5.064644050691	256
-27	472	5.064644050691	0
-27	508	5.464644050691	256
-27	510	5.464644050691	0
-27	546	5.864644050691	256
-27	548	5.864644050691	0
-27	584	6.264644050691	256
-27	586	6.264644050691	0
-27	622	6.664644050691	256
-27	624	6.664644050691	0
-27	660	7.064644050691	256
-27	662	7.064644050691	0
-27	698	7.464644050691	256
-27	700	7.464644050691	0
-27	736	7.864644050691	256
-27	738	7.864644050691	0
-27	774	8.264644050691	256
-27	776	8.264644050691	0
-27	812	8.664644050691	256
-27	814	8.664644050691	0
-27	850	9.064644050691	256
-27	852	9.064644050691	0
-27	888	9.464644050691	256
-27	890	9.464644050691	0
-27	926	9.864644050691	256
-27	928	9.864644050691	0
-27	964	10.264644050691	256
-27	966	10.264644050691	0
-27	1002	10.664644050691	256
-27	1004	10.664644050691	0
-27	1040	11.064644050691	256
-27	1042	11.064644050691	0
-27	1078	11.464644050691	256
-27	1080	11.464644050691	0
-27	1116	11.864644050691	256
-27	1118	11.864644050691	0
-28	166	1.864644050691	21
-28	204	2.264644050691	4
-28	242	2.664644050691	6
-28	280	3.064644050691	24
-28	318	3.464644050691	26
-28	356	3.864644050691	6
-28	394	4.264644050691	23
-28	432	4.664644050691	24
-28	470	5.064644050691	5
-28	508	5.464644050691	13
-28	546	5.864644050691	9
-28	584	6.264644050691	19
-28	622	6.664644050691	19
-28	660	7.064644050691	30
-28	698	7.464644050691	15
-28	736	7.864644050691	18
-28	774	8.264644050691	24
-28	812	8.664644050691	19
-28	850	9.064644050691	19
-28	888	9.464644050691	14
-28	926	9.864644050691	0
-28	964	10.264644050691	9
-28	1002	10.664644050691	31
-28	1040	11.064644050691	31
-28	1078	11.464644050691	20
-28	1116	11.864644050691	3
-29	168	1.864644050691	0
-29	206	2.264644050691	0
-29	244	2.664644050691	0
-29	282	3.064644050691	0
-29	320	3.464644050691	0
-29	358	3.864644050691	0
-29	396	4.264644050691	0
-29	434	4.664644050691	0
-29	472	5.064644050691	0
-29	510	5.464644050691	0
-29	548	5.864644050691	0
-29	586	6.264644050691	0
-29	624	6.664644050691	0
-29	662	7.064644050691	0
-29	700	7.464644050691	0
-29	738	7.864644050691	0
-29	776	8.264644050691	0
-29	814	8.664644050691	0
-29	852	9.064644050691	0
-29	890	9.464644050691	0
-29	928	9.864644050691	0
-29	966	10.264644050691	0
-29	1004	10.664644050691	0
-29	1042	11.064644050691	0
-29	1080	11.464644050691	0
-29	1118	11.864644050691	0
-30	168	1.864644050691	256
-30	206	2.264644050691	256
-30	244	2.664644050691	256
-30	282	3.064644050691	256
-30	320	3.464644050691	256
-30	358	3.864644050691	256
-30	396	4.264644050691	256
-30	434	4.664644050691	256
-30	472	5.064644050691	256
-30	510	5.464644050691	256
-30	548	5.864644050691	256
-30	586	6.264644050691	256
-30	624	6.664644050691	256
-30	662	7.064644050691	256
-30	700	7.464644050691	256
-30	738	7.864644050691	256
-30	776	8.264644050691	256
-30	814	8.664644050691	256
-30	852	9.064644050691	256
-30	890	9.464644050691	256
-30	928	9.864644050691	256
-30	966	10.264644050691	256
-30	1004	10.664644050691	256
-30	1042	11.064644050691	256
-30	1080	11.464644050691	256
-30	1118	11.864644050691	256
-31	168	1.5	2560
-31	168	1.6	0
-31	168	1.7	0
-31	168	1.8	0
-31	206	1.9	2560
-31	206	2	0
-31	206	2.1	0
-31	206	2.2	0
-31	244	2.3	2560
-31	244	2.4	0
-31	244	2.5	0
-31	244	2.6	0
-31	282	2.7	2560
-31	282	2.8	0
-31	282	2.9	0
-31	282	3	0
-31	320	3.1	2560
-31	320	3.2	0
-31	320	3.3	0
-31	320	3.4	0
-31	358	3.5	2560
-31	358	3.6	0
-31	358	3.7	0
-31	358	3.8	0
-31	396	3.9	2560
-31	396	4	0
-31	396	4.1	0
-31	396	4.2	0
-31	434	4.3	2560
-31	434	4.4	0
-31	434	4.5	0
-31	434	4.6	0
-31	472	4.7	2560
-31	472	4.8	0
-31	472	4.9	0
-31	472	5	0
-31	510	5.1	2560
-31	510	5.2	0
-31	510	5.3	0
-31	510	5.4	0
-31	548	5.5	2560
-31	548	5.6	0
-31	548	5.7	0
-31	548	5.8	0
-31	586	5.9	2560
-31	586	6	0
-31	586	6.1	0
-31	586	6.2	0
-31	624	6.3	2560
-31	624	6.4	0
-31	624	6.5	0
-31	624	6.6	0
-31	662	6.7	2560
-31	662	6.8	0
-31	662	6.9	0
-31	662	7	0
-31	700	7.1	2560
-31	700	7.2	0
-31	700	7.3	0
-31	700	7.4	0
-31	738	7.5	2560
-31	738	7.6	0
-31	738	7.7	0
-31	738	7.8	0
-31	776	7.9	2560
-31	776	8	0
-31	776	8.1	0
-31	776	8.2	0
-31	814	8.3	2560
-31	814	8.4	0
-31	814	8.5	0
-31	814	8.6	0
-31	852	8.7	2560
-31	852	8.8	0
-31	852	8.9	0
-31	852	9	0
-31	890	9.1	2560
-31	890	9.2	0
-31	890	9.3	0
-31	890	9.4	0
-31	928	9.5	2560
-31	928	9.6	0
-31	928	9.7	0
-31	928	9.8	0
-31	966	9.9	2560
-31	966	10	0
-31	966	10.1	0
-31	966	10.2	0
-31	1004	10.3	2560
-31	1004	10.4	0
-31	1004	10.5	0
-31	1004	10.6	0
-31	1042	10.7	2560
-31	1042	10.8	0
-31	1042	10.9	0
-31	1042	11	0
-31	1080	11.1	2560
-31	1080	11.2	0
-31	1080	11.3	0
-31	1080	11.4	0
-31	1118	11.5	2560
-31	1118	11.6	0
-31	1118	11.7	0
-31	1118	11.8	0
-32	168	1.864644050691	24000000
-32	206	2.264644050691	24000000
-32	244	2.664644050691	24000000
-32	282	3.064644050691	24000000
-32	320	3.464644050691	24000000
-32	358	3.864644050691	24000000
-32	396	4.264644050691	24000000
-32	434	4.664644050691	24000000
-32	472	5.064644050691	24000000
-32	510	5.464644050691	24000000
-32	548	5.864644050691	24000000
-32	586	6.264644050691	24000000
-32	624	6.664644050691	24000000
-32	662	7.064644050691	24000000
-32	700	7.464644050691	24000000
-32	738	7.864644050691	24000000
-32	776	8.264644050691	24000000
-32	814	8.664644050691	24000000
-32	852	9.064644050691	24000000
-32	890	9.464644050691	24000000
-32	928	9.864644050691	24000000
-32	966	10.264644050691	24000000
-32	1004	10.664644050691	24000000
-32	1042	11.064644050691	24000000
-32	1080	11.464644050691	24000000
-32	1118	11.864644050691	24000000
-33	168	1.864644050691	32
-33	206	2.264644050691	32
-33	244	2.664644050691	32
-33	282	3.064644050691	32
-33	320	3.464644050691	32
-33	358	3.864644050691	32
-33	396	4.264644050691	32
-33	434	4.664644050691	32
-33	472	5.064644050691	32
-33	510	5.464644050691	32
-33	548	5.864644050691	32
-33	586	6.264644050691	32
-33	624	6.664644050691	32
-33	662	7.064644050691	32
-33	700	7.464644050691	32
-33	738	7.864644050691	32
-33	776	8.264644050691	32
-33	814	8.664644050691	32
-33	852	9.064644050691	32
-33	890	9.464644050691	32
-33	928	9.864644050691	32
-33	966	10.264644050691	32
-33	1004	10.664644050691	32
-33	1042	11.064644050691	32
-33	1080	11.464644050691	32
-33	1118	11.864644050691	32
-34	134	1.464682050691	1
-34	135	1.464682050691	0
-34	169	1.864644050691	1
-34	170	1.864644050691	2
-34	172	1.864682050691	1
-34	173	1.864682050691	0
-34	207	2.264644050691	1
-34	208	2.264644050691	2
-34	210	2.264682050691	1
-34	211	2.264682050691	0
-34	245	2.664644050691	1
-34	246	2.664644050691	2
-34	248	2.664682050691	1
-34	249	2.664682050691	0
-34	283	3.064644050691	1
-34	284	3.064644050691	2
-34	286	3.064682050691	1
-34	287	3.064682050691	0
-34	321	3.464644050691	1
-34	322	3.464644050691	2
-34	324	3.464682050691	1
-34	325	3.464682050691	0
-34	359	3.864644050691	1
-34	360	3.864644050691	2
-34	362	3.864682050691	1
-34	363	3.864682050691	0
-34	397	4.264644050691	1
-34	398	4.264644050691	2
-34	400	4.264682050691	1
-34	401	4.264682050691	0
-34	435	4.664644050691	1
-34	436	4.664644050691	2
-34	438	4.664682050691	1
-34	439	4.664682050691	0
-34	473	5.064644050691	1
-34	474	5.064644050691	2
-34	476	5.064682050691	1
-34	477	5.064682050691	0
-34	511	5.464644050691	1
-34	512	5.464644050691	2
-34	514	5.464682050691	1
-34	515	5.464682050691	0
-34	549	5.864644050691	1
-34	550	5.864644050691	2
-34	552	5.864682050691	1
-34	553	5.864682050691	0
-34	587	6.264644050691	1
-34	588	6.264644050691	2
-34	590	6.264682050691	1
-34	591	6.264682050691	0
-34	625	6.664644050691	1
-34	626	6.664644050691	2
-34	628	6.664682050691	1
-34	629	6.664682050691	0
-34	663	7.064644050691	1
-34	664	7.064644050691	2
-34	666	7.064682050691	1
-34	667	7.064682050691	0
-34	701	7.464644050691	1
-34	702	7.464644050691	2
-34	704	7.464682050691	1
-34	705	7.464682050691	0
-34	739	7.864644050691	1
-34	740	7.864644050691	2
-34	742	7.864682050691	1
-34	743	7.864682050691	0
-34	777	8.264644050691	1
-34	778	8.264644050691	2
-34	780	8.264682050691	1
-34	781	8.264682050691	0
-34	815	8.664644050691	1
-34	816	8.664644050691	2
-34	818	8.664682050691	1
-34	819	8.664682050691	0
-34	853	9.064644050691	1
-34	854	9.064644050691	2
-34	856	9.064682050691	1
-34	857	9.064682050691	0
-34	891	9.464644050691	1
-34	892	9.464644050691	2
-34	894	9.464682050691	1
-34	895	9.464682050691	0
-34	929	9.864644050691	1
-34	930	9.864644050691	2
-34	932	9.864682050691	1
-34	933	9.864682050691	0
-34	967	10.264644050691	1
-34	968	10.264644050691	2
-34	970	10.264682050691	1
-34	971	10.264682050691	0
-34	1005	10.664644050691	1
-34	1006	10.664644050691	2
-34	1008	10.664682050691	1
-34	1009	10.664682050691	0
-34	1043	11.064644050691	1
-34	1044	11.064644050691	2
-34	1046	11.064682050691	1
-34	1047	11.064682050691	0
-34	1081	11.464644050691	1
-34	1082	11.464644050691	2
-34	1084	11.464682050691	1
-34	1085	11.464682050691	0
-34	1119	11.864644050691	1
-34	1120	11.864644050691	2
-35	134	1.464682050691	32
-35	172	1.864682050691	32
-35	210	2.264682050691	32
-35	248	2.664682050691	32
-35	286	3.064682050691	32
-35	324	3.464682050691	32
-35	362	3.864682050691	32
-35	400	4.264682050691	32
-35	438	4.664682050691	32
-35	476	5.064682050691	32
-35	514	5.464682050691	32
-35	552	5.864682050691	32
-35	590	6.264682050691	32
-35	628	6.664682050691	32
-35	666	7.064682050691	32
-35	704	7.464682050691	32
-35	742	7.864682050691	32
-35	780	8.264682050691	32
-35	818	8.664682050691	32
-35	856	9.064682050691	32
-35	894	9.464682050691	32
-35	932	9.864682050691	32
-35	970	10.264682050691	32
-35	1008	10.664682050691	32
-35	1046	11.064682050691	32
-35	1084	11.464682050691	32
-36	134	1.464682050691	32
-36	172	1.864682050691	32
-36	210	2.264682050691	32
-36	248	2.664682050691	32
-36	286	3.064682050691	32
-36	324	3.464682050691	32
-36	362	3.864682050691	32
-36	400	4.264682050691	32
-36	438	4.664682050691	32
-36	476	5.064682050691	32
-36	514	5.464682050691	32
-36	552	5.864682050691	32
-36	590	6.264682050691	32
-36	628	6.664682050691	32
-36	666	7.064682050691	32
-36	704	7.464682050691	32
-36	742	7.864682050691	32
-36	780	8.264682050691	32
-36	818	8.664682050691	32
-36	856	9.064682050691	32
-36	894	9.464682050691	32
-36	932	9.864682050691	32
-36	970	10.264682050691	32
-36	1008	10.664682050691	32
-36	1046	11.064682050691	32
-36	1084	11.464682050691	32
-37	134	1.464682050691	32
-37	172	1.864682050691	32
-37	210	2.264682050691	32
-37	248	2.664682050691	32
-37	286	3.064682050691	32
-37	324	3.464682050691	32
-37	362	3.864682050691	32
-37	400	4.264682050691	32
-37	438	4.664682050691	32
-37	476	5.064682050691	32
-37	514	5.464682050691	32
-37	552	5.864682050691	32
-37	590	6.264682050691	32
-37	628	6.664682050691	32
-37	666	7.064682050691	32
-37	704	7.464682050691	32
-37	742	7.864682050691	32
-37	780	8.264682050691	32
-37	818	8.664682050691	32
-37	856	9.064682050691	32
-37	894	9.464682050691	32
-37	932	9.864682050691	32
-37	970	10.264682050691	32
-37	1008	10.664682050691	32
-37	1046	11.064682050691	32
-37	1084	11.464682050691	32
-38	134	1.464682050691	32
-38	172	1.864682050691	32
-38	210	2.264682050691	32
-38	248	2.664682050691	32
-38	286	3.064682050691	32
-38	324	3.464682050691	32
-38	362	3.864682050691	32
-38	400	4.264682050691	32
-38	438	4.664682050691	32
-38	476	5.064682050691	32
-38	514	5.464682050691	32
-38	552	5.864682050691	32
-38	590	6.264682050691	32
-38	628	6.664682050691	32
-38	666	7.064682050691	32
-38	704	7.464682050691	32
-38	742	7.864682050691	32
-38	780	8.264682050691	32
-38	818	8.664682050691	32
-38	856	9.064682050691	32
-38	894	9.464682050691	32
-38	932	9.864682050691	32
-38	970	10.264682050691	32
-38	1008	10.664682050691	32
-38	1046	11.064682050691	32
-38	1084	11.464682050691	32
-39	134	1.464682050691	3.8e-05
-39	172	1.864682050691	3.8e-05
-39	210	2.264682050691	3.8e-05
-39	248	2.664682050691	3.8e-05
-39	286	3.064682050691	3.8e-05
-39	324	3.464682050691	3.8e-05
-39	362	3.864682050691	3.8e-05
-39	400	4.264682050691	3.8e-05
-39	438	4.664682050691	3.8e-05
-39	476	5.064682050691	3.8e-05
-39	514	5.464682050691	3.8e-05
-39	552	5.864682050691	3.8e-05
-39	590	6.264682050691	3.8e-05
-39	628	6.664682050691	3.8e-05
-39	666	7.064682050691	3.8e-05
-39	704	7.464682050691	3.8e-05
-39	742	7.864682050691	3.8e-05
-39	780	8.264682050691	3.8e-05
-39	818	8.664682050691	3.8e-05
-39	856	9.064682050691	3.8e-05
-39	894	9.464682050691	3.8e-05
-39	932	9.864682050691	3.8e-05
-39	970	10.264682050691	3.8e-05
-39	1008	10.664682050691	3.8e-05
-39	1046	11.064682050691	3.8e-05
-39	1084	11.464682050691	3.8e-05
-40	137	1.464682717819	32
-40	175	1.864682717819	32
-40	213	2.264682717819	32
-40	251	2.664682717819	32
-40	289	3.064682717819	32
-40	327	3.464682717819	32
-40	365	3.864682717819	32
-40	403	4.264682717819	32
-40	441	4.664682717819	32
-40	479	5.064682717819	32
-40	517	5.464682717819	32
-40	555	5.864682717819	32
-40	593	6.264682717819	32
-40	631	6.664682717819	32
-40	669	7.064682717819	32
-40	707	7.464682717819	32
-40	745	7.864682717819	32
-40	783	8.264682717819	32
-40	821	8.664682717819	32
-40	859	9.064682717819	32
-40	897	9.464682717819	32
-40	935	9.864682717819	32
-40	973	10.264682717819	32
-40	1011	10.664682717819	32
-40	1049	11.064682717819	32
-40	1087	11.464682717819	32
-41	137	1.464682717819	32
-41	175	1.864682717819	32
-41	213	2.264682717819	32
-41	251	2.664682717819	32
-41	289	3.064682717819	32
-41	327	3.464682717819	32
-41	365	3.864682717819	32
-41	403	4.264682717819	32
-41	441	4.664682717819	32
-41	479	5.064682717819	32
-41	517	5.464682717819	32
-41	555	5.864682717819	32
-41	593	6.264682717819	32
-41	631	6.664682717819	32
-41	669	7.064682717819	32
-41	707	7.464682717819	32
-41	745	7.864682717819	32
-41	783	8.264682717819	32
-41	821	8.664682717819	32
-41	859	9.064682717819	32
-41	897	9.464682717819	32
-41	935	9.864682717819	32
-41	973	10.264682717819	32
-41	1011	10.664682717819	32
-41	1049	11.064682717819	32
-41	1087	11.464682717819	32
-42	137	1.464682717819	32
-42	175	1.864682717819	32
-42	213	2.264682717819	32
-42	251	2.664682717819	32
-42	289	3.064682717819	32
-42	327	3.464682717819	32
-42	365	3.864682717819	32
-42	403	4.264682717819	32
-42	441	4.664682717819	32
-42	479	5.064682717819	32
-42	517	5.464682717819	32
-42	555	5.864682717819	32
-42	593	6.264682717819	32
-42	631	6.664682717819	32
-42	669	7.064682717819	32
-42	707	7.464682717819	32
-42	745	7.864682717819	32
-42	783	8.264682717819	32
-42	821	8.664682717819	32
-42	859	9.064682717819	32
-42	897	9.464682717819	32
-42	935	9.864682717819	32
-42	973	10.264682717819	32
-42	1011	10.664682717819	32
-42	1049	11.064682717819	32
-42	1087	11.464682717819	32
-43	137	1.464682717819	32
-43	175	1.864682717819	32
-43	213	2.264682717819	32
-43	251	2.664682717819	32
-43	289	3.064682717819	32
-43	327	3.464682717819	32
-43	365	3.864682717819	32
-43	403	4.264682717819	32
-43	441	4.664682717819	32
-43	479	5.064682717819	32
-43	517	5.464682717819	32
-43	555	5.864682717819	32
-43	593	6.264682717819	32
-43	631	6.664682717819	32
-43	669	7.064682717819	32
-43	707	7.464682717819	32
-43	745	7.864682717819	32
-43	783	8.264682717819	32
-43	821	8.664682717819	32
-43	859	9.064682717819	32
-43	897	9.464682717819	32
-43	935	9.864682717819	32
-43	973	10.264682717819	32
-43	1011	10.664682717819	32
-43	1049	11.064682717819	32
-43	1087	11.464682717819	32
-44	137	1.464682717819	32
-44	175	1.864682717819	32
-44	213	2.264682717819	32
-44	251	2.664682717819	32
-44	289	3.064682717819	32
-44	327	3.464682717819	32
-44	365	3.864682717819	32
-44	403	4.264682717819	32
-44	441	4.664682717819	32
-44	479	5.064682717819	32
-44	517	5.464682717819	32
-44	555	5.864682717819	32
-44	593	6.264682717819	32
-44	631	6.664682717819	32
-44	669	7.064682717819	32
-44	707	7.464682717819	32
-44	745	7.864682717819	32
-44	783	8.264682717819	32
-44	821	8.664682717819	32
-44	859	9.064682717819	32
-44	897	9.464682717819	32
-44	935	9.864682717819	32
-44	973	10.264682717819	32
-44	1011	10.664682717819	32
-44	1049	11.064682717819	32
-44	1087	11.464682717819	32
-45	141	1.477853384917	256
-45	179	1.877853384917	256
-45	217	2.277853384917	256
-45	255	2.677853384917	256
-45	293	3.077853384917	256
-45	331	3.477853384917	256
-45	369	3.877853384917	256
-45	407	4.277853384917	256
-45	445	4.677853384917	256
-45	483	5.077853384917	256
-45	521	5.477853384917	256
-45	559	5.877853384917	256
-45	597	6.277853384917	256
-45	635	6.677853384917	256
-45	673	7.077853384917	256
-45	711	7.477853384917	256
-45	749	7.877853384917	256
-45	787	8.277853384917	256
-45	825	8.677853384917	256
-45	863	9.077853384917	256
-45	901	9.477853384917	256
-45	939	9.877853384917	256
-45	977	10.277853384917	256
-45	1015	10.677853384917	256
-45	1053	11.077853384917	256
-45	1091	11.477853384917	256
-46	141	1.1	2560
-46	141	1.2	0
-46	141	1.3	0
-46	141	1.4	0
-46	179	1.5	2560
-46	179	1.6	0
-46	179	1.7	0
-46	179	1.8	0
-46	217	1.9	2560
-46	217	2	0
-46	217	2.1	0
-46	217	2.2	0
-46	255	2.3	2560
-46	255	2.4	0
-46	255	2.5	0
-46	255	2.6	0
-46	293	2.7	2560
-46	293	2.8	0
-46	293	2.9	0
-46	293	3	0
-46	331	3.1	2560
-46	331	3.2	0
-46	331	3.3	0
-46	331	3.4	0
-46	369	3.5	2560
-46	369	3.6	0
-46	369	3.7	0
-46	369	3.8	0
-46	407	3.9	2560
-46	407	4	0
-46	407	4.1	0
-46	407	4.2	0
-46	445	4.3	2560
-46	445	4.4	0
-46	445	4.5	0
-46	445	4.6	0
-46	483	4.7	2560
-46	483	4.8	0
-46	483	4.9	0
-46	483	5	0
-46	521	5.1	2560
-46	521	5.2	0
-46	521	5.3	0
-46	521	5.4	0
-46	559	5.5	2560
-46	559	5.6	0
-46	559	5.7	0
-46	559	5.8	0
-46	597	5.9	2560
-46	597	6	0
-46	597	6.1	0
-46	597	6.2	0
-46	635	6.3	2560
-46	635	6.4	0
-46	635	6.5	0
-46	635	6.6	0
-46	673	6.7	2560
-46	673	6.8	0
-46	673	6.9	0
-46	673	7	0
-46	711	7.1	2560
-46	711	7.2	0
-46	711	7.3	0
-46	711	7.4	0
-46	749	7.5	2560
-46	749	7.6	0
-46	749	7.7	0
-46	749	7.8	0
-46	787	7.9	2560
-46	787	8	0
-46	787	8.1	0
-46	787	8.2	0
-46	825	8.3	2560
-46	825	8.4	0
-46	825	8.5	0
-46	825	8.6	0
-46	863	8.7	2560
-46	863	8.8	0
-46	863	8.9	0
-46	863	9	0
-46	901	9.1	2560
-46	901	9.2	0
-46	901	9.3	0
-46	901	9.4	0
-46	939	9.5	2560
-46	939	9.6	0
-46	939	9.7	0
-46	939	9.8	0
-46	977	9.9	2560
-46	977	10	0
-46	977	10.1	0
-46	977	10.2	0
-46	1015	10.3	2560
-46	1015	10.4	0
-46	1015	10.5	0
-46	1015	10.6	0
-46	1053	10.7	2560
-46	1053	10.8	0
-46	1053	10.9	0
-46	1053	11	0
-46	1091	11.1	2560
-46	1091	11.2	0
-46	1091	11.3	0
-46	1091	11.4	0
-47	141	1.477853384917	1
-47	143	1.477853384917	0
-47	179	1.877853384917	1
-47	181	1.877853384917	0
-47	217	2.277853384917	1
-47	219	2.277853384917	0
-47	255	2.677853384917	1
-47	257	2.677853384917	0
-47	293	3.077853384917	1
-47	295	3.077853384917	0
-47	331	3.477853384917	1
-47	333	3.477853384917	0
-47	369	3.877853384917	1
-47	371	3.877853384917	0
-47	407	4.277853384917	1
-47	409	4.277853384917	0
-47	445	4.677853384917	1
-47	447	4.677853384917	0
-47	483	5.077853384917	1
-47	485	5.077853384917	0
-47	521	5.477853384917	1
-47	523	5.477853384917	0
-47	559	5.877853384917	1
-47	561	5.877853384917	0
-47	597	6.277853384917	1
-47	599	6.277853384917	0
-47	635	6.677853384917	1
-47	637	6.677853384917	0
-47	673	7.077853384917	1
-47	675	7.077853384917	0
-47	711	7.477853384917	1
-47	713	7.477853384917	0
-47	749	7.877853384917	1
-47	751	7.877853384917	0
-47	787	8.277853384917	1
-47	789	8.277853384917	0
-47	825	8.677853384917	1
-47	827	8.677853384917	0
-47	863	9.077853384917	1
-47	865	9.077853384917	0
-47	901	9.477853384917	1
-47	903	9.477853384917	0
-47	939	9.877853384917	1
-47	941	9.877853384917	0
-47	977	10.277853384917	1
-47	979	10.277853384917	0
-47	1015	10.677853384917	1
-47	1017	10.677853384917	0
-47	1053	11.077853384917	1
-47	1055	11.077853384917	0
-47	1091	11.477853384917	1
-47	1093	11.477853384917	0
-48	141	1.477853384917	256
-48	143	1.477853384917	0
-48	179	1.877853384917	256
-48	181	1.877853384917	0
-48	217	2.277853384917	256
-48	219	2.277853384917	0
-48	255	2.677853384917	256
-48	257	2.677853384917	0
-48	293	3.077853384917	256
-48	295	3.077853384917	0
-48	331	3.477853384917	256
-48	333	3.477853384917	0
-48	369	3.877853384917	256
-48	371	3.877853384917	0
-48	407	4.277853384917	256
-48	409	4.277853384917	0
-48	445	4.677853384917	256
-48	447	4.677853384917	0
-48	483	5.077853384917	256
-48	485	5.077853384917	0
-48	521	5.477853384917	256
-48	523	5.477853384917	0
-48	559	5.877853384917	256
-48	561	5.877853384917	0
-48	597	6.277853384917	256
-48	599	6.277853384917	0
-48	635	6.677853384917	256
-48	637	6.677853384917	0
-48	673	7.077853384917	256
-48	675	7.077853384917	0
-48	711	7.477853384917	256
-48	713	7.477853384917	0
-48	749	7.877853384917	256
-48	751	7.877853384917	0
-48	787	8.277853384917	256
-48	789	8.277853384917	0
-48	825	8.677853384917	256
-48	827	8.677853384917	0
-48	863	9.077853384917	256
-48	865	9.077853384917	0
-48	901	9.477853384917	256
-48	903	9.477853384917	0
-48	939	9.877853384917	256
-48	941	9.877853384917	0
-48	977	10.277853384917	256
-48	979	10.277853384917	0
-48	1015	10.677853384917	256
-48	1017	10.677853384917	0
-48	1053	11.077853384917	256
-48	1055	11.077853384917	0
-48	1091	11.477853384917	256
-48	1093	11.477853384917	0
-49	141	1.477853384917	19
-49	179	1.877853384917	18
-49	217	2.277853384917	23
-49	255	2.677853384917	24
-49	293	3.077853384917	12
-49	331	3.477853384917	1
-49	369	3.877853384917	7
-49	407	4.277853384917	14
-49	445	4.677853384917	17
-49	483	5.077853384917	25
-49	521	5.477853384917	8
-49	559	5.877853384917	20
-49	597	6.277853384917	16
-49	635	6.677853384917	5
-49	673	7.077853384917	15
-49	711	7.477853384917	0
-49	749	7.877853384917	3
-49	787	8.277853384917	17
-49	825	8.677853384917	29
-49	863	9.077853384917	19
-49	901	9.477853384917	7
-49	939	9.877853384917	1
-49	977	10.277853384917	25
-49	1015	10.677853384917	0
-49	1053	11.077853384917	10
-49	1091	11.477853384917	23
-50	143	1.477853384917	0
-50	181	1.877853384917	0
-50	219	2.277853384917	0
-50	257	2.677853384917	0
-50	295	3.077853384917	0
-50	333	3.477853384917	0
-50	371	3.877853384917	0
-50	409	4.277853384917	0
-50	447	4.677853384917	0
-50	485	5.077853384917	0
-50	523	5.477853384917	0
-50	561	5.877853384917	0
-50	599	6.277853384917	0
-50	637	6.677853384917	0
-50	675	7.077853384917	0
-50	713	7.477853384917	0
-50	751	7.877853384917	0
-50	789	8.277853384917	0
-50	827	8.677853384917	0
-50	865	9.077853384917	0
-50	903	9.477853384917	0
-50	941	9.877853384917	0
-50	979	10.277853384917	0
-50	1017	10.677853384917	0
-50	1055	11.077853384917	0
-50	1093	11.477853384917	0
-51	143	1.477853384917	256
-51	181	1.877853384917	256
-51	219	2.277853384917	256
-51	257	2.677853384917	256
-51	295	3.077853384917	256
-51	333	3.477853384917	256
-51	371	3.877853384917	256
-51	409	4.277853384917	256
-51	447	4.677853384917	256
-51	485	5.077853384917	256
-51	523	5.477853384917	256
-51	561	5.877853384917	256
-51	599	6.277853384917	256
-51	637	6.677853384917	256
-51	675	7.077853384917	256
-51	713	7.477853384917	256
-51	751	7.877853384917	256
-51	789	8.277853384917	256
-51	827	8.677853384917	256
-51	865	9.077853384917	256
-51	903	9.477853384917	256
-51	941	9.877853384917	256
-51	979	10.277853384917	256
-51	1017	10.677853384917	256
-51	1055	11.077853384917	256
-51	1093	11.477853384917	256
-52	143	1.1	2560
-52	143	1.2	0
-52	143	1.3	0
-52	143	1.4	0
-52	181	1.5	2560
-52	181	1.6	0
-52	181	1.7	0
-52	181	1.8	0
-52	219	1.9	2560
-52	219	2	0
-52	219	2.1	0
-52	219	2.2	0
-52	257	2.3	2560
-52	257	2.4	0
-52	257	2.5	0
-52	257	2.6	0
-52	295	2.7	2560
-52	295	2.8	0
-52	295	2.9	0
-52	295	3	0
-52	333	3.1	2560
-52	333	3.2	0
-52	333	3.3	0
-52	333	3.4	0
-52	371	3.5	2560
-52	371	3.6	0
-52	371	3.7	0
-52	371	3.8	0
-52	409	3.9	2560
-52	409	4	0
-52	409	4.1	0
-52	409	4.2	0
-52	447	4.3	2560
-52	447	4.4	0
-52	447	4.5	0
-52	447	4.6	0
-52	485	4.7	2560
-52	485	4.8	0
-52	485	4.9	0
-52	485	5	0
-52	523	5.1	2560
-52	523	5.2	0
-52	523	5.3	0
-52	523	5.4	0
-52	561	5.5	2560
-52	561	5.6	0
-52	561	5.7	0
-52	561	5.8	0
-52	599	5.9	2560
-52	599	6	0
-52	599	6.1	0
-52	599	6.2	0
-52	637	6.3	2560
-52	637	6.4	0
-52	637	6.5	0
-52	637	6.6	0
-52	675	6.7	2560
-52	675	6.8	0
-52	675	6.9	0
-52	675	7	0
-52	713	7.1	2560
-52	713	7.2	0
-52	713	7.3	0
-52	713	7.4	0
-52	751	7.5	2560
-52	751	7.6	0
-52	751	7.7	0
-52	751	7.8	0
-52	789	7.9	2560
-52	789	8	0
-52	789	8.1	0
-52	789	8.2	0
-52	827	8.3	2560
-52	827	8.4	0
-52	827	8.5	0
-52	827	8.6	0
-52	865	8.7	2560
-52	865	8.8	0
-52	865	8.9	0
-52	865	9	0
-52	903	9.1	2560
-52	903	9.2	0
-52	903	9.3	0
-52	903	9.4	0
-52	941	9.5	2560
-52	941	9.6	0
-52	941	9.7	0
-52	941	9.8	0
-52	979	9.9	2560
-52	979	10	0
-52	979	10.1	0
-52	979	10.2	0
-52	1017	10.3	2560
-52	1017	10.4	0
-52	1017	10.5	0
-52	1017	10.6	0
-52	1055	10.7	2560
-52	1055	10.8	0
-52	1055	10.9	0
-52	1055	11	0
-52	1093	11.1	2560
-52	1093	11.2	0
-52	1093	11.3	0
-52	1093	11.4	0
-53	143	1.477853384917	24000000
-53	181	1.877853384917	24000000
-53	219	2.277853384917	24000000
-53	257	2.677853384917	24000000
-53	295	3.077853384917	24000000
-53	333	3.477853384917	24000000
-53	371	3.877853384917	24000000
-53	409	4.277853384917	24000000
-53	447	4.677853384917	24000000
-53	485	5.077853384917	24000000
-53	523	5.477853384917	24000000
-53	561	5.877853384917	24000000
-53	599	6.277853384917	24000000
-53	637	6.677853384917	24000000
-53	675	7.077853384917	24000000
-53	713	7.477853384917	24000000
-53	751	7.877853384917	24000000
-53	789	8.277853384917	24000000
-53	827	8.677853384917	24000000
-53	865	9.077853384917	24000000
-53	903	9.477853384917	24000000
-53	941	9.877853384917	24000000
-53	979	10.277853384917	24000000
-53	1017	10.677853384917	24000000
-53	1055	11.077853384917	24000000
-53	1093	11.477853384917	24000000
-54	143	1.477853384917	32
-54	181	1.877853384917	32
-54	219	2.277853384917	32
-54	257	2.677853384917	32
-54	295	3.077853384917	32
-54	333	3.477853384917	32
-54	371	3.877853384917	32
-54	409	4.277853384917	32
-54	447	4.677853384917	32
-54	485	5.077853384917	32
-54	523	5.477853384917	32
-54	561	5.877853384917	32
-54	599	6.277853384917	32
-54	637	6.677853384917	32
-54	675	7.077853384917	32
-54	713	7.477853384917	32
-54	751	7.877853384917	32
-54	789	8.277853384917	32
-54	827	8.677853384917	32
-54	865	9.077853384917	32
-54	903	9.477853384917	32
-54	941	9.877853384917	32
-54	979	10.277853384917	32
-54	1017	10.677853384917	32
-54	1055	11.077853384917	32
-54	1093	11.477853384917	32
-55	144	1.477853384917	1
-55	145	1.477853384917	2
-55	147	1.477891384917	1
-55	148	1.477891384917	0
-55	182	1.877853384917	1
-55	183	1.877853384917	2
-55	185	1.877891384917	1
-55	186	1.877891384917	0
-55	220	2.277853384917	1
-55	221	2.277853384917	2
-55	223	2.277891384917	1
-55	224	2.277891384917	0
-55	258	2.677853384917	1
-55	259	2.677853384917	2
-55	261	2.677891384917	1
-55	262	2.677891384917	0
-55	296	3.077853384917	1
-55	297	3.077853384917	2
-55	299	3.077891384917	1
-55	300	3.077891384917	0
-55	334	3.477853384917	1
-55	335	3.477853384917	2
-55	337	3.477891384917	1
-55	338	3.477891384917	0
-55	372	3.877853384917	1
-55	373	3.877853384917	2
-55	375	3.877891384917	1
-55	376	3.877891384917	0
-55	410	4.277853384917	1
-55	411	4.277853384917	2
-55	413	4.277891384917	1
-55	414	4.277891384917	0
-55	448	4.677853384917	1
-55	449	4.677853384917	2
-55	451	4.677891384917	1
-55	452	4.677891384917	0
-55	486	5.077853384917	1
-55	487	5.077853384917	2
-55	489	5.077891384917	1
-55	490	5.077891384917	0
-55	524	5.477853384917	1
-55	525	5.477853384917	2
-55	527	5.477891384917	1
-55	528	5.477891384917	0
-55	562	5.877853384917	1
-55	563	5.877853384917	2
-55	565	5.877891384917	1
-55	566	5.877891384917	0
-55	600	6.277853384917	1
-55	601	6.277853384917	2
-55	603	6.277891384917	1
-55	604	6.277891384917	0
-55	638	6.677853384917	1
-55	639	6.677853384917	2
-55	641	6.677891384917	1
-55	642	6.677891384917	0
-55	676	7.077853384917	1
-55	677	7.077853384917	2
-55	679	7.077891384917	1
-55	680	7.077891384917	0
-55	714	7.477853384917	1
-55	715	7.477853384917	2
-55	717	7.477891384917	1
-55	718	7.477891384917	0
-55	752	7.877853384917	1
-55	753	7.877853384917	2
-55	755	7.877891384917	1
-55	756	7.877891384917	0
-55	790	8.277853384917	1
-55	791	8.277853384917	2
-55	793	8.277891384917	1
-55	794	8.277891384917	0
-55	828	8.677853384917	1
-55	829	8.677853384917	2
-55	831	8.677891384917	1
-55	832	8.677891384917	0
-55	866	9.077853384917	1
-55	867	9.077853384917	2
-55	869	9.077891384917	1
-55	870	9.077891384917	0
-55	904	9.477853384917	1
-55	905	9.477853384917	2
-55	907	9.477891384917	1
-55	908	9.477891384917	0
-55	942	9.877853384917	1
-55	943	9.877853384917	2
-55	945	9.877891384917	1
-55	946	9.877891384917	0
-55	980	10.277853384917	1
-55	981	10.277853384917	2
-55	983	10.277891384917	1
-55	984	10.277891384917	0
-55	1018	10.677853384917	1
-55	1019	10.677853384917	2
-55	1021	10.677891384917	1
-55	1022	10.677891384917	0
-55	1056	11.077853384917	1
-55	1057	11.077853384917	2
-55	1059	11.077891384917	1
-55	1060	11.077891384917	0
-55	1094	11.477853384917	1
-55	1095	11.477853384917	2
-55	1097	11.477891384917	1
-55	1098	11.477891384917	0
-56	147	1.477891384917	32
-56	185	1.877891384917	32
-56	223	2.277891384917	32
-56	261	2.677891384917	32
-56	299	3.077891384917	32
-56	337	3.477891384917	32
-56	375	3.877891384917	32
-56	413	4.277891384917	32
-56	451	4.677891384917	32
-56	489	5.077891384917	32
-56	527	5.477891384917	32
-56	565	5.877891384917	32
-56	603	6.277891384917	32
-56	641	6.677891384917	32
-56	679	7.077891384917	32
-56	717	7.477891384917	32
-56	755	7.877891384917	32
-56	793	8.277891384917	32
-56	831	8.677891384917	32
-56	869	9.077891384917	32
-56	907	9.477891384917	32
-56	945	9.877891384917	32
-56	983	10.277891384917	32
-56	1021	10.677891384917	32
-56	1059	11.077891384917	32
-56	1097	11.477891384917	32
-57	147	1.477891384917	32
-57	185	1.877891384917	32
-57	223	2.277891384917	32
-57	261	2.677891384917	32
-57	299	3.077891384917	32
-57	337	3.477891384917	32
-57	375	3.877891384917	32
-57	413	4.277891384917	32
-57	451	4.677891384917	32
-57	489	5.077891384917	32
-57	527	5.477891384917	32
-57	565	5.877891384917	32
-57	603	6.277891384917	32
-57	641	6.677891384917	32
-57	679	7.077891384917	32
-57	717	7.477891384917	32
-57	755	7.877891384917	32
-57	793	8.277891384917	32
-57	831	8.677891384917	32
-57	869	9.077891384917	32
-57	907	9.477891384917	32
-57	945	9.877891384917	32
-57	983	10.277891384917	32
-57	1021	10.677891384917	32
-57	1059	11.077891384917	32
-57	1097	11.477891384917	32
-58	147	1.477891384917	32
-58	185	1.877891384917	32
-58	223	2.277891384917	32
-58	261	2.677891384917	32
-58	299	3.077891384917	32
-58	337	3.477891384917	32
-58	375	3.877891384917	32
-58	413	4.277891384917	32
-58	451	4.677891384917	32
-58	489	5.077891384917	32
-58	527	5.477891384917	32
-58	565	5.877891384917	32
-58	603	6.277891384917	32
-58	641	6.677891384917	32
-58	679	7.077891384917	32
-58	717	7.477891384917	32
-58	755	7.877891384917	32
-58	793	8.277891384917	32
-58	831	8.677891384917	32
-58	869	9.077891384917	32
-58	907	9.477891384917	32
-58	945	9.877891384917	32
-58	983	10.277891384917	32
-58	1021	10.677891384917	32
-58	1059	11.077891384917	32
-58	1097	11.477891384917	32
-59	147	1.477891384917	32
-59	185	1.877891384917	32
-59	223	2.277891384917	32
-59	261	2.677891384917	32
-59	299	3.077891384917	32
-59	337	3.477891384917	32
-59	375	3.877891384917	32
-59	413	4.277891384917	32
-59	451	4.677891384917	32
-59	489	5.077891384917	32
-59	527	5.477891384917	32
-59	565	5.877891384917	32
-59	603	6.277891384917	32
-59	641	6.677891384917	32
-59	679	7.077891384917	32
-59	717	7.477891384917	32
-59	755	7.877891384917	32
-59	793	8.277891384917	32
-59	831	8.677891384917	32
-59	869	9.077891384917	32
-59	907	9.477891384917	32
-59	945	9.877891384917	32
-59	983	10.277891384917	32
-59	1021	10.677891384917	32
-59	1059	11.077891384917	32
-59	1097	11.477891384917	32
-60	147	1.477891384917	3.8e-05
-60	185	1.877891384917	3.8e-05
-60	223	2.277891384917	3.8e-05
-60	261	2.677891384917	3.8e-05
-60	299	3.077891384917	3.8e-05
-60	337	3.477891384917	3.8e-05
-60	375	3.877891384917	3.8e-05
-60	413	4.277891384917	3.8e-05
-60	451	4.677891384917	3.8e-05
-60	489	5.077891384917	3.8e-05
-60	527	5.477891384917	3.8e-05
-60	565	5.877891384917	3.8e-05
-60	603	6.277891384917	3.8e-05
-60	641	6.677891384917	3.8e-05
-60	679	7.077891384917	3.8e-05
-60	717	7.477891384917	3.8e-05
-60	755	7.877891384917	3.8e-05
-60	793	8.277891384917	3.8e-05
-60	831	8.677891384917	3.8e-05
-60	869	9.077891384917	3.8e-05
-60	907	9.477891384917	3.8e-05
-60	945	9.877891384917	3.8e-05
-60	983	10.277891384917	3.8e-05
-60	1021	10.677891384917	3.8e-05
-60	1059	11.077891384917	3.8e-05
-60	1097	11.477891384917	3.8e-05
-61	150	1.477892052045	32
-61	188	1.877892052045	32
-61	226	2.277892052045	32
-61	264	2.677892052045	32
-61	302	3.077892052045	32
-61	340	3.477892052045	32
-61	378	3.877892052045	32
-61	416	4.277892052045	32
-61	454	4.677892052045	32
-61	492	5.077892052045	32
-61	530	5.477892052045	32
-61	568	5.877892052045	32
-61	606	6.277892052045	32
-61	644	6.677892052045	32
-61	682	7.077892052045	32
-61	720	7.477892052045	32
-61	758	7.877892052045	32
-61	796	8.277892052045	32
-61	834	8.677892052045	32
-61	872	9.077892052045	32
-61	910	9.477892052045	32
-61	948	9.877892052045	32
-61	986	10.277892052045	32
-61	1024	10.677892052045	32
-61	1062	11.077892052045	32
-61	1100	11.477892052045	32
-62	150	1.477892052045	32
-62	188	1.877892052045	32
-62	226	2.277892052045	32
-62	264	2.677892052045	32
-62	302	3.077892052045	32
-62	340	3.477892052045	32
-62	378	3.877892052045	32
-62	416	4.277892052045	32
-62	454	4.677892052045	32
-62	492	5.077892052045	32
-62	530	5.477892052045	32
-62	568	5.877892052045	32
-62	606	6.277892052045	32
-62	644	6.677892052045	32
-62	682	7.077892052045	32
-62	720	7.477892052045	32
-62	758	7.877892052045	32
-62	796	8.277892052045	32
-62	834	8.677892052045	32
-62	872	9.077892052045	32
-62	910	9.477892052045	32
-62	948	9.877892052045	32
-62	986	10.277892052045	32
-62	1024	10.677892052045	32
-62	1062	11.077892052045	32
-62	1100	11.477892052045	32
-63	150	1.477892052045	32
-63	188	1.877892052045	32
-63	226	2.277892052045	32
-63	264	2.677892052045	32
-63	302	3.077892052045	32
-63	340	3.477892052045	32
-63	378	3.877892052045	32
-63	416	4.277892052045	32
-63	454	4.677892052045	32
-63	492	5.077892052045	32
-63	530	5.477892052045	32
-63	568	5.877892052045	32
-63	606	6.277892052045	32
-63	644	6.677892052045	32
-63	682	7.077892052045	32
-63	720	7.477892052045	32
-63	758	7.877892052045	32
-63	796	8.277892052045	32
-63	834	8.677892052045	32
-63	872	9.077892052045	32
-63	910	9.477892052045	32
-63	948	9.877892052045	32
-63	986	10.277892052045	32
-63	1024	10.677892052045	32
-63	1062	11.077892052045	32
-63	1100	11.477892052045	32
-64	150	1.477892052045	32
-64	188	1.877892052045	32
-64	226	2.277892052045	32
-64	264	2.677892052045	32
-64	302	3.077892052045	32
-64	340	3.477892052045	32
-64	378	3.877892052045	32
-64	416	4.277892052045	32
-64	454	4.677892052045	32
-64	492	5.077892052045	32
-64	530	5.477892052045	32
-64	568	5.877892052045	32
-64	606	6.277892052045	32
-64	644	6.677892052045	32
-64	682	7.077892052045	32
-64	720	7.477892052045	32
-64	758	7.877892052045	32
-64	796	8.277892052045	32
-64	834	8.677892052045	32
-64	872	9.077892052045	32
-64	910	9.477892052045	32
-64	948	9.877892052045	32
-64	986	10.277892052045	32
-64	1024	10.677892052045	32
-64	1062	11.077892052045	32
-64	1100	11.477892052045	32
-65	150	1.477892052045	32
-65	188	1.877892052045	32
-65	226	2.277892052045	32
-65	264	2.677892052045	32
-65	302	3.077892052045	32
-65	340	3.477892052045	32
-65	378	3.877892052045	32
-65	416	4.277892052045	32
-65	454	4.677892052045	32
-65	492	5.077892052045	32
-65	530	5.477892052045	32
-65	568	5.877892052045	32
-65	606	6.277892052045	32
-65	644	6.677892052045	32
-65	682	7.077892052045	32
-65	720	7.477892052045	32
-65	758	7.877892052045	32
-65	796	8.277892052045	32
-65	834	8.677892052045	32
-65	872	9.077892052045	32
-65	910	9.477892052045	32
-65	948	9.877892052045	32
-65	986	10.277892052045	32
-65	1024	10.677892052045	32
-65	1062	11.077892052045	32
-65	1100	11.477892052045	32
-66	156	1.764644050691	1
-66	194	2.164644050691	1
-66	232	2.564644050691	1
-66	270	2.964644050691	1
-66	308	3.364644050691	1
-66	346	3.764644050691	1
-66	384	4.164644050691	1
-66	422	4.564644050691	1
-66	460	4.964644050691	1
-66	498	5.364644050691	1
-66	536	5.764644050691	1
-66	574	6.164644050691	1
-66	612	6.564644050691	1
-66	650	6.964644050691	1
-66	688	7.364644050691	1
-66	726	7.764644050691	1
-66	764	8.164644050691	1
-66	802	8.564644050691	1
-66	840	8.964644050691	1
-66	878	9.364644050691	1
-66	916	9.764644050691	1
-66	954	10.164644050691	1
-66	992	10.564644050691	1
-66	1030	10.964644050691	1
-66	1068	11.364644050691	1
-66	1106	11.764644050691	1
-67	161	1.777853384917	1
-67	199	2.177853384917	1
-67	237	2.577853384917	1
-67	275	2.977853384917	1
-67	313	3.377853384917	1
-67	351	3.777853384917	1
-67	389	4.177853384917	1
-67	427	4.577853384917	1
-67	465	4.977853384917	1
-67	503	5.377853384917	1
-67	541	5.777853384917	1
-67	579	6.177853384917	1
-67	617	6.577853384917	1
-67	655	6.977853384917	1
-67	693	7.377853384917	1
-67	731	7.777853384917	1
-67	769	8.177853384917	1
-67	807	8.577853384917	1
-67	845	8.977853384917	1
-67	883	9.377853384917	1
-67	921	9.777853384917	1
-67	959	10.177853384917	1
-67	997	10.577853384917	1
-67	1035	10.977853384917	1
-67	1073	11.377853384917	1
-67	1111	11.777853384917	1
-vector 68 WirelessNetwork.robot0.app[0] throughput:vector ETV
+22	1	0.214556809491	1
+22	34	0.614556809491	1
+22	76	1.014556809491	1
+22	113	1.414556809491	1
+23	5	0.253279723227	1
+23	39	0.653279723227	1
+23	81	1.053279723227	1
+23	118	1.453279723227	1
+24	10	0.314556809491	256
+24	44	0.714556809491	256
+24	89	1.114556809491	256
+24	123	1.514556809491	256
+25	10	0.1	0
+25	10	0.2	0
+25	10	0.3	0
+25	44	0.4	2560
+25	44	0.5	0
+25	44	0.6	0
+25	44	0.7	0
+25	89	0.8	2560
+25	89	0.9	0
+25	89	1	0
+25	89	1.1	0
+25	123	1.2	2560
+25	123	1.3	0
+25	123	1.4	0
+25	123	1.5	0
+26	10	0.314556809491	1
+26	12	0.314556809491	0
+26	44	0.714556809491	1
+26	46	0.714556809491	0
+26	89	1.114556809491	1
+26	91	1.114556809491	0
+26	123	1.514556809491	1
+26	125	1.514556809491	0
+27	10	0.314556809491	256
+27	12	0.314556809491	0
+27	44	0.714556809491	256
+27	46	0.714556809491	0
+27	89	1.114556809491	256
+27	91	1.114556809491	0
+27	123	1.514556809491	256
+27	125	1.514556809491	0
+28	10	0.314556809491	3
+28	44	0.714556809491	21
+28	89	1.114556809491	23
+28	123	1.514556809491	13
+29	12	0.314556809491	0
+29	46	0.714556809491	0
+29	91	1.114556809491	0
+29	125	1.514556809491	0
+30	12	0.314556809491	256
+30	46	0.714556809491	256
+30	91	1.114556809491	256
+30	125	1.514556809491	256
+31	12	0.1	0
+31	12	0.2	0
+31	12	0.3	0
+31	46	0.4	2560
+31	46	0.5	0
+31	46	0.6	0
+31	46	0.7	0
+31	91	0.8	2560
+31	91	0.9	0
+31	91	1	0
+31	91	1.1	0
+31	125	1.2	2560
+31	125	1.3	0
+31	125	1.4	0
+31	125	1.5	0
+32	12	0.314556809491	24000000
+32	46	0.714556809491	24000000
+32	91	1.114556809491	24000000
+32	125	1.514556809491	24000000
+33	12	0.314556809491	32
+33	46	0.714556809491	32
+33	91	1.114556809491	32
+33	125	1.514556809491	32
+34	13	0.314556809491	1
+34	14	0.314556809491	2
+34	16	0.314594809491	1
+34	17	0.314594809491	0
+34	47	0.714556809491	1
+34	48	0.714556809491	2
+34	50	0.714594809491	1
+34	51	0.714594809491	0
+34	92	1.114556809491	1
+34	93	1.114556809491	2
+34	95	1.114594809491	1
+34	96	1.114594809491	0
+34	126	1.514556809491	1
+34	127	1.514556809491	2
+35	16	0.314594809491	32
+35	50	0.714594809491	32
+35	95	1.114594809491	32
+36	16	0.314594809491	32
+36	50	0.714594809491	32
+36	95	1.114594809491	32
+37	16	0.314594809491	32
+37	50	0.714594809491	32
+37	95	1.114594809491	32
+38	16	0.314594809491	32
+38	50	0.714594809491	32
+38	95	1.114594809491	32
+39	16	0.314594809491	3.8e-05
+39	50	0.714594809491	3.8e-05
+39	95	1.114594809491	3.8e-05
+40	21	0.353279723227	256
+40	55	0.753279723227	256
+40	100	1.153279723227	256
+41	21	0.1	0
+41	21	0.2	0
+41	21	0.3	0
+41	55	0.4	2560
+41	55	0.5	0
+41	55	0.6	0
+41	55	0.7	0
+41	100	0.8	2560
+41	100	0.9	0
+41	100	1	0
+41	100	1.1	0
+42	21	0.353279723227	1
+42	23	0.353279723227	0
+42	55	0.753279723227	1
+42	57	0.753279723227	0
+42	100	1.153279723227	1
+42	102	1.153279723227	0
+43	21	0.353279723227	256
+43	23	0.353279723227	0
+43	55	0.753279723227	256
+43	57	0.753279723227	0
+43	100	1.153279723227	256
+43	102	1.153279723227	0
+44	21	0.353279723227	7
+44	55	0.753279723227	23
+44	100	1.153279723227	17
+45	23	0.353279723227	0
+45	57	0.753279723227	0
+45	102	1.153279723227	0
+46	23	0.353279723227	256
+46	57	0.753279723227	256
+46	102	1.153279723227	256
+47	23	0.1	0
+47	23	0.2	0
+47	23	0.3	0
+47	57	0.4	2560
+47	57	0.5	0
+47	57	0.6	0
+47	57	0.7	0
+47	102	0.8	2560
+47	102	0.9	0
+47	102	1	0
+47	102	1.1	0
+48	23	0.353279723227	24000000
+48	57	0.753279723227	24000000
+48	102	1.153279723227	24000000
+49	23	0.353279723227	32
+49	57	0.753279723227	32
+49	102	1.153279723227	32
+50	24	0.353279723227	1
+50	25	0.353279723227	2
+50	27	0.353317723227	1
+50	28	0.353317723227	0
+50	58	0.753279723227	1
+50	59	0.753279723227	2
+50	61	0.753317723227	1
+50	62	0.753317723227	0
+50	103	1.153279723227	1
+50	104	1.153279723227	2
+50	106	1.153317723227	1
+50	107	1.153317723227	0
+51	27	0.353317723227	32
+51	61	0.753317723227	32
+51	106	1.153317723227	32
+52	27	0.353317723227	32
+52	61	0.753317723227	32
+52	106	1.153317723227	32
+53	27	0.353317723227	32
+53	61	0.753317723227	32
+53	106	1.153317723227	32
+54	27	0.353317723227	32
+54	61	0.753317723227	32
+54	106	1.153317723227	32
+55	27	0.353317723227	3.8e-05
+55	61	0.753317723227	3.8e-05
+55	106	1.153317723227	3.8e-05
+56	34	0.614556809491	1
+56	76	1.014556809491	1
+56	113	1.414556809491	1
+57	39	0.653279723227	1
+57	81	1.053279723227	1
+57	118	1.453279723227	1
+58	65	0.795874504566	500
+58	85	1.114230645408	500
+59	67	0.795874504566	508
+59	86	1.114230645408	508
+60	68	0.795874504566	528
+60	87	1.114230645408	528
+61	70	0.898560388484	500
+62	72	0.898560388484	508
+63	73	0.898560388484	528
+vector 64 WirelessNetwork.robot[0].app[0] throughput:vector ETV
 attr recordingmode vector
 attr source throughput(packetReceived)
 attr title throughput
 attr unit bps
-vector 69 WirelessNetwork.robot1.app[0] throughput:vector ETV
+vector 65 WirelessNetwork.robot[1].app[0] throughput:vector ETV
 attr recordingmode vector
 attr source throughput(packetReceived)
 attr title throughput
 attr unit bps
-25	1120	11.864644456625	3960.1230076857
-31	1120	11.864644456625	3960.1230076857
-46	1120	11.5	2560
-46	1120	11.6	0
-46	1120	11.7	0
-46	1120	11.8	0
-46	1120	11.864644456625	0
-52	1120	11.5	2560
-52	1120	11.6	0
-52	1120	11.7	0
-52	1120	11.8	0
-52	1120	11.864644456625	0
-68	1120	0.1	0
-68	1120	0.2	0
-68	1120	0.3	0
-68	1120	0.4	0
-68	1120	0.5	0
-68	1120	0.6	0
-68	1120	0.7	0
-68	1120	0.8	0
-68	1120	0.9	0
-68	1120	1	0
-68	1120	1.1	0
-68	1120	1.2	0
-68	1120	1.3	0
-68	1120	1.4	0
-68	1120	1.5	0
-68	1120	1.6	0
-68	1120	1.7	0
-68	1120	1.8	0
-68	1120	1.9	0
-68	1120	2	0
-68	1120	2.1	0
-68	1120	2.2	0
-68	1120	2.3	0
-68	1120	2.4	0
-68	1120	2.5	0
-68	1120	2.6	0
-68	1120	2.7	0
-68	1120	2.8	0
-68	1120	2.9	0
-68	1120	3	0
-68	1120	3.1	0
-68	1120	3.2	0
-68	1120	3.3	0
-68	1120	3.4	0
-68	1120	3.5	0
-68	1120	3.6	0
-68	1120	3.7	0
-68	1120	3.8	0
-68	1120	3.9	0
-68	1120	4	0
-68	1120	4.1	0
-68	1120	4.2	0
-68	1120	4.3	0
-68	1120	4.4	0
-68	1120	4.5	0
-68	1120	4.6	0
-68	1120	4.7	0
-68	1120	4.8	0
-68	1120	4.9	0
-68	1120	5	0
-68	1120	5.1	0
-68	1120	5.2	0
-68	1120	5.3	0
-68	1120	5.4	0
-68	1120	5.5	0
-68	1120	5.6	0
-68	1120	5.7	0
-68	1120	5.8	0
-68	1120	5.9	0
-68	1120	6	0
-68	1120	6.1	0
-68	1120	6.2	0
-68	1120	6.3	0
-68	1120	6.4	0
-68	1120	6.5	0
-68	1120	6.6	0
-68	1120	6.7	0
-68	1120	6.8	0
-68	1120	6.9	0
-68	1120	7	0
-68	1120	7.1	0
-68	1120	7.2	0
-68	1120	7.3	0
-68	1120	7.4	0
-68	1120	7.5	0
-68	1120	7.6	0
-68	1120	7.7	0
-68	1120	7.8	0
-68	1120	7.9	0
-68	1120	8	0
-68	1120	8.1	0
-68	1120	8.2	0
-68	1120	8.3	0
-68	1120	8.4	0
-68	1120	8.5	0
-68	1120	8.6	0
-68	1120	8.7	0
-68	1120	8.8	0
-68	1120	8.9	0
-68	1120	9	0
-68	1120	9.1	0
-68	1120	9.2	0
-68	1120	9.3	0
-68	1120	9.4	0
-68	1120	9.5	0
-68	1120	9.6	0
-68	1120	9.7	0
-68	1120	9.8	0
-68	1120	9.9	0
-68	1120	10	0
-68	1120	10.1	0
-68	1120	10.2	0
-68	1120	10.3	0
-68	1120	10.4	0
-68	1120	10.5	0
-68	1120	10.6	0
-68	1120	10.7	0
-68	1120	10.8	0
-68	1120	10.9	0
-68	1120	11	0
-68	1120	11.1	0
-68	1120	11.2	0
-68	1120	11.3	0
-68	1120	11.4	0
-68	1120	11.5	0
-68	1120	11.6	0
-68	1120	11.7	0
-68	1120	11.8	0
-68	1120	11.864644456625	0
-69	1120	0.1	0
-69	1120	0.2	0
-69	1120	0.3	0
-69	1120	0.4	0
-69	1120	0.5	0
-69	1120	0.6	0
-69	1120	0.7	0
-69	1120	0.8	0
-69	1120	0.9	0
-69	1120	1	0
-69	1120	1.1	0
-69	1120	1.2	0
-69	1120	1.3	0
-69	1120	1.4	0
-69	1120	1.5	0
-69	1120	1.6	0
-69	1120	1.7	0
-69	1120	1.8	0
-69	1120	1.9	0
-69	1120	2	0
-69	1120	2.1	0
-69	1120	2.2	0
-69	1120	2.3	0
-69	1120	2.4	0
-69	1120	2.5	0
-69	1120	2.6	0
-69	1120	2.7	0
-69	1120	2.8	0
-69	1120	2.9	0
-69	1120	3	0
-69	1120	3.1	0
-69	1120	3.2	0
-69	1120	3.3	0
-69	1120	3.4	0
-69	1120	3.5	0
-69	1120	3.6	0
-69	1120	3.7	0
-69	1120	3.8	0
-69	1120	3.9	0
-69	1120	4	0
-69	1120	4.1	0
-69	1120	4.2	0
-69	1120	4.3	0
-69	1120	4.4	0
-69	1120	4.5	0
-69	1120	4.6	0
-69	1120	4.7	0
-69	1120	4.8	0
-69	1120	4.9	0
-69	1120	5	0
-69	1120	5.1	0
-69	1120	5.2	0
-69	1120	5.3	0
-69	1120	5.4	0
-69	1120	5.5	0
-69	1120	5.6	0
-69	1120	5.7	0
-69	1120	5.8	0
-69	1120	5.9	0
-69	1120	6	0
-69	1120	6.1	0
-69	1120	6.2	0
-69	1120	6.3	0
-69	1120	6.4	0
-69	1120	6.5	0
-69	1120	6.6	0
-69	1120	6.7	0
-69	1120	6.8	0
-69	1120	6.9	0
-69	1120	7	0
-69	1120	7.1	0
-69	1120	7.2	0
-69	1120	7.3	0
-69	1120	7.4	0
-69	1120	7.5	0
-69	1120	7.6	0
-69	1120	7.7	0
-69	1120	7.8	0
-69	1120	7.9	0
-69	1120	8	0
-69	1120	8.1	0
-69	1120	8.2	0
-69	1120	8.3	0
-69	1120	8.4	0
-69	1120	8.5	0
-69	1120	8.6	0
-69	1120	8.7	0
-69	1120	8.8	0
-69	1120	8.9	0
-69	1120	9	0
-69	1120	9.1	0
-69	1120	9.2	0
-69	1120	9.3	0
-69	1120	9.4	0
-69	1120	9.5	0
-69	1120	9.6	0
-69	1120	9.7	0
-69	1120	9.8	0
-69	1120	9.9	0
-69	1120	10	0
-69	1120	10.1	0
-69	1120	10.2	0
-69	1120	10.3	0
-69	1120	10.4	0
-69	1120	10.5	0
-69	1120	10.6	0
-69	1120	10.7	0
-69	1120	10.8	0
-69	1120	10.9	0
-69	1120	11	0
-69	1120	11.1	0
-69	1120	11.2	0
-69	1120	11.3	0
-69	1120	11.4	0
-69	1120	11.5	0
-69	1120	11.6	0
-69	1120	11.7	0
-69	1120	11.8	0
-69	1120	11.864644456625	0
+25	127	1.514557727129	17585.162692741
+31	127	1.514557727129	17585.162692741
+41	127	1.2	2560
+41	127	1.3	0
+41	127	1.4	0
+41	127	1.5	0
+41	127	1.514557727129	0
+47	127	1.2	2560
+47	127	1.3	0
+47	127	1.4	0
+47	127	1.5	0
+47	127	1.514557727129	0
+64	127	0.1	0
+64	127	0.2	0
+64	127	0.3	0
+64	127	0.4	0
+64	127	0.5	0
+64	127	0.6	0
+64	127	0.7	0
+64	127	0.8	0
+64	127	0.9	0
+64	127	1	0
+64	127	1.1	0
+64	127	1.2	0
+64	127	1.3	0
+64	127	1.4	0
+64	127	1.5	0
+64	127	1.514557727129	0
+65	127	0.1	0
+65	127	0.2	0
+65	127	0.3	0
+65	127	0.4	0
+65	127	0.5	0
+65	127	0.6	0
+65	127	0.7	0
+65	127	0.8	0
+65	127	0.9	0
+65	127	1	0
+65	127	1.1	0
+65	127	1.2	0
+65	127	1.3	0
+65	127	1.4	0
+65	127	1.5	0
+65	127	1.514557727129	0
 

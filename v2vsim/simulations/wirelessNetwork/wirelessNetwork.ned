@@ -8,6 +8,7 @@ import inet.visualizer.common.IntegratedVisualizer;
 network WirelessNetwork
 {
     parameters:
+        int numRobots;
         @display("bgb=600,600");
 
     submodules:
@@ -23,11 +24,7 @@ network WirelessNetwork
             @display("p=50,250");
         }
 
-        robot0: WirelessHost {
-            @display("p=200,300");
-        }
-
-        robot1: WirelessHost {
-            @display("p=400,300");
+        robot[numRobots]: WirelessHost {
+            @display("i=device/wifilaptop");
         }
 }
