@@ -696,3 +696,50 @@ attr title "packet drop: no interface found, packetBytes"
 61	70	0.898560388484	500
 62	72	0.898560388484	508
 63	73	0.898560388484	528
+vector 64 WirelessNetwork.robot[0].app[0] throughput:vector ETV
+attr recordingmode vector
+attr source throughput(packetReceived)
+attr title throughput
+attr unit bps
+vector 65 WirelessNetwork.robot[1].app[0] throughput:vector ETV
+attr recordingmode vector
+attr source throughput(packetReceived)
+attr title throughput
+attr unit bps
+25	94	1.114572505998	17567.328504455
+31	94	1.114572505998	17567.328504455
+41	94	0.8	2560
+41	94	0.9	0
+41	94	1	0
+41	94	1.1	0
+41	94	1.114572505998	0
+47	94	0.8	2560
+47	94	0.9	0
+47	94	1	0
+47	94	1.1	0
+47	94	1.114572505998	0
+64	94	0.1	0
+64	94	0.2	0
+64	94	0.3	0
+64	94	0.4	0
+64	94	0.5	0
+64	94	0.6	0
+64	94	0.7	0
+64	94	0.8	0
+64	94	0.9	0
+64	94	1	0
+64	94	1.1	0
+64	94	1.114572505998	0
+65	94	0.1	0
+65	94	0.2	0
+65	94	0.3	0
+65	94	0.4	0
+65	94	0.5	0
+65	94	0.6	0
+65	94	0.7	0
+65	94	0.8	0
+65	94	0.9	0
+65	94	1	0
+65	94	1.1	0
+65	94	1.114572505998	0
+

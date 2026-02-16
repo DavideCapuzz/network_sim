@@ -1,30 +1,43 @@
 package v2vsim.simulations.wirelessNetwork;
 
-import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
 import inet.node.inet.WirelessHost;
+import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
 import inet.physicallayer.wireless.ieee80211.packetlevel.Ieee80211ScalarRadioMedium;
 import inet.visualizer.common.IntegratedVisualizer;
 
 network WirelessNetwork
 {
     parameters:
-        int numRobots;
-        @display("bgb=600,600");
+        int numRobots = default(2);
+        @display("bgb=800,600");
 
     submodules:
-        visualizer: IntegratedVisualizer {
+        // IPv4 network configurator
+        configurator: Ipv4NetworkConfigurator {
             @display("p=50,50");
         }
 
-        configurator: Ipv4NetworkConfigurator {
+        // Radio medium
+        radioMedium: Ieee80211ScalarRadioMedium {
             @display("p=50,150");
         }
 
-        radioMedium: Ieee80211ScalarRadioMedium {
+        // Visualization
+        visualizer: IntegratedVisualizer {
             @display("p=50,250");
         }
 
+        // Robots
         robot[numRobots]: WirelessHost {
-            @display("i=device/wifilaptop");
+            parameters:
+                mobility.typename = "v2vsim.RobotExternalMobility";
+                numApps = 1;
+                app[0].typename = "v2vsim.RobotApp";
+
+                // Configure WLAN interface
+                numWlanInterfaces = 1;
+                wlan[0].typename = "Ieee80211ScalarRadio";
+                wlan[0].radio.typename = "Ieee80211ScalarRadio";
+            @display("p=100,100");
         }
 }

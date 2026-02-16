@@ -1,4 +1,4 @@
-                                                                
+file 25380 1769458899                                           
 version 3
 run General-0-20260126-19:35:57-172221
 attr configname General
@@ -467,3 +467,20 @@ attr title "packet drop: no interface found, packetBytes"
 61	24450 25 70 70 0.898560388484 0.898560388484 1 500 500 500 250000
 62	24475 25 72 72 0.898560388484 0.898560388484 1 508 508 508 258064
 63	24500 25 73 73 0.898560388484 0.898560388484 1 528 528 528 278784
+vector 64 WirelessNetwork.robot[0].app[0] throughput:vector ETV
+attr recordingmode vector
+attr source throughput(packetReceived)
+attr title throughput
+attr unit bps
+vector 65 WirelessNetwork.robot[1].app[0] throughput:vector ETV
+attr recordingmode vector
+attr source throughput(packetReceived)
+attr title throughput
+attr unit bps
+25	24855 37 94 94 1.114572505998 1.114572505998 1 17567.328504455 17567.328504455 17567.328504455 308611030.78342
+31	24892 37 94 94 1.114572505998 1.114572505998 1 17567.328504455 17567.328504455 17567.328504455 308611030.78342
+41	24929 72 94 94 0.8 1.114572505998 5 0 2560 2560 6553600
+47	25001 72 94 94 0.8 1.114572505998 5 0 2560 2560 6553600
+64	25073 153 94 94 0.1 1.114572505998 12 0 0 0 0
+65	25226 153 94 94 0.1 1.114572505998 12 0 0 0 0
+
