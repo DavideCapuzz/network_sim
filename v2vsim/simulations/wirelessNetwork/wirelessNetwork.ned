@@ -30,14 +30,22 @@ network WirelessNetwork
         // Robots
         robot[numRobots]: WirelessHost {
             parameters:
+                // Use custom mobility and app
                 mobility.typename = "v2vsim.RobotExternalMobility";
                 numApps = 1;
                 app[0].typename = "v2vsim.RobotApp";
 
+                // Configure mobility parameters per robot
+                mobility.listenPort = 8000 + index;
+                mobility.externalPort = 9000 + index;
+
+                // Configure app parameters per robot
+                app[0].localPort = 5000 + index;
+                app[0].externalPort = 9000 + index;
+
                 // Configure WLAN interface
                 numWlanInterfaces = 1;
-                wlan[0].typename = "Ieee80211ScalarRadio";
-                wlan[0].radio.typename = "Ieee80211ScalarRadio";
-            @display("p=100,100");
+
+            @display("p=100+100*index,300");
         }
 }

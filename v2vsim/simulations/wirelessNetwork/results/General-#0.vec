@@ -1,78 +1,62 @@
 version 3
-run General-0-20260126-19:35:57-172221
+run General-0-20260217-02:05:58-78748
 attr configname General
-attr datetime 20260126-19:35:57
-attr datetimef 20260126-193557
+attr datetime 20260217-02:05:58
+attr datetimef 20260217-020558
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
-attr network WirelessNetwork
-attr processid 172221
+attr network v2vsim.simulations.wirelessNetwork.WirelessNetwork
+attr processid 78748
 attr repetition 0
 attr replication #0
 attr resultdir results
 attr runnumber 0
 attr seedset 0
 config image-path ../../../../packages/inet/images
-config description "N robots communicating wirelessly"
-config network WirelessNetwork
+config network v2vsim.simulations.wirelessNetwork.WirelessNetwork
+config description "Multi-robot wireless communication with Docker integration"
 config sim-time-limit 300s
-config *.numRobots 2
 config cmdenv-express-mode true
 config **.cmdenv-log-level info
-config **.radio.displayReception true
-config **.radio.displayTransmission true
+config *.numRobots 2
 config *.configurator.config "xml(\"<config><interface hosts='**' address='10.0.0.x' netmask='255.255.255.0'/></config>\")"
-config *.robot*.numWlanInterfaces 1
-config *.robot*.wlan[0].typename Ieee80211Interface
-config *.robot*.wlan[0].radio.typename Ieee80211ScalarRadio
-config *.robot*.wlan[0].radio.bandName "\"2.4 GHz\""
-config *.robot*.wlan[0].radio.transmitter.power 2mW
-config *.robot*.wlan[0].radio.receiver.sensitivity -85dBm
-config *.robot*.wlan[0].radio.receiver.noiseFloor -110dBm
-config *.robot*.wlan[0].radio.receiver.energyDetection -90dBm
-config *.robot*.wlan[0].radio.receiver.ignoreInterference false
-config *.robot*.wlan[0].radio.transmitter.communicationRange 150m
-config *.robot*.wlan[0].mac.typename Ieee80211Mac
-config *.robot*.wlan[0].mac.dcf.channelAccess.typename Dcaf
-config *.robot*.wlan[0].mac.useAck false
-config *.robot*.wlan[0].mac.fullDuplex false
-config *.robot*.wlan[0].mac.headerLength 23B
-config *.robot*.numApps 1
-config *.robot*.app[0].typename UdpBasicApp
-config *.robot*.app[0].destAddresses "\"255.255.255.255\""
-config *.robot*.app[0].destPort 5000
-config *.robot*.app[0].localPort 5000
-config *.robot*.app[0].messageLength 500B
-config *.robot*.app[0].sendInterval exponential(1s)
-config *.robot*.app[0].packetName "\"UDPData\""
-config *.robot[*].mobility.initFromDisplayString false
-config *.robot[*].mobility.typename StationaryMobility
-config *.robot[0].mobility.initialX 400m
+config *.robot[*].mobility.maxSpeed 10mps
+config *.robot[*].mobility.externalHost "\"127.0.0.1\""
+config *.robot[0].mobility.initialX 100m
 config *.robot[0].mobility.initialY 300m
-config *.robot[*].mobility.initialZ 0m
-config *.robot[1].mobility.initialX 100m
-config *.robot[1].mobility.initialY 200m
+config *.robot[0].mobility.initialZ 0m
+config *.robot[1].mobility.initialX 200m
+config *.robot[1].mobility.initialY 300m
+config *.robot[1].mobility.initialZ 0m
+config *.robot[*].app[0].externalHost "\"127.0.0.1\""
+config *.robot[*].numWlanInterfaces 1
+config *.robot[*].wlan[0].typename Ieee80211Interface
+config *.robot[*].wlan[0].radio.typename Ieee80211ScalarRadio
+config *.robot[*].wlan[0].radio.bandName "\"2.4 GHz\""
+config *.robot[*].wlan[0].radio.transmitter.power 20mW
+config *.robot[*].wlan[0].radio.receiver.sensitivity -85dBm
+config *.robot[*].wlan[0].radio.receiver.ignoreInterference false
+config *.robot[*].wlan[0].radio.transmitter.communicationRange 200m
+config *.robot[*].wlan[0].radio.displayCommunicationRange true
+config *.robot[*].wlan[0].mac.typename Ieee80211Mac
+config *.robot[*].wlan[0].mac.dcf.channelAccess.typename Dcaf
 config *.visualizer.*.mobilityVisualizer.displayPositions true
+config *.visualizer.*.mobilityVisualizer.displayOrientations true
+config *.visualizer.*.mobilityVisualizer.displayVelocities true
 config *.visualizer.*.mobilityVisualizer.displayMovementTrails true
+config *.visualizer.*.mediumVisualizer.displayCommunicationRanges true
+config *.visualizer.*.mediumVisualizer.displayInterferenceRanges false
 config *.visualizer.*.mediumVisualizer.displaySignals true
-config *.visualizer.*.mediumVisualizer.displaySignalPropagation true
-config *.visualizer.*.mediumVisualizer.displaySignalDepartures true
-config *.visualizer.*.mediumVisualizer.displaySignalArrivals true
-config *.visualizer.*.mediumVisualizer.signalShape "\"ring\""
-config *.visualizer.*.mediumVisualizer.signalPropagationAnimationSpeed 5
-config *.visualizer.*.physicalLinkVisualizer.displayLinks true
-config *.visualizer.*.physicalLinkVisualizer.packetFilter "\"UDPData*\""
-config *.visualizer.*.mediumVisualizer.signalColor "\"red\""
-config *.visualizer.*.mediumVisualizer.fadeOutMode "\"simulationTime\""
-config *.radioMedium.backgroundNoiseLevel -110dBm
-config *.radioMedium.interferenceMode "\"scalar\""
-config *.radioMedium.pathLoss.typename LogNormalShadowing
-config *.radioMedium.pathLoss.alpha 2
-config **.radio.displayCommunicationRange true
+config *.visualizer.*.mediumVisualizer.signalColor "\"yellow\""
+config *.visualizer.*.mediumVisualizer.signalPropagationAnimationSpeed 1000
+config *.visualizer.*.dataLinkVisualizer.displayLinks true
+config *.visualizer.*.dataLinkVisualizer.packetFilter "\"wlan*\""
+config *.radioMedium.propagation.typename ConstantSpeedPropagation
+config *.radioMedium.pathLoss.typename FreeSpacePathLoss
 
 vector 0 WirelessNetwork.robot[0].wlan[0].mac.dcf frameSequenceActive:vector ETV
 attr autoWarmupFilter false
@@ -190,556 +174,176 @@ vector 21 WirelessNetwork.robot[1].wlan[0].mac.dcf.recoveryProcedure contentionW
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr title "contention window"
-vector 22 WirelessNetwork.robot[0].wlan[0].agent sentRequest:vector ETV
+vector 22 WirelessNetwork.robot[0].udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 23 WirelessNetwork.robot[0].lo[0].lo rcvdPkFromHl:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetReceivedFromUpper
+attr title "packets received from higher layer, packetBytes"
+vector 24 WirelessNetwork.robot[0].lo[0].lo passedUpPk:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSentToUpper
+attr title "packets passed to higher layer, packetBytes"
+vector 25 WirelessNetwork.robot[0].udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetReceived
+attr title "packets received, packetBytes"
+vector 26 WirelessNetwork.robot[1].udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 27 WirelessNetwork.robot[1].lo[0].lo rcvdPkFromHl:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetReceivedFromUpper
+attr title "packets received from higher layer, packetBytes"
+vector 28 WirelessNetwork.robot[1].lo[0].lo passedUpPk:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSentToUpper
+attr title "packets passed to higher layer, packetBytes"
+vector 29 WirelessNetwork.robot[1].udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetReceived
+attr title "packets received, packetBytes"
+vector 30 WirelessNetwork.robot[0].wlan[0].agent sentRequest:vector ETV
 attr recordingmode vector
 attr title "sent requests"
-vector 23 WirelessNetwork.robot[1].wlan[0].agent sentRequest:vector ETV
+vector 31 WirelessNetwork.robot[1].wlan[0].agent sentRequest:vector ETV
 attr recordingmode vector
 attr title "sent requests"
-vector 24 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
+vector 32 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths"
 attr unit b
-vector 25 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
-attr interpolationmode linear
-attr recordingmode vector
-attr source throughput(packetPushStarted)
-attr title "incoming datarate"
-attr unit bps
-vector 26 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
+vector 33 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + count(packetPushStarted) - count(packetPulled) - count(packetRemoved) - count(packetDropped)))"
 attr title "queue length"
 attr unit pk
-vector 27 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
+vector 34 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetPushStarted)) - sum(packetLength(packetPulled)) - sum(packetLength(packetRemoved)) - sum(packetLength(packetDropped))))"
 attr title "queue bit length"
 attr unit b
-vector 28 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
+vector 35 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "backoff periods"
-vector 29 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
+vector 36 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetPulled)
 attr title "queueing times"
 attr unit s
-vector 30 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
+vector 37 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths"
 attr unit b
-vector 31 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
-attr interpolationmode linear
-attr recordingmode vector
-attr source throughput(packetPulled)
-attr title "outgoing datarate"
-attr unit bps
-vector 32 WirelessNetwork.robot[0].wlan[0].mac.dcf datarateSelected:vector ETV
+vector 38 WirelessNetwork.robot[0].wlan[0].mac.dcf datarateSelected:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "datarates selected"
-vector 33 WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
+vector 39 WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent to lower layer, packetBytes"
-vector 34 WirelessNetwork.robot[0].wlan[0].radio transmissionState:vector ETV
+vector 40 WirelessNetwork.robot[0].wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source transmissionStateChanged
 attr title "Radio transmission state"
-vector 35 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
+vector 41 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent, packetBytes"
-vector 36 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
+vector 42 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, packetBytes"
-vector 37 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
+vector 43 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Broadcast(packetSentToPeer)
 attr title "packets sent: broadcast , packetBytes"
-vector 38 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
+vector 44 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, packetBytes"
-vector 39 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
+vector 45 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
-vector 40 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
+vector 46 WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr title "packets received from lower layer, packetBytes"
+vector 47 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr title "packets received, packetBytes"
+vector 48 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source ieee80211Multicast(packetReceivedFromPeer)
+attr title "packets received: multicast, packetBytes"
+vector 49 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source ieee80211Broadcast(packetReceivedFromPeer)
+attr title "packets received: broadcast, packetBytes"
+vector 50 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source ieee80211NotRetry(packetReceivedFromPeer)
+attr title "packets received: without retry, packetBytes"
+vector 51 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths"
 attr unit b
-vector 41 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
-attr interpolationmode linear
-attr recordingmode vector
-attr source throughput(packetPushStarted)
-attr title "incoming datarate"
-attr unit bps
-vector 42 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
+vector 52 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + count(packetPushStarted) - count(packetPulled) - count(packetRemoved) - count(packetDropped)))"
 attr title "queue length"
 attr unit pk
-vector 43 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
+vector 53 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetPushStarted)) - sum(packetLength(packetPulled)) - sum(packetLength(packetRemoved)) - sum(packetLength(packetDropped))))"
 attr title "queue bit length"
 attr unit b
-vector 44 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
+vector 54 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "backoff periods"
-vector 45 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
+vector 55 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetPulled)
 attr title "queueing times"
 attr unit s
-vector 46 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
-attr interpolationmode none
-attr recordingmode vector
-attr source packetLength(packetPulled)
-attr title "outgoing packet lengths"
-attr unit b
-vector 47 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
-attr interpolationmode linear
-attr recordingmode vector
-attr source throughput(packetPulled)
-attr title "outgoing datarate"
-attr unit bps
-vector 48 WirelessNetwork.robot[1].wlan[0].mac.dcf datarateSelected:vector ETV
-attr interpolationmode none
-attr recordingmode vector
-attr title "datarates selected"
-vector 49 WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets sent to lower layer, packetBytes"
-vector 50 WirelessNetwork.robot[1].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr recordingmode vector
-attr source transmissionStateChanged
-attr title "Radio transmission state"
-vector 51 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets sent, packetBytes"
-vector 52 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Multicast(packetSentToPeer)
-attr title "packets sent: multicast, packetBytes"
-vector 53 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Broadcast(packetSentToPeer)
-attr title "packets sent: broadcast , packetBytes"
-vector 54 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211NotRetry(packetSentToPeer)
-attr title "packets sent: without retry, packetBytes"
-vector 55 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
-attr interpolationmode none
-attr recordingmode vector
-attr source queueingTime(packetDequeued)
-attr title "queueing times"
-vector 56 WirelessNetwork.robot[0].wlan[0].agent dropConfirm:vector ETV
-attr recordingmode vector
-attr title "dropped confirms"
-vector 57 WirelessNetwork.robot[1].wlan[0].agent dropConfirm:vector ETV
-attr recordingmode vector
-attr title "dropped confirms"
-vector 58 WirelessNetwork.robot[0].app[0] packetSent:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source packetSent
-attr title "packets sent, packetBytes"
-vector 59 WirelessNetwork.robot[0].udp packetSent:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source packetSent
-attr title "packets sent, packetBytes"
-vector 60 WirelessNetwork.robot[0].ipv4.ip packetDropNoInterfaceFound:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source packetDropReasonIsNoInterfaceFound(packetDropped)
-attr title "packet drop: no interface found, packetBytes"
-vector 61 WirelessNetwork.robot[1].app[0] packetSent:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source packetSent
-attr title "packets sent, packetBytes"
-vector 62 WirelessNetwork.robot[1].udp packetSent:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source packetSent
-attr title "packets sent, packetBytes"
-vector 63 WirelessNetwork.robot[1].ipv4.ip packetDropNoInterfaceFound:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source packetDropReasonIsNoInterfaceFound(packetDropped)
-attr title "packet drop: no interface found, packetBytes"
-0	0	0	0
-0	0	0	0
-0	12	0.314556809491	1
-0	16	0.314594809491	0
-0	46	0.714556809491	1
-0	50	0.714594809491	0
-0	91	1.114556809491	1
-1	0	0	0
-1	0	0	0
-1	12	0.314556809491	1
-1	16	0.314594809491	0
-1	46	0.714556809491	1
-1	50	0.714594809491	0
-1	91	1.114556809491	1
-2	0	0	0
-2	0	0	0
-2	10	0.314556809491	1
-2	11	0.314556809491	0
-2	44	0.714556809491	1
-2	45	0.714556809491	0
-2	89	1.114556809491	1
-2	90	1.114556809491	0
-3	0	0	0
-4	0	0	0
-5	0	0	0
-6	0	0	0
-6	0	0	0
-6	23	0.353279723227	1
-6	27	0.353317723227	0
-6	57	0.753279723227	1
-6	61	0.753317723227	0
-7	0	0	0
-7	0	0	0
-7	23	0.353279723227	1
-7	27	0.353317723227	0
-7	57	0.753279723227	1
-7	61	0.753317723227	0
-8	0	0	0
-8	0	0	0
-8	21	0.353279723227	1
-8	22	0.353279723227	0
-8	55	0.753279723227	1
-8	56	0.753279723227	0
-9	0	0	0
-10	0	0	0
-11	0	0	0
-12	0	0	0
-12	0	0	0
-12	0	0	2
-12	13	0.314556809491	3
-12	17	0.314594809491	2
-12	47	0.714556809491	3
-12	51	0.714594809491	2
-12	92	1.114556809491	3
-13	0	0	0
-13	4	0.214556809491	0
-13	37	0.614556809491	0
-13	79	1.014556809491	0
-14	0	0	0
-14	0	0	0
-14	0	0	2
-14	24	0.353279723227	3
-14	28	0.353317723227	2
-14	58	0.753279723227	3
-14	62	0.753317723227	2
-15	0	0	0
-15	8	0.253279723227	0
-15	42	0.653279723227	0
-15	84	1.053279723227	0
-16	0	0	1
-16	13	0.314556809491	0
-16	17	0.314594809491	1
-16	26	0.353280778049	2
-16	29	0.353318778049	1
-16	47	0.714556809491	0
-16	51	0.714594809491	1
-16	60	0.753280778049	2
-16	63	0.753318778049	1
-16	92	1.114556809491	0
-17	0	0	0
-17	0	0	0
-17	10	0.314556809491	0
-17	10	0.314556809491	2
-17	11	0.314556809491	2
-17	11	0.314556809491	0
-17	13	0.314556809491	0
-17	13	0.314556809491	0
-17	17	0.314594809491	0
-17	17	0.314594809491	0
-17	26	0.353280778049	0
-17	26	0.353280778049	0
-17	29	0.353318778049	0
-17	29	0.353318778049	0
-17	44	0.714556809491	0
-17	44	0.714556809491	2
-17	45	0.714556809491	2
-17	45	0.714556809491	0
-17	47	0.714556809491	0
-17	47	0.714556809491	0
-17	51	0.714594809491	0
-17	51	0.714594809491	0
-17	60	0.753280778049	0
-17	60	0.753280778049	0
-17	63	0.753318778049	0
-17	63	0.753318778049	0
-17	89	1.114556809491	0
-17	89	1.114556809491	2
-17	90	1.114556809491	2
-17	90	1.114556809491	0
-17	92	1.114556809491	0
-17	92	1.114556809491	0
-18	0	0	1
-18	15	0.314557864313	2
-18	18	0.314595864313	1
-18	24	0.353279723227	0
-18	28	0.353317723227	1
-18	49	0.714557864313	2
-18	52	0.714595864313	1
-18	58	0.753279723227	0
-18	62	0.753317723227	1
-18	94	1.114557864313	2
-19	0	0	0
-19	0	0	0
-19	15	0.314557864313	0
-19	15	0.314557864313	0
-19	18	0.314595864313	0
-19	18	0.314595864313	0
-19	21	0.353279723227	0
-19	21	0.353279723227	2
-19	22	0.353279723227	2
-19	22	0.353279723227	0
-19	24	0.353279723227	0
-19	24	0.353279723227	0
-19	28	0.353317723227	0
-19	28	0.353317723227	0
-19	49	0.714557864313	0
-19	49	0.714557864313	0
-19	52	0.714595864313	0
-19	52	0.714595864313	0
-19	55	0.753279723227	0
-19	55	0.753279723227	2
-19	56	0.753279723227	2
-19	56	0.753279723227	0
-19	58	0.753279723227	0
-19	58	0.753279723227	0
-19	62	0.753317723227	0
-19	62	0.753317723227	0
-19	94	1.114557864313	0
-19	94	1.114557864313	0
-20	0	0	31
-21	0	0	31
-22	1	0.214556809491	1
-22	34	0.614556809491	1
-22	76	1.014556809491	1
-23	5	0.253279723227	1
-23	39	0.653279723227	1
-23	81	1.053279723227	1
-24	10	0.314556809491	256
-24	44	0.714556809491	256
-24	89	1.114556809491	256
-25	10	0.1	0
-25	10	0.2	0
-25	10	0.3	0
-25	44	0.4	2560
-25	44	0.5	0
-25	44	0.6	0
-25	44	0.7	0
-25	89	0.8	2560
-25	89	0.9	0
-25	89	1	0
-25	89	1.1	0
-26	10	0.314556809491	1
-26	12	0.314556809491	0
-26	44	0.714556809491	1
-26	46	0.714556809491	0
-26	89	1.114556809491	1
-26	91	1.114556809491	0
-27	10	0.314556809491	256
-27	12	0.314556809491	0
-27	44	0.714556809491	256
-27	46	0.714556809491	0
-27	89	1.114556809491	256
-27	91	1.114556809491	0
-28	10	0.314556809491	3
-28	44	0.714556809491	21
-28	89	1.114556809491	23
-29	12	0.314556809491	0
-29	46	0.714556809491	0
-29	91	1.114556809491	0
-30	12	0.314556809491	256
-30	46	0.714556809491	256
-30	91	1.114556809491	256
-31	12	0.1	0
-31	12	0.2	0
-31	12	0.3	0
-31	46	0.4	2560
-31	46	0.5	0
-31	46	0.6	0
-31	46	0.7	0
-31	91	0.8	2560
-31	91	0.9	0
-31	91	1	0
-31	91	1.1	0
-32	12	0.314556809491	24000000
-32	46	0.714556809491	24000000
-32	91	1.114556809491	24000000
-33	12	0.314556809491	32
-33	46	0.714556809491	32
-33	91	1.114556809491	32
-34	13	0.314556809491	1
-34	14	0.314556809491	2
-34	16	0.314594809491	1
-34	17	0.314594809491	0
-34	47	0.714556809491	1
-34	48	0.714556809491	2
-34	50	0.714594809491	1
-34	51	0.714594809491	0
-34	92	1.114556809491	1
-34	93	1.114556809491	2
-35	16	0.314594809491	32
-35	50	0.714594809491	32
-36	16	0.314594809491	32
-36	50	0.714594809491	32
-37	16	0.314594809491	32
-37	50	0.714594809491	32
-38	16	0.314594809491	32
-38	50	0.714594809491	32
-39	16	0.314594809491	3.8e-05
-39	50	0.714594809491	3.8e-05
-40	21	0.353279723227	256
-40	55	0.753279723227	256
-41	21	0.1	0
-41	21	0.2	0
-41	21	0.3	0
-41	55	0.4	2560
-41	55	0.5	0
-41	55	0.6	0
-41	55	0.7	0
-42	21	0.353279723227	1
-42	23	0.353279723227	0
-42	55	0.753279723227	1
-42	57	0.753279723227	0
-43	21	0.353279723227	256
-43	23	0.353279723227	0
-43	55	0.753279723227	256
-43	57	0.753279723227	0
-44	21	0.353279723227	7
-44	55	0.753279723227	23
-45	23	0.353279723227	0
-45	57	0.753279723227	0
-46	23	0.353279723227	256
-46	57	0.753279723227	256
-47	23	0.1	0
-47	23	0.2	0
-47	23	0.3	0
-47	57	0.4	2560
-47	57	0.5	0
-47	57	0.6	0
-47	57	0.7	0
-48	23	0.353279723227	24000000
-48	57	0.753279723227	24000000
-49	23	0.353279723227	32
-49	57	0.753279723227	32
-50	24	0.353279723227	1
-50	25	0.353279723227	2
-50	27	0.353317723227	1
-50	28	0.353317723227	0
-50	58	0.753279723227	1
-50	59	0.753279723227	2
-50	61	0.753317723227	1
-50	62	0.753317723227	0
-51	27	0.353317723227	32
-51	61	0.753317723227	32
-52	27	0.353317723227	32
-52	61	0.753317723227	32
-53	27	0.353317723227	32
-53	61	0.753317723227	32
-54	27	0.353317723227	32
-54	61	0.753317723227	32
-55	27	0.353317723227	3.8e-05
-55	61	0.753317723227	3.8e-05
-56	34	0.614556809491	1
-56	76	1.014556809491	1
-57	39	0.653279723227	1
-57	81	1.053279723227	1
-58	65	0.795874504566	500
-58	85	1.114230645408	500
-59	67	0.795874504566	508
-59	86	1.114230645408	508
-60	68	0.795874504566	528
-60	87	1.114230645408	528
-61	70	0.898560388484	500
-62	72	0.898560388484	508
-63	73	0.898560388484	528
-vector 64 WirelessNetwork.robot[0].app[0] throughput:vector ETV
-attr recordingmode vector
-attr source throughput(packetReceived)
-attr title throughput
-attr unit bps
-vector 65 WirelessNetwork.robot[1].app[0] throughput:vector ETV
-attr recordingmode vector
-attr source throughput(packetReceived)
-attr title throughput
-attr unit bps
-25	94	1.114572505998	17567.328504455
-31	94	1.114572505998	17567.328504455
-41	94	0.8	2560
-41	94	0.9	0
-41	94	1	0
-41	94	1.1	0
-41	94	1.114572505998	0
-47	94	0.8	2560
-47	94	0.9	0
-47	94	1	0
-47	94	1.1	0
-47	94	1.114572505998	0
-64	94	0.1	0
-64	94	0.2	0
-64	94	0.3	0
-64	94	0.4	0
-64	94	0.5	0
-64	94	0.6	0
-64	94	0.7	0
-64	94	0.8	0
-64	94	0.9	0
-64	94	1	0
-64	94	1.1	0
-64	94	1.114572505998	0
-65	94	0.1	0
-65	94	0.2	0
-65	94	0.3	0
-65	94	0.4	0
-65	94	0.5	0
-65	94	0.6	0
-65	94	0.7	0
-65	94	0.8	0
-65	94	0.9	0
-65	94	1	0
-65	94	1.1	0
-65	94	1.114572505998	0
-
+vector 56 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue 

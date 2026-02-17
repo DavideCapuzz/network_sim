@@ -31,7 +31,34 @@
   /home/ubuntu/packages/inet/src/inet/common/packet/chunk/SequenceChunk.h \
   /home/ubuntu/packages/inet/src/inet/common/packet/chunk/SliceChunk.h \
   /home/ubuntu/packages/inet/src/inet/common/packet/tag/ITaggedObject.h \
-  /home/ubuntu/packages/inet/src/inet/common/packet/tag/SharingTagSet.h
+  /home/ubuntu/packages/inet/src/inet/common/packet/tag/SharingTagSet.h \
+  /home/ubuntu/packages/inet/src/inet/transportlayer/contract/udp/UdpSocket.h \
+  /home/ubuntu/packages/inet/src/inet/common/packet/Message.h \
+  /home/ubuntu/packages/inet/src/inet/common/socket/ISocket.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/common/L3Address.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/common/ModuleIdAddress.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/common/ModulePathAddress.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/contract/clns/ClnsAddress.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/contract/IInterfaceTable.h \
+  /home/ubuntu/packages/inet/src/inet/transportlayer/contract/udp/UdpControlInfo.h \
+  /home/ubuntu/packages/inet/src/inet/transportlayer/contract/udp/UdpControlInfo_m.h \
+  /home/ubuntu/packages/inet/src/inet/common/INETDefs_m.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/common/L3Address_m.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/common/L3AddressResolver.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/contract/IRoutingTable.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/contract/IRoute.h \
+  /home/ubuntu/packages/inet/src/inet/networklayer/common/NetworkInterface.h \
+  /home/ubuntu/packages/inet/src/inet/common/lifecycle/ILifecycle.h \
+  /home/ubuntu/packages/inet/src/inet/common/ModuleRefByPar.h \
+  /home/ubuntu/packages/inet/src/inet/common/ModuleAccess.h \
+  /home/ubuntu/packages/inet/src/inet/common/packet/tag/TagSet.h \
+  /home/ubuntu/packages/inet/src/inet/common/Protocol.h \
+  /home/ubuntu/packages/inet/src/inet/common/Simsignals.h \
+  /home/ubuntu/packages/inet/src/inet/common/Simsignals_m.h \
+  /home/ubuntu/packages/inet/src/inet/common/StringFormat.h \
+  /home/ubuntu/packages/inet/src/inet/queueing/base/PacketProcessorBase.h \
+  /home/ubuntu/packages/inet/src/inet/queueing/contract/IPacketProcessor.h \
+  /home/ubuntu/packages/inet/src/inet/queueing/contract/IPassivePacketSink.h
 
 RobotApp.h:
 
@@ -100,3 +127,57 @@ RobotApp.h:
 /home/ubuntu/packages/inet/src/inet/common/packet/tag/ITaggedObject.h:
 
 /home/ubuntu/packages/inet/src/inet/common/packet/tag/SharingTagSet.h:
+
+/home/ubuntu/packages/inet/src/inet/transportlayer/contract/udp/UdpSocket.h:
+
+/home/ubuntu/packages/inet/src/inet/common/packet/Message.h:
+
+/home/ubuntu/packages/inet/src/inet/common/socket/ISocket.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/common/L3Address.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/common/ModuleIdAddress.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/common/ModulePathAddress.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/contract/clns/ClnsAddress.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/contract/IInterfaceTable.h:
+
+/home/ubuntu/packages/inet/src/inet/transportlayer/contract/udp/UdpControlInfo.h:
+
+/home/ubuntu/packages/inet/src/inet/transportlayer/contract/udp/UdpControlInfo_m.h:
+
+/home/ubuntu/packages/inet/src/inet/common/INETDefs_m.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/common/L3Address_m.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/common/L3AddressResolver.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/contract/IRoutingTable.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/contract/IRoute.h:
+
+/home/ubuntu/packages/inet/src/inet/networklayer/common/NetworkInterface.h:
+
+/home/ubuntu/packages/inet/src/inet/common/lifecycle/ILifecycle.h:
+
+/home/ubuntu/packages/inet/src/inet/common/ModuleRefByPar.h:
+
+/home/ubuntu/packages/inet/src/inet/common/ModuleAccess.h:
+
+/home/ubuntu/packages/inet/src/inet/common/packet/tag/TagSet.h:
+
+/home/ubuntu/packages/inet/src/inet/common/Protocol.h:
+
+/home/ubuntu/packages/inet/src/inet/common/Simsignals.h:
+
+/home/ubuntu/packages/inet/src/inet/common/Simsignals_m.h:
+
+/home/ubuntu/packages/inet/src/inet/common/StringFormat.h:
+
+/home/ubuntu/packages/inet/src/inet/queueing/base/PacketProcessorBase.h:
+
+/home/ubuntu/packages/inet/src/inet/queueing/contract/IPacketProcessor.h:
+
+/home/ubuntu/packages/inet/src/inet/queueing/contract/IPassivePacketSink.h:
