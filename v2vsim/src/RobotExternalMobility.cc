@@ -139,6 +139,12 @@ void RobotExternalMobility::pollExternalPosition()
                          (struct sockaddr*)&from_addr, &from_len);
 
     if (n > 0) {
+        // Print source address
+        char src_ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &from_addr.sin_addr, src_ip, INET_ADDRSTRLEN);
+        EV_INFO << "Robot " << robotId << " received " << n
+                << " bytes from " << src_ip << ":" << ntohs(from_addr.sin_port) << "\n";
+
         std::vector<uint8_t> data(buffer, buffer + n);
         parsePositionUpdate(data);
     }

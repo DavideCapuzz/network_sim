@@ -1,5 +1,6 @@
 services:
   dev:
+    container_name: omnetpp_sim
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,12 +11,31 @@ services:
         USER_UID: 1000
         USER_GID: 1000
 
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
     volumes:
       - .:/home/ubuntu/src:rw
-
     ports:
       - "6083:6083"
+      # Expose OMNeT++ ports for external communication
+      - "8000:8000/udp"  # Robot 0 mobility
+      - "8001:8001/udp"  # Robot 1 mobility
+      - "5000:5000/udp"  # Robot 0 app
+      - "5001:5001/udp"  # Robot 1 app
+    networks:
+      v2v_network:
+        ipv4_address: 172.20.0.2
     environment:
       NOVNC_PORT: 6083
       DISPLAY: ":1"
       VNC_RESOLUTION: "1600x900"
+
+networks:
+  v2v_network:
+    name: v2v_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

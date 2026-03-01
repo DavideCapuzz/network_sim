@@ -8,8 +8,9 @@ simple RobotApp like inet.applications.contract.IApp
 
         // Communication ports
         int localPort = default(5000);
+        int remotePort = default(5000);
 
-        // External Docker communication
+        // External Docker communication (not used in simple V2V)
         string externalHost = default("127.0.0.1");
         int externalPort = default(9000);
 

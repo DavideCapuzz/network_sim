@@ -1,0 +1,133 @@
+#include "RobotApp.h"
+#include <inet/common/packet/chunk/BytesChunk.h>
+#include <inet/networklayer/common/L3AddressResolver.h>
+#include <inet/common/ModuleAccess.h>
+#include <inet/transportlayer/contract/udp/UdpControlInfo.h>
+
+Define_Module(RobotApp);
+
+RobotApp::~RobotApp()
+{
+    cancelAndDelete(broadcastTimer);
+}
+
+void RobotApp::initialize(int stage)
+{
+    if (stage == inet::INITSTAGE_LOCAL) {
+        robotId = getParentModule()->getIndex();
+        messageCounter = 0;
+
+        localPort = par("localPort").intValue();
+        broadcastTimer = new cMessage("broadcast");
+
+        EV_INFO << "RobotApp initialized for robot " << robotId << "\n";
+    }
+    else if (stage == inet::INITSTAGE_APPLICATION_LAYER) {
+        // Set up socket for V2V communication
+        socket.setOutputGate(gate("socketOut"));
+        socket.setCallback(this);
+        socket.bind(localPort);
+        socket.setBroadcast(true);  // Enable broadcast
+
+        EV_INFO << "Robot " << robotId << " ready for V2V on port " << localPort << "\n";
+
+        // Start broadcasting messages every 2 seconds
+        scheduleAt(simTime() + uniform(0.1, 1.0), broadcastTimer);
+    }
+}
+
+void RobotApp::handleMessage(cMessage *msg)
+{
+    if (msg == broadcastTimer) {
+        // Broadcast incremental number to all robots
+        broadcastMessage();
+
+        // Schedule next broadcast in 2 seconds
+        scheduleAt(simTime() + 2.0, broadcastTimer);
+    }
+    else {
+        // Let socket process incoming messages
+        socket.processMessage(msg);
+    }
+}
+
+void RobotApp::broadcastMessage()
+{
+    // Increment counter
+    messageCounter++;
+
+    // Create message with format: [ROBOT_ID, COUNTER (4 bytes)]
+    std::vector<uint8_t> data;
+    data.push_back(robotId);  // Byte 0: Who sent this
+
+    // Bytes 1-4: Counter (32-bit integer, little-endian)
+    uint32_t counter = messageCounter;
+    data.push_back((counter >> 0) & 0xFF);
+    data.push_back((counter >> 8) & 0xFF);
+    data.push_back((counter >> 16) & 0xFF);
+    data.push_back((counter >> 24) & 0xFF);
+
+    // Create packet
+    auto packet = new inet::Packet("V2V-msg");
+    auto chunk = inet::makeShared<inet::BytesChunk>(data.data(), data.size());
+    packet->insertAtBack(chunk);
+
+    // Broadcast to all robots (255.255.255.255)
+    inet::L3Address broadcastAddr = inet::L3Address(inet::Ipv4Address("255.255.255.255"));
+    socket.sendTo(packet, broadcastAddr, localPort);
+
+    EV_INFO << "Robot " << robotId << " broadcasted message #" << messageCounter << "\n";
+}
+
+void RobotApp::handleV2VMessage(inet::Packet *packet)
+{
+    // Extract data
+    auto chunk = packet->peekDataAsBytes();
+    std::vector<uint8_t> data(chunk->getBytes().begin(), chunk->getBytes().end());
+
+    if (data.size() >= 5) {
+        uint8_t senderId = data[0];
+
+        // Reconstruct counter (little-endian)
+        uint32_t counter = data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
+
+        // Don't process our own messages
+        if (senderId != robotId) {
+            EV_INFO << "Robot " << robotId << " received message from Robot "
+                    << (int)senderId << " with counter=" << counter << "\n";
+
+            // Print to console for easy viewing
+            std::cout << "[t=" << simTime() << "] Robot " << robotId
+                      << " ← Robot " << (int)senderId
+                      << " (msg #" << counter << ")" << std::endl;
+        }
+    }
+}
+
+// UdpSocket::ICallback implementation
+void RobotApp::socketDataArrived(inet::UdpSocket *sock, inet::Packet *packet)
+{
+    handleV2VMessage(packet);
+    delete packet;
+}
+
+void RobotApp::socketErrorArrived(inet::UdpSocket *sock, inet::Indication *indication)
+{
+    // Ignore errors (likely ICMP port unreachable from broadcast)
+    EV_DEBUG << "Robot " << robotId << " socket error (ignored): "
+             << indication->str() << "\n";
+    delete indication;
+}
+
+void RobotApp::socketClosed(inet::UdpSocket *sock)
+{
+    EV_INFO << "Robot " << robotId << " socket closed\n";
+}
+
+void RobotApp::finish()
+{
+    socket.close();
+
+    EV_INFO << "Robot " << robotId << " sent " << messageCounter
+            << " messages total\n";
+}

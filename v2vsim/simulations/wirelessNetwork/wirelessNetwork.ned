@@ -40,7 +40,7 @@ network WirelessNetwork
                 mobility.externalPort = 9000 + index;
 
                 // Configure app parameters per robot
-                app[0].localPort = 5000 + index;
+                app[0].localPort = 5000;
                 app[0].externalPort = 9000 + index;
 
                 // Configure WLAN interface

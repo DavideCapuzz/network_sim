@@ -50,7 +50,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     novnc websockify \
     # TigerVNC server + supervisord
     tigervnc-standalone-server tigervnc-common tigervnc-tools supervisor \
+    # network tools \
+    libcap2-bin \
+    iproute2 iputils-ping net-tools \
+    tcpdump tshark wireshark-common \
+    nmap socat netcat-openbsd \
+    ethtool bridge-utils arping \
+    dnsutils traceroute \
+    iftop nethogs iperf3 \
+    ngrep tcpflow \
+    mtr-tiny whois \
  && rm -rf /var/lib/apt/lists/*
+
+RUN setcap cap_net_raw,cap_net_admin=eip /usr/bin/tcpdump \
+ && setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
 
 # ---------------------------------------------------------------------
 # Locales (some wrappers call 'locale-gen' explicitly; make it available)

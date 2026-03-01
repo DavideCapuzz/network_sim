@@ -4,7 +4,6 @@
 #include <inet/common/packet/Packet.h>
 #include <inet/transportlayer/contract/udp/UdpSocket.h>
 #include <inet/networklayer/common/L3Address.h>
-#include <inet/networklayer/common/L3AddressResolver.h>
 #include <vector>
 
 using namespace omnetpp;
@@ -16,20 +15,19 @@ class RobotApp : public cSimpleModule, public inet::UdpSocket::ICallback
 {
 protected:
     // Robot identification
-    int robotId_ = -1;
+    int robotId = -1;
 
     // Message counter (incremental number to send)
-    uint32_t messageCounter_ = 0;
+    uint32_t messageCounter = 0;
 
     // UDP socket for V2V communication
-    inet::UdpSocket socket_;
+    inet::UdpSocket socket;
 
     // Local port for communication
-    int localPort_;
-    int remotePort_;
+    int localPort;
 
     // Timer for periodic broadcasts
-    cMessage *broadcastTimer_ = nullptr;
+    cMessage *broadcastTimer = nullptr;
 
 protected:
     virtual void initialize(int stage) override;
