@@ -19,21 +19,15 @@ void RobotApp::initialize(int stage)
         remotePort_ = par("remotePort").intValue();
         broadcastTimer_ = new cMessage("broadcast");
 
-        EV << "========================================\n";
         EV << "RobotApp INIT for robot " << robotId_ << "\n";
-        EV << "========================================\n";
     }
     else if (stage == inet::INITSTAGE_APPLICATION_LAYER) {
-        // Setup socket
         socket_.setOutputGate(gate("socketOut"));
         socket_.setCallback(this);
-        socket_.bind(localPort_);
+        socket_.bind(inet::L3Address(), localPort_);
         socket_.setBroadcast(true);
 
-        EV << "========================================\n";
-        EV << "Robot " << robotId_ << " SOCKET READY on port " << localPort_ << "\n";
-        EV << "Socket ID: " << socket_.getSocketId() << "\n";
-        EV << "========================================\n";
+        EV << "Robot " << robotId_ << " SOCKET READY\n";
 
         // Start broadcasting
         scheduleAt(simTime() + 1.0 + robotId_ * 0.5, broadcastTimer_);
@@ -75,14 +69,13 @@ void RobotApp::broadcastMessage()
     int otherRobot = (robotId_ == 0) ? 1 : 0;
     char ipStr[20];
     sprintf(ipStr, "10.0.0.%d", otherRobot + 1);
-    inet::L3Address destAddr = inet::Ipv4Address(ipStr);
+    // inet::L3Address destAddr = inet::Ipv4Address("10.0.0.255");
+    inet::L3Address destAddr = inet::Ipv4Address::ALLONES_ADDRESS;
 
-    EV << "========================================\n";
-    EV << "Robot " << robotId_ << " SENDING message #" << messageCounter_ << "\n";
-    EV << "  Destination: " << destAddr << ":" << localPort_ << "\n";
-    EV << "  Packet size: " << packet->getByteLength() << " bytes\n";
-    EV << "========================================\n";
-
+    EV << "Robot " << robotId_ << " SENDING message #" << messageCounter_ <<
+        "  Destination: " << destAddr << ":" << localPort_ <<
+        "  Packet size: " << packet->getByteLength() << " bytes\n";
+    socket_.setBroadcast(true);
     socket_.sendTo(packet, destAddr, localPort_);
 }
 
@@ -97,11 +90,9 @@ void RobotApp::handleV2VMessage(inet::Packet *packet)
         uint32_t counter = data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
 
         if (senderId != robotId_) {
-            EV << "========================================\n";
-            EV << "SUCCESS! Robot " << robotId_ << " received message!\n";
-            EV << "  From: Robot " << (int)senderId << "\n";
-            EV << "  Counter: " << counter << "\n";
-            EV << "========================================\n";
+            EV << "SUCCESS! Robot " << robotId_ << " received message!" <<
+                "  From: Robot " << (int)senderId <<
+                "  Counter: " << counter << "\n";
 
             std::cout << "✓✓✓ Robot " << robotId_ << " ← Robot " << (int)senderId
                       << " (msg #" << counter << ") ✓✓✓" << std::endl;
@@ -111,11 +102,11 @@ void RobotApp::handleV2VMessage(inet::Packet *packet)
 
 void RobotApp::socketDataArrived(inet::UdpSocket *sock, inet::Packet *packet)
 {
-    EV << "========================================\n";
-    EV << "socketDataArrived() CALLED for Robot " << robotId_ << "\n";
-    EV << "  Packet: " << packet->getName() << "\n";
-    EV << "  Size: " << packet->getByteLength() << " bytes\n";
-    EV << "========================================\n";
+    // EV << "========================================\n";
+    // EV << "socketDataArrived() CALLED for Robot " << robotId_ << "\n";
+    // EV << "  Packet: " << packet->getName() << "\n";
+    // EV << "  Size: " << packet->getByteLength() << " bytes\n";
+    // EV << "========================================\n";
 
     std::cout << "!!! ROBOT " << robotId_ << " socketDataArrived() CALLED !!!" << std::endl;
 

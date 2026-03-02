@@ -1,9 +1,9 @@
-file 67091 1772392420                                           
+file 52450 1772400877                                           
 version 3
-run General-0-20260301-19:13:33-94781
+run General-0-20260301-21:33:09-122291
 attr configname General
-attr datetime 20260301-19:13:33
-attr datetimef 20260301-191333
+attr datetime 20260301-21:33:09
+attr datetimef 20260301-213309
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -11,7 +11,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network v2vsim.simulations.wirelessNetwork.WirelessNetwork
-attr processid 94781
+attr processid 122291
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -23,8 +23,12 @@ config description "DIAGNOSTIC - Maximum logging"
 config sim-time-limit 20s
 config cmdenv-express-mode false
 config **.cmdenv-log-level trace
+config *.configurator.addStaticAnycastRoutes true
+config **.arp.typename GlobalArp
+config **.ipv4.ip.limitedBroadcast true
 config *.numRobots 2
 config *.configurator.config "xml(\"<config><interface hosts='**' address='10.0.0.x' netmask='255.255.255.0'/></config>\")"
+config **.robot[*].ipv4.ip.directBroadcastInterfaces "\"wlan0\""
 config *.robot[*].mobility.typename StationaryMobility
 config *.robot[0].mobility.initialX 100m
 config *.robot[0].mobility.initialY 300m
@@ -180,345 +184,347 @@ attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source packetSent
 attr title "packets sent, packetBytes"
-vector 23 WirelessNetwork.robot[0].ipv4.arp arpRequestSent:vector(packetBytes) ETV
+vector 23 WirelessNetwork.robot[0].lo[0].lo rcvdPkFromHl:vector(packetBytes) ETV
+attr interpolationmode none
 attr recordingmode vector(packetBytes)
-attr source arpRequestSent
-attr title "ARP request sent, packetBytes"
-vector 24 WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromUpper:vector(packetBytes) ETV
+attr source packetReceivedFromUpper
+attr title "packets received from higher layer, packetBytes"
+vector 24 WirelessNetwork.robot[0].lo[0].lo passedUpPk:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSentToUpper
+attr title "packets passed to higher layer, packetBytes"
+vector 25 WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromUpper:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets received from upper layer, packetBytes"
-vector 25 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
+vector 26 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths"
 attr unit b
-vector 26 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
+vector 27 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPushStarted)
 attr title "incoming datarate"
 attr unit bps
-vector 27 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
+vector 28 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + count(packetPushStarted) - count(packetPulled) - count(packetRemoved) - count(packetDropped)))"
 attr title "queue length"
 attr unit pk
-vector 28 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
+vector 29 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetPushStarted)) - sum(packetLength(packetPulled)) - sum(packetLength(packetRemoved)) - sum(packetLength(packetDropped))))"
 attr title "queue bit length"
 attr unit b
-vector 29 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
+vector 30 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "backoff periods"
-vector 30 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
+vector 31 WirelessNetwork.robot[0].udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetReceived
+attr title "packets received, packetBytes"
+vector 32 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetPulled)
 attr title "queueing times"
 attr unit s
-vector 31 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
+vector 33 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths"
 attr unit b
-vector 32 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
+vector 34 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPulled)
 attr title "outgoing datarate"
 attr unit bps
-vector 33 WirelessNetwork.robot[0].wlan[0].mac.dcf datarateSelected:vector ETV
+vector 35 WirelessNetwork.robot[0].wlan[0].mac.dcf datarateSelected:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "datarates selected"
-vector 34 WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
+vector 36 WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent to lower layer, packetBytes"
-vector 35 WirelessNetwork.robot[0].wlan[0].radio transmissionState:vector ETV
+vector 37 WirelessNetwork.robot[0].wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source transmissionStateChanged
 attr title "Radio transmission state"
-vector 36 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
+vector 38 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent, packetBytes"
-vector 37 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
+vector 39 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, packetBytes"
-vector 38 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
+vector 40 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Broadcast(packetSentToPeer)
 attr title "packets sent: broadcast , packetBytes"
-vector 39 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
+vector 41 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, packetBytes"
-vector 40 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
+vector 42 WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
-vector 41 WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
+vector 43 WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets received from lower layer, packetBytes"
-vector 42 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
+vector 44 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets received, packetBytes"
-vector 43 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:vector(packetBytes) ETV
+vector 45 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Multicast(packetReceivedFromPeer)
 attr title "packets received: multicast, packetBytes"
-vector 44 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:vector(packetBytes) ETV
+vector 46 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211Broadcast(packetReceivedFromPeer)
 attr title "packets received: broadcast, packetBytes"
-vector 45 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
+vector 47 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211NotRetry(packetReceivedFromPeer)
 attr title "packets received: without retry, packetBytes"
-vector 46 WirelessNetwork.robot[1].wlan[0].mac packetSentToUpper:vector(packetBytes) ETV
+vector 48 WirelessNetwork.robot[1].wlan[0].mac packetSentToUpper:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent to upper layer, packetBytes"
-vector 47 WirelessNetwork.robot[1].ipv4.arp arpReplySent:vector(packetBytes) ETV
+vector 49 WirelessNetwork.robot[1].udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
 attr recordingmode vector(packetBytes)
-attr source arpReplySent
-attr title "ARP replies sent, packetBytes"
-vector 48 WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromUpper:vector(packetBytes) ETV
+attr source packetReceived
+attr title "packets received, packetBytes"
+vector 50 WirelessNetwork.robot[1].udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSent
+attr title "packets sent, packetBytes"
+vector 51 WirelessNetwork.robot[1].lo[0].lo rcvdPkFromHl:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetReceivedFromUpper
+attr title "packets received from higher layer, packetBytes"
+vector 52 WirelessNetwork.robot[1].lo[0].lo passedUpPk:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source packetSentToUpper
+attr title "packets passed to higher layer, packetBytes"
+vector 53 WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromUpper:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets received from upper layer, packetBytes"
-vector 49 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
+vector 54 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths"
 attr unit b
-vector 50 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
+vector 55 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPushStarted)
 attr title "incoming datarate"
 attr unit bps
-vector 51 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
+vector 56 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + count(packetPushStarted) - count(packetPulled) - count(packetRemoved) - count(packetDropped)))"
 attr title "queue length"
 attr unit pk
-vector 52 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
+vector 57 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueBitLength:vector ETV
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetPushStarted)) - sum(packetLength(packetPulled)) - sum(packetLength(packetRemoved)) - sum(packetLength(packetDropped))))"
 attr title "queue bit length"
 attr unit b
-vector 53 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
+vector 58 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffPeriodGenerated:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "backoff periods"
-vector 54 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
+vector 59 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetPulled)
 attr title "queueing times"
 attr unit s
-vector 55 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
+vector 60 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths"
 attr unit b
-vector 56 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
+vector 61 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingDataRate:vector ETV
 attr interpolationmode linear
 attr recordingmode vector
 attr source throughput(packetPulled)
 attr title "outgoing datarate"
 attr unit bps
-vector 57 WirelessNetwork.robot[1].wlan[0].mac.dcf datarateSelected:vector ETV
+vector 62 WirelessNetwork.robot[1].wlan[0].mac.dcf datarateSelected:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title "datarates selected"
-vector 58 WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
+vector 63 WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent to lower layer, packetBytes"
-vector 59 WirelessNetwork.robot[1].wlan[0].radio transmissionState:vector ETV
+vector 64 WirelessNetwork.robot[1].wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr recordingmode vector
 attr source transmissionStateChanged
 attr title "Radio transmission state"
-vector 60 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
+vector 65 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr title "packets sent, packetBytes"
-vector 61 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerUnicast:vector(packetBytes) ETV
+vector 66 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
-attr source ieee80211Unicast(packetSentToPeer)
-attr title "packets sent: unicast, packetBytes"
-vector 62 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
+attr source ieee80211Multicast(packetSentToPeer)
+attr title "packets sent: multicast, packetBytes"
+vector 67 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source ieee80211Broadcast(packetSentToPeer)
+attr title "packets sent: broadcast , packetBytes"
+vector 68 WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, packetBytes"
-vector 63 WirelessNetwork.robot[1].wlan[0].mac.rx nav:vector ETV
-attr interpolationmode linear
-attr recordingmode vector
-attr source navChanged
-attr title "network allocation vector"
-vector 64 WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets received from lower layer, packetBytes"
-vector 65 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets received, packetBytes"
-vector 66 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerUnicast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Unicast(packetReceivedFromPeer)
-attr title "packets received: unicast, packetBytes"
-vector 67 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211NotRetry(packetReceivedFromPeer)
-attr title "packets received: without retry, packetBytes"
-vector 68 WirelessNetwork.robot[0].wlan[0].mac packetSentToUpper:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr title "packets sent to upper layer, packetBytes"
-vector 69 WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerUnicast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Unicast(packetSentToPeer)
-attr title "packets sent: unicast, packetBytes"
-vector 70 WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerUnicast:vector(packetBytes) ETV
-attr interpolationmode none
-attr recordingmode vector(packetBytes)
-attr source ieee80211Unicast(packetReceivedFromPeer)
-attr title "packets received: unicast, packetBytes"
-vector 71 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
+vector 69 WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
-vector 72 WirelessNetwork.robot[0].wlan[0].mac.rx nav:vector ETV
-attr interpolationmode linear
-attr recordingmode vector
-attr source navChanged
-attr title "network allocation vector"
-vector 73 WirelessNetwork.robot[1].udp packetReceived:vector(packetBytes) ETV
+vector 70 WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromLower:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
-attr source packetReceived
+attr title "packets received from lower layer, packetBytes"
+vector 71 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeer:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
 attr title "packets received, packetBytes"
-vector 74 WirelessNetwork.robot[1].udp packetSent:vector(packetBytes) ETV
+vector 72 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerMulticast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
-attr source packetSent
-attr title "packets sent, packetBytes"
-vector 75 WirelessNetwork.robot[0].udp packetReceived:vector(packetBytes) ETV
+attr source ieee80211Multicast(packetReceivedFromPeer)
+attr title "packets received: multicast, packetBytes"
+vector 73 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:vector(packetBytes) ETV
 attr interpolationmode none
 attr recordingmode vector(packetBytes)
-attr source packetReceived
-attr title "packets received, packetBytes"
-0	20775 402 0 1731 0 19.000094333564 24 0 1 11 11
-1	21177 402 0 1731 0 19.000094333564 24 0 1 11 11
-2	21579 322 0 1710 0 19 26 0 1 12 12
-3	21901 249 0 1780 0 19.500050166782 11 0 10 55 385
-4	22150 8 0 0 0 0 1 0 0 0 0
-5	22158 8 0 0 0 0 1 0 0 0 0
-6	22166 431 0 1790 0 19.500094333564 24 0 1 11 11
-7	22597 431 0 1790 0 19.500094333564 24 0 1 11 11
-8	23028 320 0 1769 0 19.5 24 0 1 11 11
-9	23348 249 0 1721 0 19.000050166782 11 0 10 55 385
-10	23597 9 0 0 0 0 1 0 0 0 0
-11	23606 9 0 0 0 0 1 0 0 0 0
-12	23615 920 0 1788 0 19.500094166782 47 0 3 112 290
-13	24535 9 0 0 0 0 1 0 0 0 0
-14	24544 893 0 1775 0 19.50005 45 0 3 107 277
-15	25437 9 0 0 0 0 1 0 0 0 0
-16	25446 1948 0 1788 0 19.500094166782 87 0 3 107 233
-17	27394 3588 0 1788 0 19.500094166782 178 0 2 50 98
-18	30982 1968 0 1789 0 19.500094333564 87 0 3 110 242
-19	32950 3636 0 1789 0 19.500094333564 174 0 2 44 88
-20	36586 10 0 0 0 0 1 31 31 31 961
-21	36596 10 0 0 0 0 1 31 31 31 961
-22	36606 128 66 1706 1 19 10 13 13 130 1690
-23	36734 11 67 67 1 1 1 28 28 28 784
-24	36745 152 69 1709 1 19 11 36 41 446 18106
-25	36897 163 69 1709 1 19 11 512 552 6032 3309184
-26	37060 2772 69 1823 0.1 20 200 0 10640 60320 387443200
-27	39832 283 69 1711 1 19 22 0 1 11 11
-28	40115 305 69 1711 1 19 22 0 552 6032 3309184
-29	40420 146 69 1709 1 19 11 3 26 135 2465
-30	40566 149 71 1711 1 19 11 0 0.000514 0.000514 2.64196e-07
-31	40715 164 71 1711 1 19 11 512 552 6032 3309184
-32	40879 2772 71 1823 0.1 20 200 0 10640 60320 387443200
-33	43651 569 71 1777 1 19.500050166782 22 24000000 24000000 528000000 1.2672e+16
-34	44220 437 71 1782 1 19.500060166782 22 14 69 908 53862
-35	44657 1786 72 1788 1 19.500094166782 88 0 2 88 132
-36	46443 499 75 1787 1.00005 19.500094166782 22 14 69 908 53862
-37	46942 17 75 75 1.00005 1.00005 1 64 64 64 4096
-38	46959 17 75 75 1.00005 1.00005 1 64 64 64 4096
-39	46976 499 75 1787 1.00005 19.500094166782 22 14 69 908 53862
-40	47475 390 75 1731 1.00005 19.000094333564 11 5e-05 9.4333564e-05 0.00099333564 9.1488212969421e-08
-41	47865 569 78 1790 1.000050166782 19.500094333564 22 14 69 908 53862
-42	48434 569 78 1790 1.000050166782 19.500094333564 22 14 69 908 53862
-43	49003 24 78 78 1.000050166782 1.000050166782 1 64 64 64 4096
-44	49027 24 78 78 1.000050166782 1.000050166782 1 64 64 64 4096
-45	49051 569 78 1790 1.000050166782 19.500094333564 22 14 69 908 53862
-46	49620 284 78 1718 1.000050166782 19.000050166782 11 36 41 446 18106
-47	49904 24 80 80 1.000050166782 1.000050166782 1 28 28 28 784
-48	49928 174 82 1768 1.000050166782 19.5 11 36 41 446 18106
-49	50102 185 82 1768 1.000050166782 19.5 11 512 552 6032 3309184
-50	50287 2789 82 1823 0.1 20 200 0 5520 60320 330918400
-51	53076 326 82 1770 1.000050166782 19.5 22 0 1 11 11
-52	53402 348 82 1770 1.000050166782 19.5 22 0 552 6032 3309184
-53	53750 170 82 1768 1.000050166782 19.5 11 0 27 153 2987
-54	53920 169 84 1770 1.000400166782 19.5 11 0 0.00035 0.00035 1.225e-07
-55	54089 185 84 1770 1.000400166782 19.5 11 512 552 6032 3309184
-56	54274 2789 84 1823 0.1 20 200 0 5520 60320 330918400
-57	57063 560 84 1770 1.000400166782 19.5 21 24000000 24000000 504000000 1.2096e+16
-58	57623 434 84 1770 1.000400166782 19.5 21 14 69 894 53666
-59	58057 1732 85 1775 1.000400166782 19.50005 84 0 2 84 126
-60	59789 474 88 1774 1.000450166782 19.50005 21 14 69 894 53666
-61	60263 474 88 1774 1.000450166782 19.50005 21 14 69 894 53666
-62	60737 474 88 1774 1.000450166782 19.50005 21 14 69 894 53666
-63	61211 686 88 1786 1.000450166782 19.500094 33 0 4.4e-05 0.000484 2.1296e-08
-64	61897 544 91 1777 1.000450333564 19.500050166782 21 14 69 894 53666
-65	62441 544 91 1777 1.000450333564 19.500050166782 21 14 69 894 53666
-66	62985 544 91 1777 1.000450333564 19.500050166782 21 14 69 894 53666
-67	63529 544 91 1777 1.000450333564 19.500050166782 21 14 69 894 53666
-68	64073 284 91 1777 1.000450333564 19.500050166782 11 36 41 446 18106
-69	64357 482 101 1787 1.000494333564 19.500094166782 21 14 69 844 49766
-70	64839 545 104 1790 1.000494500346 19.500094333564 21 14 69 844 49766
-71	65384 406 104 1790 1.000494500346 19.500094333564 11 9.4333564e-05 9.4333564e-05 0.001037669204 9.7887034266363e-08
-72	65790 630 110 1727 1.001014333564 19.000094 30 0 4.4e-05 0.00044 1.936e-08
-73	66420 260 116 1721 1.001014500346 19.000050166782 10 13 13 130 1690
-74	66680 150 163 1765 1.5 19.5 10 13 13 130 1690
-75	66830 260 178 1780 1.500050166782 19.500050166782 10 13 13 130 1690
+attr source ieee80211Broadcast(packetReceivedFromPeer)
+attr title "packets received: broadcast, packetBytes"
+vector 74 WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr source ieee80211NotRetry(packetReceivedFromPeer)
+attr title "packets received: without retry, packetBytes"
+vector 75 WirelessNetwork.robot[0].wlan[0].mac packetSentToUpper:vector(packetBytes) ETV
+attr interpolationmode none
+attr recordingmode vector(packetBytes)
+attr title "packets sent to upper layer, packetBytes"
+0	21200 292 0 1592 0 19.00005 22 0 1 10 10
+1	21492 292 0 1592 0 19.00005 22 0 1 10 10
+2	21784 232 0 1587 0 19 22 0 1 10 10
+3	22016 366 0 1652 0 19.500050166782 21 0 20 210 2870
+4	22382 8 0 0 0 0 1 0 0 0 0
+5	22390 8 0 0 0 0 1 0 0 0 0
+6	22398 314 0 1646 0 19.50005 22 0 1 10 10
+7	22712 314 0 1646 0 19.50005 22 0 1 10 10
+8	23026 274 0 1641 0 19.5 22 0 1 10 10
+9	23300 386 0 1639 0 19.5 21 0 20 210 2870
+10	23686 9 0 0 0 0 1 0 0 0 0
+11	23695 9 0 0 0 0 1 0 0 0 0
+12	23704 323 0 1593 0 19.00005 23 0 3 52 134
+13	24027 9 0 0 0 0 1 0 0 0 0
+14	24036 345 0 1647 0 19.50005 23 0 3 52 134
+15	24381 9 0 0 0 0 1 0 0 0 0
+16	24390 803 0 1648 0 19.500050166782 41 0 3 51 111
+17	25193 2078 0 1648 0 19.500050166782 122 0 2 40 80
+18	27271 823 0 1647 0 19.50005 41 0 3 51 111
+19	28094 2202 0 1647 0 19.50005 122 0 2 40 80
+20	30296 10 0 0 0 0 1 31 31 31 961
+21	30306 10 0 0 0 0 1 31 31 31 961
+22	30316 128 67 1579 1 19 10 13 13 130 1690
+23	30444 128 69 1581 1 19 10 33 33 330 10890
+24	30572 128 69 1581 1 19 10 33 33 330 10890
+25	30700 128 72 1584 1 19 10 41 41 410 16810
+26	30828 138 72 1584 1 19 10 552 552 5520 3047040
+27	30966 2771 72 1685 0.1 20 200 0 5520 55200 304704000
+28	33737 236 72 1588 1 19 20 0 1 10 10
+29	33973 256 72 1588 1 19 20 0 552 5520 3047040
+30	34229 123 72 1584 1 19 10 3 26 129 2429
+31	34352 387 73 1652 1 19.500050166782 20 13 13 260 3380
+32	34739 118 76 1588 1 19 10 0 0 0 0
+33	34857 138 76 1588 1 19 10 552 552 5520 3047040
+34	34995 2771 76 1685 0.1 20 200 0 5520 55200 304704000
+35	37766 188 76 1588 1 19 10 24000000 24000000 240000000 5.76e+15
+36	37954 128 76 1588 1 19 10 69 69 690 47610
+37	38082 592 77 1593 1 19.00005 40 0 2 40 60
+38	38674 188 80 1592 1.00005 19.00005 10 69 69 690 47610
+39	38862 188 80 1592 1.00005 19.00005 10 69 69 690 47610
+40	39050 188 80 1592 1.00005 19.00005 10 69 69 690 47610
+41	39238 188 80 1592 1.00005 19.00005 10 69 69 690 47610
+42	39426 218 80 1592 1.00005 19.00005 10 5e-05 5e-05 0.0005 2.5e-08
+43	39644 258 83 1595 1.000050166782 19.000050166782 10 69 69 690 47610
+44	39902 258 83 1595 1.000050166782 19.000050166782 10 69 69 690 47610
+45	40160 258 83 1595 1.000050166782 19.000050166782 10 69 69 690 47610
+46	40418 258 83 1595 1.000050166782 19.000050166782 10 69 69 690 47610
+47	40676 258 83 1595 1.000050166782 19.000050166782 10 69 69 690 47610
+48	40934 258 83 1595 1.000050166782 19.000050166782 10 41 41 410 16810
+49	41192 407 86 1639 1.000050166782 19.5 20 13 13 260 3380
+50	41599 149 121 1633 1.5 19.5 10 13 13 130 1690
+51	41748 149 123 1635 1.5 19.5 10 33 33 330 10890
+52	41897 149 123 1635 1.5 19.5 10 33 33 330 10890
+53	42046 149 126 1638 1.5 19.5 10 41 41 410 16810
+54	42195 159 126 1638 1.5 19.5 10 552 552 5520 3047040
+55	42354 2776 126 1685 0.1 20 200 0 5520 55200 304704000
+56	45130 278 126 1642 1.5 19.5 20 0 1 10 10
+57	45408 298 126 1642 1.5 19.5 20 0 552 5520 3047040
+58	45706 146 126 1638 1.5 19.5 10 0 27 146 2938
+59	45852 139 130 1642 1.5 19.5 10 0 0 0 0
+60	45991 159 130 1642 1.5 19.5 10 552 552 5520 3047040
+61	46150 2776 130 1685 0.1 20 200 0 5520 55200 304704000
+62	48926 209 130 1642 1.5 19.5 10 24000000 24000000 240000000 5.76e+15
+63	49135 149 130 1642 1.5 19.5 10 69 69 690 47610
+64	49284 636 131 1647 1.5 19.50005 40 0 2 40 60
+65	49920 189 134 1646 1.50005 19.50005 10 69 69 690 47610
+66	50109 189 134 1646 1.50005 19.50005 10 69 69 690 47610
+67	50298 189 134 1646 1.50005 19.50005 10 69 69 690 47610
+68	50487 189 134 1646 1.50005 19.50005 10 69 69 690 47610
+69	50676 219 134 1646 1.50005 19.50005 10 5e-05 5e-05 0.0005 2.5e-08
+70	50895 259 137 1649 1.500050166782 19.500050166782 10 69 69 690 47610
+71	51154 259 137 1649 1.500050166782 19.500050166782 10 69 69 690 47610
+72	51413 259 137 1649 1.500050166782 19.500050166782 10 69 69 690 47610
+73	51672 259 137 1649 1.500050166782 19.500050166782 10 69 69 690 47610
+74	51931 259 137 1649 1.500050166782 19.500050166782 10 69 69 690 47610
+75	52190 259 137 1649 1.500050166782 19.500050166782 10 41 41 410 16810
 
