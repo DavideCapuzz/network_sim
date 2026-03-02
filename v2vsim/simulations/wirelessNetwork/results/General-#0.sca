@@ -1,8 +1,8 @@
 version 3
-run General-0-20260301-21:33:09-122291
+run General-0-20260302-01:55:24-135534
 attr configname General
-attr datetime 20260301-21:33:09
-attr datetimef 20260301-213309
+attr datetime 20260302-01:55:24
+attr datetimef 20260302-015524
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,7 +10,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network v2vsim.simulations.wirelessNetwork.WirelessNetwork
-attr processid 122291
+attr processid 135534
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -20,14 +20,11 @@ config image-path ../../../../packages/inet/images
 config network v2vsim.simulations.wirelessNetwork.WirelessNetwork
 config description "DIAGNOSTIC - Maximum logging"
 config sim-time-limit 20s
-config cmdenv-express-mode false
-config **.cmdenv-log-level trace
-config *.configurator.addStaticAnycastRoutes true
-config **.arp.typename GlobalArp
+config cmdenv-express-mode true
+config **.cmdenv-log-level info
 config **.ipv4.ip.limitedBroadcast true
 config *.numRobots 2
 config *.configurator.config "xml(\"<config><interface hosts='**' address='10.0.0.x' netmask='255.255.255.0'/></config>\")"
-config **.robot[*].ipv4.ip.directBroadcastInterfaces "\"wlan0\""
 config *.robot[*].mobility.typename StationaryMobility
 config *.robot[0].mobility.initialX 100m
 config *.robot[0].mobility.initialY 300m
@@ -55,12 +52,6 @@ config *.radioMedium.typename Ieee80211ScalarRadioMedium
 config *.radioMedium.propagation.typename ConstantSpeedPropagation
 config *.radioMedium.pathLoss.typename FreeSpacePathLoss
 config *.radioMedium.backgroundNoise.power -110dBm
-config *.robot[*].app[0].**.displayStringTextFormat "\"sent: %s, rcvd: %r\""
-config *.robot[*].udp.**.displayStringTextFormat "\"sent: %s, rcvd: %r\""
-config **.udp.verbose true
-config **.ipv4.verbose true
-config **.wlan[0].mac.verbose true
-config **.wlan[0].radio.verbose true
 
 par WirelessNetwork.configurator typename "\"inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator\""
 par WirelessNetwork.configurator minLinkWeight 0.001
@@ -85,7 +76,7 @@ attr unit mps
 par WirelessNetwork.radioMedium.propagation ignoreMovementDuringTransmission true
 par WirelessNetwork.radioMedium.propagation ignoreMovementDuringPropagation true
 par WirelessNetwork.radioMedium.propagation ignoreMovementDuringReception true
-scalar WirelessNetwork.radioMedium.propagation "Arrival computation count" 20
+scalar WirelessNetwork.radioMedium.propagation "Arrival computation count" 2
 par WirelessNetwork.radioMedium.analogModel typename "\"inet.physicallayer.wireless.common.analogmodel.packetlevel.ScalarAnalogModel\""
 par WirelessNetwork.radioMedium.analogModel ignorePartialInterference false
 par WirelessNetwork.radioMedium.backgroundNoise typename "\"inet.physicallayer.wireless.common.backgroundnoise.IsotropicScalarBackgroundNoise\""
@@ -129,12 +120,12 @@ par WirelessNetwork.radioMedium listeningFilter false
 par WirelessNetwork.radioMedium macAddressFilter false
 par WirelessNetwork.radioMedium recordTransmissionLog false
 par WirelessNetwork.radioMedium recordReceptionLog false
-scalar WirelessNetwork.radioMedium "transmission count" 20
-scalar WirelessNetwork.radioMedium "signal send count" 20
-scalar WirelessNetwork.radioMedium "reception computation count" 20
-scalar WirelessNetwork.radioMedium "interference computation count" 84
-scalar WirelessNetwork.radioMedium "reception decision computation count" 20
-scalar WirelessNetwork.radioMedium "listening decision computation count" 44
+scalar WirelessNetwork.radioMedium "transmission count" 2
+scalar WirelessNetwork.radioMedium "signal send count" 2
+scalar WirelessNetwork.radioMedium "reception computation count" 2
+scalar WirelessNetwork.radioMedium "interference computation count" 12
+scalar WirelessNetwork.radioMedium "reception decision computation count" 2
+scalar WirelessNetwork.radioMedium "listening decision computation count" 8
 scalar WirelessNetwork.radioMedium "reception cache hit" 85.714285714286
 attr unit %
 scalar WirelessNetwork.radioMedium "interference cache hit" 66.666666666667
@@ -897,22 +888,22 @@ par WirelessNetwork.robot[0].lo[0].lo typename "\"inet.linklayer.loopback.Loopba
 par WirelessNetwork.robot[0].lo[0].lo interfaceTableModule "\"WirelessNetwork.robot[0].interfaceTable\""
 par WirelessNetwork.robot[0].lo[0].lo mtu 4470B
 attr unit B
-scalar WirelessNetwork.robot[0].lo[0].lo rcvdPkFromHl:count 10
+scalar WirelessNetwork.robot[0].lo[0].lo rcvdPkFromHl:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source packetReceivedFromUpper
 attr title "packets received from higher layer, count"
-scalar WirelessNetwork.robot[0].lo[0].lo rcvdPkFromHl:sum(packetBytes) 330
+scalar WirelessNetwork.robot[0].lo[0].lo rcvdPkFromHl:sum(packetBytes) 33
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetReceivedFromUpper
 attr title "packets received from higher layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].lo[0].lo passedUpPk:count 10
+scalar WirelessNetwork.robot[0].lo[0].lo passedUpPk:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source packetSentToUpper
 attr title "packets passed to higher layer, count"
-scalar WirelessNetwork.robot[0].lo[0].lo passedUpPk:sum(packetBytes) 330
+scalar WirelessNetwork.robot[0].lo[0].lo passedUpPk:sum(packetBytes) 33
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetSentToUpper
@@ -1003,9 +994,9 @@ attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetP
 attr title "queue bit length, timeavg"
 attr unit b
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:histogram
-field count 10
+field count 1
 field mean 0
-field stddev 0
+field stddev nan
 field min 0
 field max 0
 field sum 0
@@ -1041,7 +1032,7 @@ bin	-0.08	0
 bin	-0.06	0
 bin	-0.04	0
 bin	-0.02	0
-bin	0	10
+bin	0	1
 bin	0.02	0
 bin	0.04	0
 bin	0.06	0
@@ -1067,25 +1058,25 @@ bin	0.44	0
 bin	0.46	0
 bin	0.48	0
 bin	0.5	0
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPackets:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPackets:count 1
 attr recordingmode count
 attr source packetPulled
 attr title "outgoing packets, count"
 attr unit pk
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:sum 5520
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:sum 552
 attr interpolationmode none
 attr recordingmode sum
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths, sum"
 attr unit b
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:histogram
-field count 10
+field count 1
 field mean 552
-field stddev 0
+field stddev nan
 field min 552
 field max 552
-field sum 5520
-field sqrsum 3047040
+field sum 552
+field sqrsum 304704
 attr interpolationmode none
 attr recordingmode histogram
 attr source packetLength(packetPulled)
@@ -1093,7 +1084,7 @@ attr title "outgoing packet lengths"
 attr unit b
 bin	-inf	0
 bin	551	0
-bin	552	10
+bin	552	1
 bin	553	0
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue flowQueueingTime:histogram
 field count 0
@@ -1111,25 +1102,25 @@ attr unit s
 bin	-inf	0
 bin	0	0
 bin	1	0
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPackets:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPackets:count 1
 attr recordingmode count
 attr source packetPushStarted
 attr title "incoming packets, count"
 attr unit pk
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:sum 5520
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:sum 552
 attr interpolationmode none
 attr recordingmode sum
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths, sum"
 attr unit b
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:histogram
-field count 10
+field count 1
 field mean 552
-field stddev 0
+field stddev nan
 field min 552
 field max 552
-field sum 5520
-field sqrsum 3047040
+field sum 552
+field sqrsum 304704
 attr interpolationmode none
 attr recordingmode histogram
 attr source packetLength(packetPushStarted)
@@ -1137,7 +1128,7 @@ attr title "incoming packet lengths"
 attr unit b
 bin	-inf	0
 bin	551	0
-bin	552	10
+bin	552	1
 bin	553	0
 scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.pendingQueue droppedPacketsQueueOverflow:count 0
 attr interpolationmode none
@@ -1156,19 +1147,19 @@ par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames pend
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames originatorMacDataServiceModule "\"^.^.originatorMacDataService\""
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames ackHandlerModule "\"^.^.ackHandler\""
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:histogram
-field count 10
+field count 1
 field mean 5e-05
-field stddev 0
+field stddev nan
 field min 5e-05
 field max 5e-05
-field sum 0.0005
-field sqrsum 2.5e-08
+field sum 5e-05
+field sqrsum 2.5e-09
 attr interpolationmode none
 attr recordingmode histogram
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
 bin	-inf	0
-bin	0	10
+bin	0	1
 bin	0.01	0
 bin	0.02	0
 bin	0.03	0
@@ -1226,7 +1217,7 @@ attr interpolationmode sample-hold
 attr recordingmode max
 attr source "warmup(count(packetEnqueued) - count(packetDequeued))"
 attr title "queue length, max"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:timeavg 2.5e-05
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:timeavg 1.9230769230769e-05
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode timeavg
@@ -1235,10 +1226,10 @@ attr title "queue length, timeavg"
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention typename "\"inet.linklayer.ieee80211.mac.contention.Contention\""
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention initialChannelBusy true
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention backoffOptimization true
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention channelAccessGranted:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention channelAccessGranted:count 1
 attr recordingmode count
 attr title "channel access granted, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention stateChanged:count 122
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess.contention stateChanged:count 14
 attr enum IDLE,DEFER,IFS_AND_BACKOFF
 attr interpolationmode none
 attr recordingmode count
@@ -1249,7 +1240,7 @@ par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess difsn -1
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess cwMin -1
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess cwMax -1
 par WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess rxModule "\"^.^.rx\""
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess channelOwnershipChanged:count 20
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.channelAccess channelOwnershipChanged:count 2
 attr interpolationmode sample-hold
 attr recordingmode count
 attr title "channel ownership, count"
@@ -1267,7 +1258,7 @@ par WirelessNetwork.robot[0].wlan[0].mac.dcf.recipientMacDataService typename "\
 scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.recipientMacDataService packetDeaggregated:count 0
 attr recordingmode count
 attr title "packets deaggregated, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.recipientMacDataService packetDefragmented:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.recipientMacDataService packetDefragmented:count 1
 attr recordingmode count
 attr title "packets defragmented, count"
 scalar WirelessNetwork.robot[0].wlan[0].mac.dcf.recipientMacDataService packetDropDuplicateDetected:count 0
@@ -1326,22 +1317,22 @@ par WirelessNetwork.robot[0].wlan[0].mac.dcf.ctsPolicy rateSelectionModule "\"^.
 par WirelessNetwork.robot[0].wlan[0].mac.dcf typename "\"inet.linklayer.ieee80211.mac.coordinationfunction.Dcf\""
 par WirelessNetwork.robot[0].wlan[0].mac.dcf rxModule "\"^.rx\""
 par WirelessNetwork.robot[0].wlan[0].mac.dcf txModule "\"^.tx\""
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf frameSequenceFinished:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf frameSequenceFinished:count 1
 attr recordingmode count
 attr title "finished frame sequences, count"
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf frameSequenceDuration:histogram
-field count 10
+field count 1
 field mean 5e-05
-field stddev 0
+field stddev nan
 field min 5e-05
 field max 5e-05
-field sum 0.0005
-field sqrsum 2.5e-08
+field sum 5e-05
+field sqrsum 2.5e-09
 attr recordingmode histogram
 attr source frameSequenceDuration(frameSequenceFinished)
 attr title "frame sequence durations"
 bin	-inf	0
-bin	0	10
+bin	0	1
 bin	0.01	0
 bin	0.02	0
 bin	0.03	0
@@ -1394,25 +1385,25 @@ bin	0.49	0
 bin	0.5	0
 bin	0.51	0
 statistic WirelessNetwork.robot[0].wlan[0].mac.dcf frameSequenceNumPackets:histogram
-field count 10
+field count 1
 field mean 1
-field stddev 0
+field stddev nan
 field min 1
 field max 1
-field sum 10
-field sqrsum 10
+field sum 1
+field sqrsum 1
 attr recordingmode histogram
 attr source frameSequenceNumPackets(frameSequenceFinished)
 attr title "frame sequences: number of packets"
 bin	-inf	0
 bin	0	0
-bin	1	10
+bin	1	1
 bin	2	0
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeer:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeer:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets received, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeer:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeer:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets received, sum(packetBytes)"
@@ -1426,22 +1417,22 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Unicast(packetReceivedFromPeer)
 attr title "packets received: unicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerMulticast:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerMulticast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Multicast(packetReceivedFromPeer)
 attr title "packets received: multicast, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerMulticast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerMulticast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Multicast(packetReceivedFromPeer)
 attr title "packets received: multicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Broadcast(packetReceivedFromPeer)
 attr title "packets received: broadcast, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Broadcast(packetReceivedFromPeer)
@@ -1456,21 +1447,21 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Retry(packetReceivedFromPeer)
 attr title "packets received: with retry, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211NotRetry(packetReceivedFromPeer)
 attr title "packets received: without retry, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211NotRetry(packetReceivedFromPeer)
 attr title "packets received: without retry, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets sent, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeer:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets sent, sum(packetBytes)"
@@ -1484,22 +1475,22 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Unicast(packetSentToPeer)
 attr title "packets sent: unicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerMulticast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Broadcast(packetSentToPeer)
 attr title "packets sent: broadcast , count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerBroadcast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Broadcast(packetSentToPeer)
@@ -1514,12 +1505,12 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Retry(packetSentToPeer)
 attr title "packets sent: with retry, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac.dcf packetSentToPeerWithoutRetry:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
@@ -1585,35 +1576,35 @@ attr enum off,sleep,receiver,transmitter,transceiver
 par WirelessNetwork.robot[0].wlan[0].mac mtu 2304B
 attr unit B
 par WirelessNetwork.robot[0].wlan[0].mac qosStation false
-scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromLower:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromLower:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets received from lower layer, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromLower:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromLower:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets received from lower layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets sent to lower layer, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:sum(packetBytes) 690
+scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToLower:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets sent to lower layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromUpper:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromUpper:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets received from upper layer, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromUpper:sum(packetBytes) 410
+scalar WirelessNetwork.robot[0].wlan[0].mac packetReceivedFromUpper:sum(packetBytes) 41
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets received from upper layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToUpper:count 10
+scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToUpper:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets sent to upper layer, count"
-scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToUpper:sum(packetBytes) 410
+scalar WirelessNetwork.robot[0].wlan[0].mac packetSentToUpper:sum(packetBytes) 41
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets sent to upper layer, sum(packetBytes)"
@@ -1828,29 +1819,29 @@ bin	0.44	0
 bin	0.46	0
 bin	0.48	0
 bin	0.5	0
-scalar WirelessNetwork.robot[0].wlan[0].radio radioMode:count 23
+scalar WirelessNetwork.robot[0].wlan[0].radio radioMode:count 5
 attr interpolationmode sample-hold
 attr recordingmode count
 attr source radioModeChanged
 attr title "Radio mode, count"
-scalar WirelessNetwork.robot[0].wlan[0].radio receptionState:count 41
+scalar WirelessNetwork.robot[0].wlan[0].radio receptionState:count 5
 attr interpolationmode sample-hold
 attr recordingmode count
 attr source receptionStateChanged
 attr title "Radio reception state, count"
-scalar WirelessNetwork.robot[0].wlan[0].radio transmissionState:count 40
+scalar WirelessNetwork.robot[0].wlan[0].radio transmissionState:count 4
 attr interpolationmode sample-hold
 attr recordingmode count
 attr source transmissionStateChanged
 attr title "Radio transmission state, count"
 statistic WirelessNetwork.robot[0].wlan[0].radio minSnir:histogram
-field count 10
+field count 1
 field mean 3913155.1042077
-field stddev 0
+field stddev nan
 field min 3913155.1042077
 field max 3913155.1042077
-field sum 39131551.042077
-field sqrsum 1.5312782869587e+14
+field sum 3913155.1042077
+field sqrsum 15312782869587
 attr recordingmode histogram
 attr source minimumSnir(packetSentToUpper)
 attr title "Min SNIR"
@@ -1880,7 +1871,7 @@ bin	3913155.02	0
 bin	3913155.04	0
 bin	3913155.06	0
 bin	3913155.08	0
-bin	3913155.1	10
+bin	3913155.1	1
 bin	3913155.12	0
 bin	3913155.14	0
 bin	3913155.16	0
@@ -1908,9 +1899,9 @@ bin	3913155.58	0
 bin	3913155.6	0
 bin	3913155.62	0
 statistic WirelessNetwork.robot[0].wlan[0].radio packetErrorRate:histogram
-field count 10
+field count 1
 field mean 0
-field stddev 0
+field stddev nan
 field min 0
 field max 0
 field sum 0
@@ -1944,7 +1935,7 @@ bin	-0.08	0
 bin	-0.06	0
 bin	-0.04	0
 bin	-0.02	0
-bin	0	10
+bin	0	1
 bin	0.02	0
 bin	0.04	0
 bin	0.06	0
@@ -2103,7 +2094,7 @@ par WirelessNetwork.robot[0].ipv4.ip multicastTimeToLive 32
 par WirelessNetwork.robot[0].ipv4.ip fragmentTimeout 60s
 attr unit s
 par WirelessNetwork.robot[0].ipv4.ip limitedBroadcast true
-par WirelessNetwork.robot[0].ipv4.ip directBroadcastInterfaces "\"wlan0\""
+par WirelessNetwork.robot[0].ipv4.ip directBroadcastInterfaces "\"\""
 scalar WirelessNetwork.robot[0].ipv4.ip packetDropAddressResolutionFailed:count 0
 attr interpolationmode none
 attr recordingmode count
@@ -2164,10 +2155,40 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetDropReasonIsUndefined(packetDropped)
 attr title "packet drop: undefined, sum(packetBytes)"
-par WirelessNetwork.robot[0].ipv4.arp typename "\"inet.networklayer.arp.ipv4.GlobalArp\""
+par WirelessNetwork.robot[0].ipv4.arp typename "\"inet.networklayer.arp.ipv4.Arp\""
 par WirelessNetwork.robot[0].ipv4.arp interfaceTableModule "\"WirelessNetwork.robot[0].interfaceTable\""
-par WirelessNetwork.robot[0].ipv4.arp addressType "\"ipv4\""
-attr enum ipv4,ipv6,mac,moduleid,modulepath
+par WirelessNetwork.robot[0].ipv4.arp routingTableModule "\"WirelessNetwork.robot[0].ipv4.routingTable\""
+par WirelessNetwork.robot[0].ipv4.arp retryTimeout 1s
+attr unit s
+par WirelessNetwork.robot[0].ipv4.arp retryCount 3
+par WirelessNetwork.robot[0].ipv4.arp cacheTimeout 120s
+attr unit s
+par WirelessNetwork.robot[0].ipv4.arp proxyArpInterfaces "\"\""
+scalar WirelessNetwork.robot[0].ipv4.arp arpResolutionFailed:count 0
+attr recordingmode count
+attr title "ARP failed resolutions, count"
+scalar WirelessNetwork.robot[0].ipv4.arp arpResolutionCompleted:count 0
+attr recordingmode count
+attr title "ARP completed resolutions, count"
+scalar WirelessNetwork.robot[0].ipv4.arp arpResolutionInitiated:count 0
+attr recordingmode count
+attr title "ARP initiated resolutions, count"
+scalar WirelessNetwork.robot[0].ipv4.arp arpReplySent:count 0
+attr recordingmode count
+attr source arpReplySent
+attr title "ARP replies sent, count"
+scalar WirelessNetwork.robot[0].ipv4.arp arpReplySent:sum(packetBytes) 0
+attr recordingmode sum(packetBytes)
+attr source arpReplySent
+attr title "ARP replies sent, sum(packetBytes)"
+scalar WirelessNetwork.robot[0].ipv4.arp arpRequestSent:count 0
+attr recordingmode count
+attr source arpRequestSent
+attr title "ARP request sent, count"
+scalar WirelessNetwork.robot[0].ipv4.arp arpRequestSent:sum(packetBytes) 0
+attr recordingmode sum(packetBytes)
+attr source arpRequestSent
+attr title "ARP request sent, sum(packetBytes)"
 par WirelessNetwork.robot[0].ipv4.lp typename "\"inet.common.MessageDispatcher\""
 par WirelessNetwork.robot[0].ipv4.lp displayStringTextFormat "\"processed %p pk (%l)\""
 par WirelessNetwork.robot[0].ipv4.lp forwardServiceRegistration true
@@ -2188,27 +2209,27 @@ par WirelessNetwork.robot[0].udp icmpv6Module "\"^.ipv6.icmpv6\""
 par WirelessNetwork.robot[0].udp crcMode "\"declared\""
 attr enum disabled,declared,computed
 par WirelessNetwork.robot[0].udp defaultMulticastLoop true
-scalar WirelessNetwork.robot[0].udp packetReceived:count 20
+scalar WirelessNetwork.robot[0].udp packetReceived:count 2
 attr interpolationmode none
 attr recordingmode count
 attr source packetReceived
 attr title "packets received, count"
-scalar WirelessNetwork.robot[0].udp packetReceived:sum(packetBytes) 260
+scalar WirelessNetwork.robot[0].udp packetReceived:sum(packetBytes) 26
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetReceived
 attr title "packets received, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].udp packetSent:count 10
+scalar WirelessNetwork.robot[0].udp packetSent:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source packetSent
 attr title "packets sent, count"
-scalar WirelessNetwork.robot[0].udp packetSent:sum(packetBytes) 130
+scalar WirelessNetwork.robot[0].udp packetSent:sum(packetBytes) 13
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetSent
 attr title "packets sent, sum(packetBytes)"
-scalar WirelessNetwork.robot[0].udp passedUpPk:count 20
+scalar WirelessNetwork.robot[0].udp passedUpPk:count 2
 attr interpolationmode none
 attr recordingmode count
 attr source packetSentToUpper
@@ -2337,22 +2358,22 @@ par WirelessNetwork.robot[1].lo[0].lo typename "\"inet.linklayer.loopback.Loopba
 par WirelessNetwork.robot[1].lo[0].lo interfaceTableModule "\"WirelessNetwork.robot[1].interfaceTable\""
 par WirelessNetwork.robot[1].lo[0].lo mtu 4470B
 attr unit B
-scalar WirelessNetwork.robot[1].lo[0].lo rcvdPkFromHl:count 10
+scalar WirelessNetwork.robot[1].lo[0].lo rcvdPkFromHl:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source packetReceivedFromUpper
 attr title "packets received from higher layer, count"
-scalar WirelessNetwork.robot[1].lo[0].lo rcvdPkFromHl:sum(packetBytes) 330
+scalar WirelessNetwork.robot[1].lo[0].lo rcvdPkFromHl:sum(packetBytes) 33
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetReceivedFromUpper
 attr title "packets received from higher layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].lo[0].lo passedUpPk:count 10
+scalar WirelessNetwork.robot[1].lo[0].lo passedUpPk:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source packetSentToUpper
 attr title "packets passed to higher layer, count"
-scalar WirelessNetwork.robot[1].lo[0].lo passedUpPk:sum(packetBytes) 330
+scalar WirelessNetwork.robot[1].lo[0].lo passedUpPk:sum(packetBytes) 33
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetSentToUpper
@@ -2443,9 +2464,9 @@ attr source "warmup(atomic(constant0(packetPushEnded) + sum(packetLength(packetP
 attr title "queue bit length, timeavg"
 attr unit b
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue queueingTime:histogram
-field count 10
+field count 1
 field mean 0
-field stddev 0
+field stddev nan
 field min 0
 field max 0
 field sum 0
@@ -2481,7 +2502,7 @@ bin	-0.08	0
 bin	-0.06	0
 bin	-0.04	0
 bin	-0.02	0
-bin	0	10
+bin	0	1
 bin	0.02	0
 bin	0.04	0
 bin	0.06	0
@@ -2507,25 +2528,25 @@ bin	0.44	0
 bin	0.46	0
 bin	0.48	0
 bin	0.5	0
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPackets:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPackets:count 1
 attr recordingmode count
 attr source packetPulled
 attr title "outgoing packets, count"
 attr unit pk
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:sum 5520
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:sum 552
 attr interpolationmode none
 attr recordingmode sum
 attr source packetLength(packetPulled)
 attr title "outgoing packet lengths, sum"
 attr unit b
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue outgoingPacketLengths:histogram
-field count 10
+field count 1
 field mean 552
-field stddev 0
+field stddev nan
 field min 552
 field max 552
-field sum 5520
-field sqrsum 3047040
+field sum 552
+field sqrsum 304704
 attr interpolationmode none
 attr recordingmode histogram
 attr source packetLength(packetPulled)
@@ -2533,7 +2554,7 @@ attr title "outgoing packet lengths"
 attr unit b
 bin	-inf	0
 bin	551	0
-bin	552	10
+bin	552	1
 bin	553	0
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue flowQueueingTime:histogram
 field count 0
@@ -2551,25 +2572,25 @@ attr unit s
 bin	-inf	0
 bin	0	0
 bin	1	0
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPackets:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPackets:count 1
 attr recordingmode count
 attr source packetPushStarted
 attr title "incoming packets, count"
 attr unit pk
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:sum 5520
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:sum 552
 attr interpolationmode none
 attr recordingmode sum
 attr source packetLength(packetPushStarted)
 attr title "incoming packet lengths, sum"
 attr unit b
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue incomingPacketLengths:histogram
-field count 10
+field count 1
 field mean 552
-field stddev 0
+field stddev nan
 field min 552
 field max 552
-field sum 5520
-field sqrsum 3047040
+field sum 552
+field sqrsum 304704
 attr interpolationmode none
 attr recordingmode histogram
 attr source packetLength(packetPushStarted)
@@ -2577,7 +2598,7 @@ attr title "incoming packet lengths"
 attr unit b
 bin	-inf	0
 bin	551	0
-bin	552	10
+bin	552	1
 bin	553	0
 scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.pendingQueue droppedPacketsQueueOverflow:count 0
 attr interpolationmode none
@@ -2596,19 +2617,19 @@ par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames pend
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames originatorMacDataServiceModule "\"^.^.originatorMacDataService\""
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames ackHandlerModule "\"^.^.ackHandler\""
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueingTime:histogram
-field count 10
+field count 1
 field mean 5e-05
-field stddev 0
+field stddev nan
 field min 5e-05
 field max 5e-05
-field sum 0.0005
-field sqrsum 2.5e-08
+field sum 5e-05
+field sqrsum 2.5e-09
 attr interpolationmode none
 attr recordingmode histogram
 attr source queueingTime(packetDequeued)
 attr title "queueing times"
 bin	-inf	0
-bin	0	10
+bin	0	1
 bin	0.01	0
 bin	0.02	0
 bin	0.03	0
@@ -2666,7 +2687,7 @@ attr interpolationmode sample-hold
 attr recordingmode max
 attr source "warmup(count(packetEnqueued) - count(packetDequeued))"
 attr title "queue length, max"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:timeavg 2.5e-05
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.inProgressFrames queueLength:timeavg 1.9230769230769e-05
 attr autoWarmupFilter false
 attr interpolationmode sample-hold
 attr recordingmode timeavg
@@ -2675,10 +2696,10 @@ attr title "queue length, timeavg"
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention typename "\"inet.linklayer.ieee80211.mac.contention.Contention\""
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention initialChannelBusy true
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention backoffOptimization true
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention channelAccessGranted:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention channelAccessGranted:count 1
 attr recordingmode count
 attr title "channel access granted, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention stateChanged:count 122
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess.contention stateChanged:count 14
 attr enum IDLE,DEFER,IFS_AND_BACKOFF
 attr interpolationmode none
 attr recordingmode count
@@ -2689,7 +2710,7 @@ par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess difsn -1
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess cwMin -1
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess cwMax -1
 par WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess rxModule "\"^.^.rx\""
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess channelOwnershipChanged:count 20
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.channelAccess channelOwnershipChanged:count 2
 attr interpolationmode sample-hold
 attr recordingmode count
 attr title "channel ownership, count"
@@ -2707,7 +2728,7 @@ par WirelessNetwork.robot[1].wlan[0].mac.dcf.recipientMacDataService typename "\
 scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.recipientMacDataService packetDeaggregated:count 0
 attr recordingmode count
 attr title "packets deaggregated, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.recipientMacDataService packetDefragmented:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.recipientMacDataService packetDefragmented:count 1
 attr recordingmode count
 attr title "packets defragmented, count"
 scalar WirelessNetwork.robot[1].wlan[0].mac.dcf.recipientMacDataService packetDropDuplicateDetected:count 0
@@ -2766,22 +2787,22 @@ par WirelessNetwork.robot[1].wlan[0].mac.dcf.ctsPolicy rateSelectionModule "\"^.
 par WirelessNetwork.robot[1].wlan[0].mac.dcf typename "\"inet.linklayer.ieee80211.mac.coordinationfunction.Dcf\""
 par WirelessNetwork.robot[1].wlan[0].mac.dcf rxModule "\"^.rx\""
 par WirelessNetwork.robot[1].wlan[0].mac.dcf txModule "\"^.tx\""
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf frameSequenceFinished:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf frameSequenceFinished:count 1
 attr recordingmode count
 attr title "finished frame sequences, count"
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf frameSequenceDuration:histogram
-field count 10
+field count 1
 field mean 5e-05
-field stddev 0
+field stddev nan
 field min 5e-05
 field max 5e-05
-field sum 0.0005
-field sqrsum 2.5e-08
+field sum 5e-05
+field sqrsum 2.5e-09
 attr recordingmode histogram
 attr source frameSequenceDuration(frameSequenceFinished)
 attr title "frame sequence durations"
 bin	-inf	0
-bin	0	10
+bin	0	1
 bin	0.01	0
 bin	0.02	0
 bin	0.03	0
@@ -2834,25 +2855,25 @@ bin	0.49	0
 bin	0.5	0
 bin	0.51	0
 statistic WirelessNetwork.robot[1].wlan[0].mac.dcf frameSequenceNumPackets:histogram
-field count 10
+field count 1
 field mean 1
-field stddev 0
+field stddev nan
 field min 1
 field max 1
-field sum 10
-field sqrsum 10
+field sum 1
+field sqrsum 1
 attr recordingmode histogram
 attr source frameSequenceNumPackets(frameSequenceFinished)
 attr title "frame sequences: number of packets"
 bin	-inf	0
 bin	0	0
-bin	1	10
+bin	1	1
 bin	2	0
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets received, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeer:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets received, sum(packetBytes)"
@@ -2866,22 +2887,22 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Unicast(packetReceivedFromPeer)
 attr title "packets received: unicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Multicast(packetReceivedFromPeer)
 attr title "packets received: multicast, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerMulticast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Multicast(packetReceivedFromPeer)
 attr title "packets received: multicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Broadcast(packetReceivedFromPeer)
 attr title "packets received: broadcast, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerBroadcast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Broadcast(packetReceivedFromPeer)
@@ -2896,21 +2917,21 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Retry(packetReceivedFromPeer)
 attr title "packets received: with retry, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211NotRetry(packetReceivedFromPeer)
 attr title "packets received: without retry, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetReceivedFromPeerWithoutRetry:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211NotRetry(packetReceivedFromPeer)
 attr title "packets received: without retry, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets sent, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeer:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets sent, sum(packetBytes)"
@@ -2924,22 +2945,22 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Unicast(packetSentToPeer)
 attr title "packets sent: unicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerMulticast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Multicast(packetSentToPeer)
 attr title "packets sent: multicast, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211Broadcast(packetSentToPeer)
 attr title "packets sent: broadcast , count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerBroadcast:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Broadcast(packetSentToPeer)
@@ -2954,12 +2975,12 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211Retry(packetSentToPeer)
 attr title "packets sent: with retry, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source ieee80211NotRetry(packetSentToPeer)
 attr title "packets sent: without retry, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac.dcf packetSentToPeerWithoutRetry:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source ieee80211NotRetry(packetSentToPeer)
@@ -3025,35 +3046,35 @@ attr enum off,sleep,receiver,transmitter,transceiver
 par WirelessNetwork.robot[1].wlan[0].mac mtu 2304B
 attr unit B
 par WirelessNetwork.robot[1].wlan[0].mac qosStation false
-scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets received from lower layer, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromLower:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets received from lower layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets sent to lower layer, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:sum(packetBytes) 690
+scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToLower:sum(packetBytes) 69
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets sent to lower layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromUpper:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromUpper:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets received from upper layer, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromUpper:sum(packetBytes) 410
+scalar WirelessNetwork.robot[1].wlan[0].mac packetReceivedFromUpper:sum(packetBytes) 41
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets received from upper layer, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToUpper:count 10
+scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToUpper:count 1
 attr interpolationmode none
 attr recordingmode count
 attr title "packets sent to upper layer, count"
-scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToUpper:sum(packetBytes) 410
+scalar WirelessNetwork.robot[1].wlan[0].mac packetSentToUpper:sum(packetBytes) 41
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr title "packets sent to upper layer, sum(packetBytes)"
@@ -3268,29 +3289,29 @@ bin	0.44	0
 bin	0.46	0
 bin	0.48	0
 bin	0.5	0
-scalar WirelessNetwork.robot[1].wlan[0].radio radioMode:count 23
+scalar WirelessNetwork.robot[1].wlan[0].radio radioMode:count 5
 attr interpolationmode sample-hold
 attr recordingmode count
 attr source radioModeChanged
 attr title "Radio mode, count"
-scalar WirelessNetwork.robot[1].wlan[0].radio receptionState:count 41
+scalar WirelessNetwork.robot[1].wlan[0].radio receptionState:count 5
 attr interpolationmode sample-hold
 attr recordingmode count
 attr source receptionStateChanged
 attr title "Radio reception state, count"
-scalar WirelessNetwork.robot[1].wlan[0].radio transmissionState:count 40
+scalar WirelessNetwork.robot[1].wlan[0].radio transmissionState:count 4
 attr interpolationmode sample-hold
 attr recordingmode count
 attr source transmissionStateChanged
 attr title "Radio transmission state, count"
 statistic WirelessNetwork.robot[1].wlan[0].radio minSnir:histogram
-field count 10
+field count 1
 field mean 3913155.1042077
-field stddev 0
+field stddev nan
 field min 3913155.1042077
 field max 3913155.1042077
-field sum 39131551.042077
-field sqrsum 1.5312782869587e+14
+field sum 3913155.1042077
+field sqrsum 15312782869587
 attr recordingmode histogram
 attr source minimumSnir(packetSentToUpper)
 attr title "Min SNIR"
@@ -3320,7 +3341,7 @@ bin	3913155.02	0
 bin	3913155.04	0
 bin	3913155.06	0
 bin	3913155.08	0
-bin	3913155.1	10
+bin	3913155.1	1
 bin	3913155.12	0
 bin	3913155.14	0
 bin	3913155.16	0
@@ -3348,9 +3369,9 @@ bin	3913155.58	0
 bin	3913155.6	0
 bin	3913155.62	0
 statistic WirelessNetwork.robot[1].wlan[0].radio packetErrorRate:histogram
-field count 10
+field count 1
 field mean 0
-field stddev 0
+field stddev nan
 field min 0
 field max 0
 field sum 0
@@ -3384,7 +3405,7 @@ bin	-0.08	0
 bin	-0.06	0
 bin	-0.04	0
 bin	-0.02	0
-bin	0	10
+bin	0	1
 bin	0.02	0
 bin	0.04	0
 bin	0.06	0
@@ -3543,7 +3564,7 @@ par WirelessNetwork.robot[1].ipv4.ip multicastTimeToLive 32
 par WirelessNetwork.robot[1].ipv4.ip fragmentTimeout 60s
 attr unit s
 par WirelessNetwork.robot[1].ipv4.ip limitedBroadcast true
-par WirelessNetwork.robot[1].ipv4.ip directBroadcastInterfaces "\"wlan0\""
+par WirelessNetwork.robot[1].ipv4.ip directBroadcastInterfaces "\"\""
 scalar WirelessNetwork.robot[1].ipv4.ip packetDropAddressResolutionFailed:count 0
 attr interpolationmode none
 attr recordingmode count
@@ -3604,10 +3625,40 @@ attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetDropReasonIsUndefined(packetDropped)
 attr title "packet drop: undefined, sum(packetBytes)"
-par WirelessNetwork.robot[1].ipv4.arp typename "\"inet.networklayer.arp.ipv4.GlobalArp\""
+par WirelessNetwork.robot[1].ipv4.arp typename "\"inet.networklayer.arp.ipv4.Arp\""
 par WirelessNetwork.robot[1].ipv4.arp interfaceTableModule "\"WirelessNetwork.robot[1].interfaceTable\""
-par WirelessNetwork.robot[1].ipv4.arp addressType "\"ipv4\""
-attr enum ipv4,ipv6,mac,moduleid,modulepath
+par WirelessNetwork.robot[1].ipv4.arp routingTableModule "\"WirelessNetwork.robot[1].ipv4.routingTable\""
+par WirelessNetwork.robot[1].ipv4.arp retryTimeout 1s
+attr unit s
+par WirelessNetwork.robot[1].ipv4.arp retryCount 3
+par WirelessNetwork.robot[1].ipv4.arp cacheTimeout 120s
+attr unit s
+par WirelessNetwork.robot[1].ipv4.arp proxyArpInterfaces "\"\""
+scalar WirelessNetwork.robot[1].ipv4.arp arpResolutionFailed:count 0
+attr recordingmode count
+attr title "ARP failed resolutions, count"
+scalar WirelessNetwork.robot[1].ipv4.arp arpResolutionCompleted:count 0
+attr recordingmode count
+attr title "ARP completed resolutions, count"
+scalar WirelessNetwork.robot[1].ipv4.arp arpResolutionInitiated:count 0
+attr recordingmode count
+attr title "ARP initiated resolutions, count"
+scalar WirelessNetwork.robot[1].ipv4.arp arpReplySent:count 0
+attr recordingmode count
+attr source arpReplySent
+attr title "ARP replies sent, count"
+scalar WirelessNetwork.robot[1].ipv4.arp arpReplySent:sum(packetBytes) 0
+attr recordingmode sum(packetBytes)
+attr source arpReplySent
+attr title "ARP replies sent, sum(packetBytes)"
+scalar WirelessNetwork.robot[1].ipv4.arp arpRequestSent:count 0
+attr recordingmode count
+attr source arpRequestSent
+attr title "ARP request sent, count"
+scalar WirelessNetwork.robot[1].ipv4.arp arpRequestSent:sum(packetBytes) 0
+attr recordingmode sum(packetBytes)
+attr source arpRequestSent
+attr title "ARP request sent, sum(packetBytes)"
 par WirelessNetwork.robot[1].ipv4.lp typename "\"inet.common.MessageDispatcher\""
 par WirelessNetwork.robot[1].ipv4.lp displayStringTextFormat "\"processed %p pk (%l)\""
 par WirelessNetwork.robot[1].ipv4.lp forwardServiceRegistration true
@@ -3628,27 +3679,27 @@ par WirelessNetwork.robot[1].udp icmpv6Module "\"^.ipv6.icmpv6\""
 par WirelessNetwork.robot[1].udp crcMode "\"declared\""
 attr enum disabled,declared,computed
 par WirelessNetwork.robot[1].udp defaultMulticastLoop true
-scalar WirelessNetwork.robot[1].udp packetReceived:count 20
+scalar WirelessNetwork.robot[1].udp packetReceived:count 2
 attr interpolationmode none
 attr recordingmode count
 attr source packetReceived
 attr title "packets received, count"
-scalar WirelessNetwork.robot[1].udp packetReceived:sum(packetBytes) 260
+scalar WirelessNetwork.robot[1].udp packetReceived:sum(packetBytes) 26
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetReceived
 attr title "packets received, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].udp packetSent:count 10
+scalar WirelessNetwork.robot[1].udp packetSent:count 1
 attr interpolationmode none
 attr recordingmode count
 attr source packetSent
 attr title "packets sent, count"
-scalar WirelessNetwork.robot[1].udp packetSent:sum(packetBytes) 130
+scalar WirelessNetwork.robot[1].udp packetSent:sum(packetBytes) 13
 attr interpolationmode none
 attr recordingmode sum(packetBytes)
 attr source packetSent
 attr title "packets sent, sum(packetBytes)"
-scalar WirelessNetwork.robot[1].udp passedUpPk:count 20
+scalar WirelessNetwork.robot[1].udp passedUpPk:count 2
 attr interpolationmode none
 attr recordingmode count
 attr source packetSentToUpper

@@ -102,12 +102,6 @@ void RobotApp::handleV2VMessage(inet::Packet *packet)
 
 void RobotApp::socketDataArrived(inet::UdpSocket *sock, inet::Packet *packet)
 {
-    // EV << "========================================\n";
-    // EV << "socketDataArrived() CALLED for Robot " << robotId_ << "\n";
-    // EV << "  Packet: " << packet->getName() << "\n";
-    // EV << "  Size: " << packet->getByteLength() << " bytes\n";
-    // EV << "========================================\n";
-
     std::cout << "!!! ROBOT " << robotId_ << " socketDataArrived() CALLED !!!" << std::endl;
 
     handleV2VMessage(packet);
