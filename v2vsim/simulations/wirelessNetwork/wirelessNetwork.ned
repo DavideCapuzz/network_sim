@@ -41,7 +41,8 @@ network WirelessNetwork
 
                 // Configure app parameters per robot
                 app[0].localPort = 5000;
-                app[0].externalPort = 9000 + index;
+                app[0].externalListenPort = 5000 + index;
+                app[0].externalSendPort = 9000 + index;
 
                 // Configure WLAN interface
                 numWlanInterfaces = 1;

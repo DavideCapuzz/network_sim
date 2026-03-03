@@ -4,13 +4,23 @@
 #include <inet/common/packet/Packet.h>
 #include <inet/transportlayer/contract/udp/UdpSocket.h>
 #include <inet/networklayer/common/L3Address.h>
-#include <inet/networklayer/common/L3AddressResolver.h>
 #include <vector>
+#include <string>
 
 using namespace omnetpp;
 
 /**
- * Simple V2V application that broadcasts incremental counter to other robots
+ * Gateway RobotApp - Bridges external Docker apps and OMNeT++ wireless simulation
+ *
+ * Message Flow:
+ * 1. External App → UDP (externalListenPort) → RobotApp
+ * 2. RobotApp → Wireless Broadcast → Other Robots in OMNeT++
+ * 3. Other Robots → Wireless → RobotApp
+ * 4. RobotApp → UDP (externalSendPort) → External App
+ *
+ * Message Format (Position + Counter):
+ * External:  [x:4][y:4][z:4][counter:4] = 16 bytes
+ * Wireless:  [id:1][x:4][y:4][z:4][counter:4] = 17 bytes
  */
 class RobotApp : public cSimpleModule, public inet::UdpSocket::ICallback
 {
@@ -18,18 +28,18 @@ protected:
     // Robot identification
     int robotId_ = -1;
 
-    // Message counter (incremental number to send)
-    uint32_t messageCounter_ = 0;
-
-    // UDP socket for V2V communication
+    // INET socket for wireless V2V communication (between robots in OMNeT++)
     inet::UdpSocket socket_;
+    int localPort_;  // Wireless V2V port (same for all: 5000)
 
-    // Local port for communication
-    int localPort_;
-    int remotePort_;
+    // Raw UDP socket for external Docker communication
+    int externalSockfd_;
+    int externalListenPort_;  // Port to receive FROM Docker (5000 + robotId)
+    int externalSendPort_;    // Port to send TO Docker (9000 + robotId)
+    std::string externalHost_;  // Docker host IP
 
-    // Timer for periodic broadcasts
-    cMessage *broadcastTimer_ = nullptr;
+    // Timer for polling external socket
+    cMessage *pollExternalTimer_ = nullptr;
 
 protected:
     virtual void initialize(int stage) override;
@@ -37,11 +47,20 @@ protected:
     virtual void handleMessage(cMessage *msg) override;
     virtual void finish() override;
 
-    // V2V communication
-    void broadcastMessage();
+    // External socket management
+    void setupExternalSocket();
+    void closeExternalSocket();
+    void pollExternalMessages();
+
+    // Message handling
+    void handleExternalMessage(const std::vector<uint8_t>& data);
     void handleV2VMessage(inet::Packet *packet);
 
-    // UdpSocket::ICallback interface
+    // Message forwarding
+    void broadcastViaWireless(float x, float y, float z, uint32_t counter);
+    void forwardToExternal(uint8_t senderId, float x, float y, float z, uint32_t counter);
+
+    // INET UdpSocket::ICallback interface (for wireless messages)
     virtual void socketDataArrived(inet::UdpSocket *socket, inet::Packet *packet) override;
     virtual void socketErrorArrived(inet::UdpSocket *socket, inet::Indication *indication) override;
     virtual void socketClosed(inet::UdpSocket *socket) override;

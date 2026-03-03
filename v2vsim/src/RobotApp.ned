@@ -6,13 +6,14 @@ simple RobotApp like inet.applications.contract.IApp
         @class(RobotApp);
         @display("i=block/app");
 
-        // Communication ports
+        // Wireless V2V communication (same port for all robots for broadcast)
         int localPort = default(5000);
         int remotePort = default(5000);
 
-        // External Docker communication (not used in simple V2V)
+        // External Docker communication (unique per robot)
+        int externalListenPort = default(5000);  // Receives from Docker
+        int externalSendPort = default(9000);     // Sends to Docker
         string externalHost = default("127.0.0.1");
-        int externalPort = default(9000);
 
     gates:
         input socketIn @labels(UdpControlInfo/up);
